@@ -14,6 +14,7 @@ export interface RegisterVendeurRequest {
 export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
+  email: string;
   username: string;
   role: Role;
   tokenType: string;
