@@ -6,16 +6,17 @@ export interface LoginRequest {
 }
 
 export interface RegisterVendeurRequest {
-  nom: string;
+  name: string;
   email: string;
   password: string;
 }
 
 export interface AuthResponse {
+  id: number;
   accessToken: string;
   refreshToken: string;
   email: string;
-  username: string;
+  name: string;
   role: Role;
   tokenType: string;
 }
@@ -40,7 +41,8 @@ export interface ResetPasswordRequest {
  * de AuthResponse). Ne contient jamais le mot de passe, évidemment.
  */
 export interface AuthenticatedUser {
-  nom: string;
+  id: number;
+  name: string;
   email: string;
   role: Role;
 }

@@ -2,9 +2,10 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/routes/ProtectedRoute";
 import { LoginPage } from "@/pages/auth/LoginPage";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { DashboardHome } from "@/pages/dashboard/DashboardHome";
+import { VendeursListPage } from "@/pages/vendeurs/VendeursListPage";
 
-// import { DashboardHome } from "@/pages/dashboard/DashboardHome";
-// import { DashboardLayout } from "@/components/layout/DashboardLayout";
 
 function App() {
   return (
@@ -12,19 +13,17 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
-          <Route path="/login" element={<LoginPage />} /> 
+          <Route path="/login" element={<LoginPage />} />
 
           <Route element={<ProtectedRoute />}>
-            {/* <Route element={<DashboardLayout />}>
+            <Route element={<DashboardLayout />}>
               <Route path="/dashboard" element={<DashboardHome />} />
-            </Route> */}
-          </Route>
 
-          {/* Exemple de route réservée au GERANT uniquement, pour plus tard : */}
-          {/* <Route element={<ProtectedRoute allowedRoles={["GERANT"]} />}>
-            <Route path="/parametres" element={<SettingsPage />} />
-          </Route> */}
+              <Route element={<ProtectedRoute allowedRoles={["GERANT"]} />}>
+                <Route path="/vendeurs" element={<VendeursListPage />} />
+              </Route>
+            </Route>
+          </Route>
         </Routes>
       </AuthProvider>
     </BrowserRouter>

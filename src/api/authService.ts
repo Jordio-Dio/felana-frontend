@@ -47,7 +47,8 @@ export const authService = {
     localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, auth.refreshToken);
 
     const user: AuthenticatedUser = {
-      nom: auth.username,
+      id: auth.id, // L'ID réel de l'utilisateur n'est pas fourni par le backend dans AuthResponse, donc on met 0 par défaut.
+      name: auth.name,
       email: auth.email,
       role: auth.role,
     };
