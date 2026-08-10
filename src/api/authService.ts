@@ -48,7 +48,7 @@ export const authService = {
 
     const user: AuthenticatedUser = {
       nom: auth.username,
-      email: "", // l'email n'est pas renvoyé dans AuthResponse actuellement, voir note ci-dessous
+      email: auth.email,
       role: auth.role,
     };
     localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
