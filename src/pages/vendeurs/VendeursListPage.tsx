@@ -4,6 +4,8 @@ import { useAuth } from "@/context/AuthContext";
 import type { UserAccount } from "@/types/user.types";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -13,13 +15,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { CreateVendeurDialog } from "@/components/vendeurs/CreateVendeurDialog";
+import { VerifyEmailDialog } from "@/components/vendeurs/VerifyEmailDialog";
 import { formatDate } from "@/lib/formatters";
+import { authService } from "@/api/authService";
 
 export function VendeursListPage() {
   const { user: currentUser } = useAuth();
   const [vendeurs, setVendeurs] = useState<UserAccount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [togglingId, setTogglingId] = useState<number | null>(null);
+  const [verifyEmailTarget, setVerifyEmailTarget] = useState<string | null>(null);
+  const [sendingCodeFor, setSendingCodeFor] = useState<number | null>(null);
 
   const loadVendeurs = useCallback(async () => {
     setIsLoading(true);
@@ -49,6 +55,28 @@ export function VendeursListPage() {
     }
   }
 
+   /**
+   * Pour un compte existant, aucun code n'est déjà en attente (le seul
+   * envoi automatique a lieu à la création). On déclenche donc un envoi
+   * explicite AVANT d'ouvrir le dialog de saisie.
+   */
+  async function handleStartVerification(vendeur: UserAccount) {
+    setSendingCodeFor(vendeur.id);
+    try {
+      await authService.resendVerification(vendeur.email);
+      setVerifyEmailTarget(vendeur.email);
+    } catch (error) {
+      console.error("Erreur lors de l'envoi du code :", error);
+    } finally {
+      setSendingCodeFor(null);
+    }
+  }
+
+  function handleVerified() {
+    setVerifyEmailTarget(null);
+    loadVendeurs();
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -58,7 +86,12 @@ export function VendeursListPage() {
             Gérez les accès de votre équipe de vente.
           </p>
         </div>
-        <CreateVendeurDialog onCreated={loadVendeurs} />
+        <CreateVendeurDialog
+          onCreated={(email) => {
+            loadVendeurs();
+            setVerifyEmailTarget(email);
+          }}
+        />
       </div>
 
       <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
@@ -97,9 +130,25 @@ export function VendeursListPage() {
                           Vérifié
                         </Badge>
                       ) : (
-                        <Badge variant="outline" className="bg-gray-50 text-gray-500 border-gray-200">
-                          Non vérifié
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="bg-gray-50 text-gray-500 border-gray-200">
+                            Non vérifié
+                          </Badge>
+                          <Button
+                            variant="link"
+                            size="sm"
+                            disabled={sendingCodeFor === vendeur.id}
+                            className="h-auto p-0 text-xs text-teal-700"
+                            onClick={() => handleStartVerification(vendeur)}
+                          >
+                            {sendingCodeFor === vendeur.id ? (
+                              <Loader2 className="h-3 w-3 animate-spin" />)
+                              : (
+                                "Vérifier"
+                              )
+                            }
+                          </Button>
+                        </div>
                       )}
                     </TableCell>
                     <TableCell className="text-gray-500">{formatDate(vendeur.createdAt)}</TableCell>
@@ -122,6 +171,14 @@ export function VendeursListPage() {
           </Table>
         </div>
       </div>
+
+      <VerifyEmailDialog
+        email={verifyEmailTarget}
+        onOpenChange={(open) => {
+          if (!open) setVerifyEmailTarget(null);
+        }}
+        onVerified={handleVerified}
+      />
     </div>
   );
 }

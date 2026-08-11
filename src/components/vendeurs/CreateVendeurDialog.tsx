@@ -16,7 +16,7 @@ import type { AxiosError } from "axios";
 import type { ApiErrorResponse } from "@/types/api.types";
 
 interface CreateVendeurDialogProps {
-  onCreated: () => void;
+  onCreated: (email: string) => void;
 }
 
 export function CreateVendeurDialog({ onCreated }: CreateVendeurDialogProps) {
@@ -41,9 +41,9 @@ export function CreateVendeurDialog({ onCreated }: CreateVendeurDialogProps) {
 
     try {
       await userService.createVendeur({ name, email, password });
-      resetForm();
       setOpen(false);
-      onCreated();
+      onCreated(email);
+      resetForm();
     } catch (err) {
       const axiosError = err as AxiosError<ApiErrorResponse>;
       const message =

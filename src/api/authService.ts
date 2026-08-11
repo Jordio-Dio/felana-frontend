@@ -30,7 +30,7 @@ export const authService = {
   },
 
   async resendVerification(email: string): Promise<void> {
-    await axiosInstance.post(`/auth/resend-verification?email=${encodeURIComponent(email)}`);
+    await axiosInstance.post("/auth/resend-verification", { email });
   },
 
   async forgotPassword(payload: ForgotPasswordRequest): Promise<void> {
