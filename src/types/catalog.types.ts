@@ -19,3 +19,24 @@ export interface Article {
   actif: boolean;
   categorie: Categorie;
 }
+
+export interface CategorieRequest {
+  nom: string;
+  description: string | null;
+}
+
+export interface ArticleCreateRequest {
+  reference: string | null;
+  nom: string;
+  description: string | null;
+  prixVente: number;
+  coutAchat: number;
+  quantiteStock: number;
+  seuilAlerte: number | null;
+  imageUrl: string | null;
+  categorieId: number;
+}
+
+export interface ArticleUpdateRequest extends ArticleCreateRequest {
+  actif: boolean;
+}

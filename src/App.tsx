@@ -6,6 +6,8 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { DashboardHome } from "@/pages/dashboard/DashboardHome";
 import { VendeursListPage } from "@/pages/vendeurs/VendeursListPage";
 import { ClientsListPage } from "@/pages/clients/ClientsListPage";
+import { ArticlesListPage } from "@/pages/catalog/ArticlesListPage";
+import { CategoriesPage } from "@/pages/catalog/CategoriesPage";
 
 
 function App() {
@@ -20,9 +22,11 @@ function App() {
             <Route element={<DashboardLayout />}>
               <Route path="/dashboard" element={<DashboardHome />} />
               <Route path="/clients" element={<ClientsListPage />} />
+              <Route path="/articles" element={<ArticlesListPage />} />
 
               <Route element={<ProtectedRoute allowedRoles={["GERANT"]} />}>
                 <Route path="/vendeurs" element={<VendeursListPage />} />
+                <Route path="/categories" element={<CategoriesPage />} />
               </Route>
             </Route>
           </Route>
