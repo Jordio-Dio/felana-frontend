@@ -5,6 +5,7 @@ import { LoginPage } from "@/pages/auth/LoginPage";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { DashboardHome } from "@/pages/dashboard/DashboardHome";
 import { VendeursListPage } from "@/pages/vendeurs/VendeursListPage";
+import { ClientsListPage } from "@/pages/clients/ClientsListPage";
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<DashboardLayout />}>
               <Route path="/dashboard" element={<DashboardHome />} />
+              <Route path="/clients" element={<ClientsListPage />} />
 
               <Route element={<ProtectedRoute allowedRoles={["GERANT"]} />}>
                 <Route path="/vendeurs" element={<VendeursListPage />} />
