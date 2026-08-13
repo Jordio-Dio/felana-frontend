@@ -18,6 +18,7 @@ import { CreateVendeurDialog } from "@/components/vendeurs/CreateVendeurDialog";
 import { VerifyEmailDialog } from "@/components/vendeurs/VerifyEmailDialog";
 import { formatDate } from "@/lib/formatters";
 import { authService } from "@/api/authService";
+import { notify } from "@/lib/toast";
 
 export function VendeursListPage() {
   const { user: currentUser } = useAuth();
@@ -48,18 +49,20 @@ export function VendeursListPage() {
     try {
       const updated = await userService.updateStatut(vendeur.id, !vendeur.enabled);
       setVendeurs((prev) => prev.map((v) => (v.id === updated.id ? updated : v)));
+      notify.success(updated.enabled ? "Compte activé." : "Compte désactivé.");
     } catch (error) {
       console.error("Erreur lors du changement de statut :", error);
+      notify.error("Impossible de modifier le statut de ce compte.");
     } finally {
       setTogglingId(null);
     }
   }
 
-   /**
-   * Pour un compte existant, aucun code n'est déjà en attente (le seul
-   * envoi automatique a lieu à la création). On déclenche donc un envoi
-   * explicite AVANT d'ouvrir le dialog de saisie.
-   */
+  /**
+  * Pour un compte existant, aucun code n'est déjà en attente (le seul
+  * envoi automatique a lieu à la création). On déclenche donc un envoi
+  * explicite AVANT d'ouvrir le dialog de saisie.
+  */
   async function handleStartVerification(vendeur: UserAccount) {
     setSendingCodeFor(vendeur.id);
     try {
@@ -73,9 +76,10 @@ export function VendeursListPage() {
   }
 
   function handleVerified() {
-    setVerifyEmailTarget(null);
-    loadVendeurs();
-  }
+  setVerifyEmailTarget(null);
+  loadVendeurs();
+  notify.success("E-mail vérifié avec succès.");
+}
 
   return (
     <div className="space-y-4">

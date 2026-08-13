@@ -13,6 +13,7 @@ import { articleService } from "@/api/articleService";
 import type { Article, Categorie } from "@/types/catalog.types";
 import type { AxiosError } from "axios";
 import type { ApiErrorResponse } from "@/types/api.types";
+import { notify } from "@/lib/toast";
 
 interface EditArticleDialogProps {
   article: Article | null;
@@ -70,6 +71,7 @@ export function EditArticleDialog({ article, categories, onOpenChange, onUpdated
       });
       onOpenChange(false);
       onUpdated();
+      notify.success("Article modifié avec succès.");
     } catch (err) {
       const axiosError = err as AxiosError<ApiErrorResponse>;
       setError(axiosError.response?.data?.error ?? "Impossible de modifier cet article.");

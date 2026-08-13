@@ -14,6 +14,7 @@ import {
 import { userService } from "@/api/userService";
 import type { AxiosError } from "axios";
 import type { ApiErrorResponse } from "@/types/api.types";
+import { notify } from "@/lib/toast";
 
 interface CreateVendeurDialogProps {
   onCreated: (email: string) => void;
@@ -44,6 +45,7 @@ export function CreateVendeurDialog({ onCreated }: CreateVendeurDialogProps) {
       setOpen(false);
       onCreated(email);
       resetForm();
+      notify.success("Compte vendeur créé. Vérification de l'e-mail en attente.");
     } catch (err) {
       const axiosError = err as AxiosError<ApiErrorResponse>;
       const message =

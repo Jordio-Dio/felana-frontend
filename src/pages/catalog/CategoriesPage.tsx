@@ -36,6 +36,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { CategorieFormFields } from "@/components/catalog/CategorieFormFields";
+import { notify } from "@/lib/toast";
 
 const EMPTY_FORM: CategorieRequest = { nom: "", description: null };
 
@@ -81,6 +82,7 @@ export function CategoriesPage() {
             setCreateOpen(false);
             setCreateValues(EMPTY_FORM);
             loadCategories();
+            notify.success("Catégorie créée avec succès.");
         } catch {
             setCreateError("Impossible de créer cette catégorie (nom peut-être déjà utilisé).");
         } finally {
@@ -103,6 +105,7 @@ export function CategoriesPage() {
             await categorieService.update(editTarget.id, editValues);
             setEditTarget(null);
             loadCategories();
+            notify.success("Catégorie modifiée avec succès.");
         } catch {
             setEditError("Impossible de modifier cette catégorie.");
         } finally {
@@ -117,8 +120,10 @@ export function CategoriesPage() {
             await categorieService.remove(deleteTarget.id);
             setDeleteTarget(null);
             loadCategories();
+            notify.success("Catégorie supprimée.");
         } catch (error) {
             console.error("Erreur lors de la suppression :", error);
+            notify.error("Impossible de supprimer cette catégorie (des articles y sont peut-être liés).");
         } finally {
             setIsDeleting(false);
         }

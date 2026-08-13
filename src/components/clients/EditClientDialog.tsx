@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { ClientFormFields } from "@/components/clients/ClientFormFields";
 import { clientService } from "@/api/clientService";
+import { notify } from "@/lib/toast";
 import type { Client, ClientRequest } from "@/types/client.types";
 import type { AxiosError } from "axios";
 import type { ApiErrorResponse } from "@/types/api.types";
@@ -35,8 +36,6 @@ export function EditClientDialog({ client, onOpenChange, onUpdated }: EditClient
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Synchronise le formulaire local à chaque fois qu'un nouveau client est
-  // sélectionné pour édition (le dialog reste monté, seul son contenu change).
   useEffect(() => {
     if (client) {
       setValues(toRequest(client));
@@ -55,6 +54,7 @@ export function EditClientDialog({ client, onOpenChange, onUpdated }: EditClient
       await clientService.update(client.id, values);
       onOpenChange(false);
       onUpdated();
+      notify.success("Client modifié avec succès.");
     } catch (err) {
       const axiosError = err as AxiosError<ApiErrorResponse>;
       setError(axiosError.response?.data?.error ?? "Impossible de modifier ce client.");

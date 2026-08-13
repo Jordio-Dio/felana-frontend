@@ -1,5 +1,6 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import type { AuthResponse } from "@/types/auth.types";
+import { notify } from "@/lib/toast";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -131,3 +132,22 @@ export function clearSession() {
   localStorage.removeItem(STORAGE_KEYS.USER);
   window.location.href = "/login";
 }
+
+
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Ne pas doubler la notification si le composant appelant gère déjà
+    // l'erreur lui-même (ex: formulaires avec message inline) - on ne
+    // notifie ici que les erreurs réseau/serveur "silencieuses" (5xx, pas
+    // de réponse du tout), pas les 400/401/403/404 qui sont déjà affichés
+    // dans les formulaires.
+    if (!error.response) {
+      notify.error("Impossible de contacter le serveur. Vérifiez votre connexion.");
+    } else if (error.response.status >= 500) {
+      notify.error("Une erreur serveur est survenue. Réessayez plus tard.");
+    }
+    return Promise.reject(error);
+  }
+);

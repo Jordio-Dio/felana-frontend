@@ -14,6 +14,7 @@ import { articleService } from "@/api/articleService";
 import type { Categorie } from "@/types/catalog.types";
 import type { AxiosError } from "axios";
 import type { ApiErrorResponse } from "@/types/api.types";
+import { notify } from "@/lib/toast";
 
 const EMPTY_FORM: ArticleFormValues = {
   reference: "",
@@ -64,6 +65,7 @@ export function CreateArticleDialog({ categories, onCreated }: CreateArticleDial
       setOpen(false);
       setValues(EMPTY_FORM);
       onCreated();
+      notify.success("Article créé avec succès.");
     } catch (err) {
       const axiosError = err as AxiosError<ApiErrorResponse>;
       setError(axiosError.response?.data?.error ?? "Impossible de créer cet article.");

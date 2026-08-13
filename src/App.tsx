@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/routes/ProtectedRoute";
 import { LoginPage } from "@/pages/auth/LoginPage";
+import { ForgotPasswordPage } from "@/pages/auth/ForgotPasswordPage";
+import { ResetPasswordPage } from "@/pages/auth/ResetPasswordPage";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { DashboardHome } from "@/pages/dashboard/DashboardHome";
 import { VendeursListPage } from "@/pages/vendeurs/VendeursListPage";
@@ -11,6 +13,7 @@ import { CategoriesPage } from "@/pages/catalog/CategoriesPage";
 import { CommandesListPage } from "@/pages/orders/CommandesListPage";
 import { NewSalePage } from "@/pages/orders/NewSalePage";
 import { CommandeDetailPage } from "@/pages/orders/CommandeDetailPage";
+import { NotFoundPage } from "@/pages/NotFoundPage";
 
 
 function App() {
@@ -20,6 +23,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/mot-de-passe-oublie" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           <Route element={<ProtectedRoute />}>
             <Route element={<DashboardLayout />}>
@@ -36,6 +41,7 @@ function App() {
               </Route>
             </Route>
           </Route>
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

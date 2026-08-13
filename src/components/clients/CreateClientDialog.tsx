@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { ClientFormFields } from "@/components/clients/ClientFormFields";
 import { clientService } from "@/api/clientService";
+import { notify } from "@/lib/toast";
 import type { ClientRequest } from "@/types/client.types";
 import type { AxiosError } from "axios";
 import type { ApiErrorResponse } from "@/types/api.types";
@@ -37,6 +38,7 @@ export function CreateClientDialog({ onCreated }: CreateClientDialogProps) {
       setOpen(false);
       setValues(EMPTY_FORM);
       onCreated();
+      notify.success("Client créé avec succès.");
     } catch (err) {
       const axiosError = err as AxiosError<ApiErrorResponse>;
       setError(axiosError.response?.data?.error ?? "Impossible de créer ce client.");

@@ -14,6 +14,7 @@ import {
 import { authService } from "@/api/authService";
 import type { AxiosError } from "axios";
 import type { ApiErrorResponse } from "@/types/api.types";
+import { notify } from "@/lib/toast";
 
 interface VerifyEmailDialogProps {
   email: string | null;
@@ -65,7 +66,7 @@ export function VerifyEmailDialog({ email, onOpenChange, onVerified }: VerifyEma
 
     try {
       await authService.resendVerification(email);
-      setResendMessage("Un nouveau code a été envoyé.");
+      notify.success("Un nouveau code a été envoyé.");
     } catch {
       setError("Impossible d'envoyer un nouveau code pour le moment.");
     } finally {

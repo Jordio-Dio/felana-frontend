@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { CreateClientDialog } from "@/components/clients/CreateClientDialog";
 import { EditClientDialog } from "@/components/clients/EditClientDialog";
+import { notify } from "@/lib/toast";
 
 export function ClientsListPage() {
   const [clients, setClients] = useState<Client[]>([]);
@@ -69,18 +70,20 @@ export function ClientsListPage() {
   }, [clients, search]);
 
   async function handleConfirmDelete() {
-    if (!deleteTarget) return;
-    setIsDeleting(true);
-    try {
-      await clientService.remove(deleteTarget.id);
-      setDeleteTarget(null);
-      loadClients();
-    } catch (error) {
-      console.error("Erreur lors de la suppression du client :", error);
-    } finally {
-      setIsDeleting(false);
-    }
+  if (!deleteTarget) return;
+  setIsDeleting(true);
+  try {
+    await clientService.remove(deleteTarget.id);
+    setDeleteTarget(null);
+    loadClients();
+    notify.success("Client supprimé.");
+  } catch (error) {
+    console.error("Erreur lors de la suppression du client :", error);
+    notify.error("Impossible de supprimer ce client.");
+  } finally {
+    setIsDeleting(false);
   }
+}
 
   return (
     <div className="space-y-4">

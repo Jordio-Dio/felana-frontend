@@ -41,6 +41,7 @@ import {
 import { CreateArticleDialog } from "@/components/catalog/CreateArticleDialog";
 import { EditArticleDialog } from "@/components/catalog/EditArticleDialog";
 import { formatCurrency } from "@/lib/formatters";
+import { notify } from "@/lib/toast";
 
 const ALL_CATEGORIES = "ALL";
 const ALL_STATUS = "ALL";
@@ -94,18 +95,20 @@ export function ArticlesListPage() {
   }, []);
 
   async function handleDelete() {
-    if (!deleteTarget) return;
-    setIsDeleting(true);
-    try {
-      await articleService.remove(deleteTarget.id);
-      setDeleteTarget(null);
-      loadArticles();
-    } catch (error) {
-      console.error("Erreur lors de la suppression :", error);
-    } finally {
-      setIsDeleting(false);
-    }
+  if (!deleteTarget) return;
+  setIsDeleting(true);
+  try {
+    await articleService.remove(deleteTarget.id);
+    setDeleteTarget(null);
+    loadArticles();
+    notify.success("Article supprimé.");
+  } catch (error) {
+    console.error("Erreur lors de la suppression :", error);
+    notify.error("Impossible de supprimer cet article.");
+  } finally {
+    setIsDeleting(false);
   }
+}
 
   return (
     <div className="space-y-4">
