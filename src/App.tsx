@@ -8,6 +8,9 @@ import { VendeursListPage } from "@/pages/vendeurs/VendeursListPage";
 import { ClientsListPage } from "@/pages/clients/ClientsListPage";
 import { ArticlesListPage } from "@/pages/catalog/ArticlesListPage";
 import { CategoriesPage } from "@/pages/catalog/CategoriesPage";
+import { CommandesListPage } from "@/pages/orders/CommandesListPage";
+import { NewSalePage } from "@/pages/orders/NewSalePage";
+import { CommandeDetailPage } from "@/pages/orders/CommandeDetailPage";
 
 
 function App() {
@@ -23,6 +26,9 @@ function App() {
               <Route path="/dashboard" element={<DashboardHome />} />
               <Route path="/clients" element={<ClientsListPage />} />
               <Route path="/articles" element={<ArticlesListPage />} />
+              <Route path="/commandes" element={<CommandesListPage />} />
+              <Route path="/commandes/nouvelle" element={<NewSalePage />} />
+              <Route path="/commandes/:id" element={<CommandeDetailPage />} />
 
               <Route element={<ProtectedRoute allowedRoles={["GERANT"]} />}>
                 <Route path="/vendeurs" element={<VendeursListPage />} />

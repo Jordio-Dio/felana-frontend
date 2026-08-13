@@ -28,3 +28,43 @@ export interface Commande {
   totalAchat: number;
   lignes: LigneCommande[];
 }
+
+export interface LigneCommandeRequest {
+  articleId: number;
+  quantite: number;
+}
+
+export interface CommandeCreateRequest {
+  clientId: number;
+  lignes: LigneCommandeRequest[];
+}
+
+export interface CommandeUpdateRequest {
+  statut: StatutCommande;
+}
+
+export interface InvoiceLigne {
+  reference: string | null;
+  articleNom: string;
+  quantite: number;
+  prixUnitaire: number;
+  sousTotal: number;
+}
+
+export interface Invoice {
+  numeroFacture: string;
+  dateEmission: string;
+  magasinNom: string;
+  magasinAdresse: string;
+  magasinTelephone: string;
+  clientNomComplet: string;
+  clientTelephone: string | null;
+  clientEmail: string | null;
+  vendeurNom: string;
+  lignes: InvoiceLigne[];
+  sousTotal: number;
+  tauxTaxe: number;
+  montantTaxe: number;
+  total: number;
+  statutPaiement: StatutCommande;
+}

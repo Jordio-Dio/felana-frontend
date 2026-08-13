@@ -73,3 +73,8 @@ export default defineConfig([
 ])
 
 ```
+Idée d'amélioration:
+il doit voir de notif ( pour les rapport de ventes) en temps reel:
+  - Quand le vendeur
+
+Voici pourquoi une application SaaS de gestion est largement supérieure et plus importante pour une entreprise qu'un simple fichier Excel :
