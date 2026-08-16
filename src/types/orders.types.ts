@@ -1,4 +1,4 @@
-export type StatutCommande = "EN_ATTENTE" | "PAYEE" | "LIVREE" | "ANNULEE";
+export type StatutCommande = "EN_ATTENTE" | "EN_FABRICATION" | "PAYEE" | "LIVREE" | "ANNULEE";
 
 export interface Client {
   id: number;
@@ -21,10 +21,11 @@ export interface LigneCommande {
 export interface Commande {
   id: number;
   reference: string;
-  dateCommande: string; // ISO string
+  dateCommande: string;
   statut: StatutCommande;
   client: Client;
   vendeurNom: string;
+  remise: number;
   totalAchat: number;
   lignes: LigneCommande[];
 }
@@ -37,9 +38,10 @@ export interface LigneCommandeRequest {
 export interface CommandeCreateRequest {
   clientId: number;
   lignes: LigneCommandeRequest[];
+  remise: number | null;
 }
 
-export interface CommandeUpdateRequest {
+export interface StatutUpdateRequest {
   statut: StatutCommande;
 }
 
@@ -63,6 +65,7 @@ export interface Invoice {
   vendeurNom: string;
   lignes: InvoiceLigne[];
   sousTotal: number;
+  remise: number;
   tauxTaxe: number;
   montantTaxe: number;
   total: number;

@@ -16,7 +16,7 @@ import {
 import { formatCurrency, formatDate, STATUT_LABELS, STATUT_BADGE_CLASSES } from "@/lib/formatters";
 import { notify } from "@/lib/toast";
 
-const STATUTS: StatutCommande[] = ["EN_ATTENTE", "PAYEE", "LIVREE", "ANNULEE"];
+const STATUTS: StatutCommande[] = ["EN_ATTENTE", "EN_FABRICATION", "PAYEE", "LIVREE", "ANNULEE"];
 
 export function CommandeDetailPage() {
     const { id } = useParams<{ id: string }>();
@@ -135,6 +135,12 @@ export function CommandeDetailPage() {
                             <span>Sous-total</span>
                             <span>{formatCurrency(invoice.sousTotal)}</span>
                         </div>
+                        {invoice.remise > 0 && (
+                            <div className="flex justify-between text-red-600">
+                                <span>Remise</span>
+                                <span>- {formatCurrency(invoice.remise)}</span>
+                            </div>
+                        )}
                         {invoice.tauxTaxe > 0 && (
                             <div className="flex justify-between text-gray-600">
                                 <span>Taxe ({(invoice.tauxTaxe * 100).toFixed(0)}%)</span>

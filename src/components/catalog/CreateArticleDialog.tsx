@@ -11,17 +11,20 @@ import {
 } from "@/components/ui/dialog";
 import { ArticleFormFields, type ArticleFormValues } from "@/components/catalog/ArticleFormFields";
 import { articleService } from "@/api/articleService";
+import { notify } from "@/lib/toast";
 import type { Categorie } from "@/types/catalog.types";
 import type { AxiosError } from "axios";
 import type { ApiErrorResponse } from "@/types/api.types";
-import { notify } from "@/lib/toast";
 
 const EMPTY_FORM: ArticleFormValues = {
   reference: "",
   nom: "",
   description: "",
   prixVente: "",
-  coutAchat: "",
+  coutMatiere: "",
+  coutAccessoire: "",
+  coutMainOeuvre: "",
+  pourcentageMarge: "",
   quantiteStock: "",
   seuilAlerte: "",
   imageUrl: "",
@@ -56,7 +59,13 @@ export function CreateArticleDialog({ categories, onCreated }: CreateArticleDial
         nom: values.nom,
         description: values.description || null,
         prixVente: parseFloat(values.prixVente),
-        coutAchat: parseFloat(values.coutAchat),
+        coutMatiere: parseFloat(values.coutMatiere) || 0,
+        coutAccessoire: parseFloat(values.coutAccessoire) || 0,
+        coutMainOeuvre: parseFloat(values.coutMainOeuvre) || 0,
+        // Conversion pourcentage lisible (50) -> décimal attendu par le backend (0.5)
+        pourcentageMarge: values.pourcentageMarge
+          ? parseFloat(values.pourcentageMarge) / 100
+          : null,
         quantiteStock: parseInt(values.quantiteStock, 10),
         seuilAlerte: values.seuilAlerte ? parseInt(values.seuilAlerte, 10) : null,
         imageUrl: values.imageUrl || null,

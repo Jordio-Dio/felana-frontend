@@ -10,7 +10,12 @@ export interface Article {
   nom: string;
   description: string | null;
   prixVente: number;
-  coutAchat?: number; // présent uniquement pour un GERANT
+  coutMatiere?: number; // présent uniquement pour un GERANT
+  coutAccessoire?: number; // présent uniquement pour un GERANT
+  coutMainOeuvre?: number; // présent uniquement pour un GERANT
+  coutAchat?: number; // calculé côté serveur, présent uniquement pour un GERANT
+  pourcentageMarge?: number | null; // présent uniquement pour un GERANT
+  prixVenteSuggere?: number | null; // présent uniquement pour un GERANT
   marge?: number; // présent uniquement pour un GERANT
   quantiteStock: number;
   seuilAlerte?: number;
@@ -30,7 +35,10 @@ export interface ArticleCreateRequest {
   nom: string;
   description: string | null;
   prixVente: number;
-  coutAchat: number;
+  coutMatiere: number;
+  coutAccessoire: number;
+  coutMainOeuvre: number;
+  pourcentageMarge: number | null;
   quantiteStock: number;
   seuilAlerte: number | null;
   imageUrl: string | null;

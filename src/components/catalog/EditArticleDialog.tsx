@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/dialog";
 import { ArticleFormFields, type ArticleFormValues } from "@/components/catalog/ArticleFormFields";
 import { articleService } from "@/api/articleService";
+import { notify } from "@/lib/toast";
 import type { Article, Categorie } from "@/types/catalog.types";
 import type { AxiosError } from "axios";
 import type { ApiErrorResponse } from "@/types/api.types";
-import { notify } from "@/lib/toast";
 
 interface EditArticleDialogProps {
   article: Article | null;
@@ -28,7 +28,14 @@ function toFormValues(article: Article): ArticleFormValues {
     nom: article.nom,
     description: article.description ?? "",
     prixVente: String(article.prixVente),
-    coutAchat: article.coutAchat !== undefined ? String(article.coutAchat) : "",
+    coutMatiere: article.coutMatiere !== undefined ? String(article.coutMatiere) : "0",
+    coutAccessoire: article.coutAccessoire !== undefined ? String(article.coutAccessoire) : "0",
+    coutMainOeuvre: article.coutMainOeuvre !== undefined ? String(article.coutMainOeuvre) : "0",
+    // Conversion décimal (0.5) -> pourcentage lisible (50) pour l'affichage
+    pourcentageMarge:
+      article.pourcentageMarge !== undefined && article.pourcentageMarge !== null
+        ? String(article.pourcentageMarge * 100)
+        : "",
     quantiteStock: String(article.quantiteStock),
     seuilAlerte: article.seuilAlerte !== undefined ? String(article.seuilAlerte) : "",
     imageUrl: article.imageUrl ?? "",
@@ -62,7 +69,12 @@ export function EditArticleDialog({ article, categories, onOpenChange, onUpdated
         nom: values.nom,
         description: values.description || null,
         prixVente: parseFloat(values.prixVente),
-        coutAchat: parseFloat(values.coutAchat),
+        coutMatiere: parseFloat(values.coutMatiere) || 0,
+        coutAccessoire: parseFloat(values.coutAccessoire) || 0,
+        coutMainOeuvre: parseFloat(values.coutMainOeuvre) || 0,
+        pourcentageMarge: values.pourcentageMarge
+          ? parseFloat(values.pourcentageMarge) / 100
+          : null,
         quantiteStock: parseInt(values.quantiteStock, 10),
         seuilAlerte: values.seuilAlerte ? parseInt(values.seuilAlerte, 10) : null,
         imageUrl: values.imageUrl || null,

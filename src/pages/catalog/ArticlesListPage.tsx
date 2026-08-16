@@ -95,20 +95,20 @@ export function ArticlesListPage() {
   }, []);
 
   async function handleDelete() {
-  if (!deleteTarget) return;
-  setIsDeleting(true);
-  try {
-    await articleService.remove(deleteTarget.id);
-    setDeleteTarget(null);
-    loadArticles();
-    notify.success("Article supprimé.");
-  } catch (error) {
-    console.error("Erreur lors de la suppression :", error);
-    notify.error("Impossible de supprimer cet article.");
-  } finally {
-    setIsDeleting(false);
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    try {
+      await articleService.remove(deleteTarget.id);
+      setDeleteTarget(null);
+      loadArticles();
+      notify.success("Article supprimé.");
+    } catch (error) {
+      console.error("Erreur lors de la suppression :", error);
+      notify.error("Impossible de supprimer cet article.");
+    } finally {
+      setIsDeleting(false);
+    }
   }
-}
 
   return (
     <div className="space-y-4">
@@ -199,11 +199,14 @@ export function ArticlesListPage() {
                     <TableCell className="font-medium">{formatCurrency(article.prixVente)}</TableCell>
                     {isGerant && (
                       <TableCell className="text-gray-600">
-                        {article.coutAchat !== undefined ? formatCurrency(article.coutAchat) : "—"}
+                        <div>{article.coutAchat !== undefined ? formatCurrency(article.coutAchat) : "—"}</div>
                         {article.marge !== undefined && (
-                          <span className="ml-1 text-xs text-emerald-600">
-                            (+{formatCurrency(article.marge)})
-                          </span>
+                          <div className="text-xs text-emerald-600">+{formatCurrency(article.marge)} marge</div>
+                        )}
+                        {article.prixVenteSuggere !== undefined && article.prixVenteSuggere !== null && (
+                          <div className="text-xs text-gray-400">
+                            Suggéré : {formatCurrency(article.prixVenteSuggere)}
+                          </div>
                         )}
                       </TableCell>
                     )}

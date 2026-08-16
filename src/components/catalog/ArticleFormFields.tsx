@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -8,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { formatCurrency } from "@/lib/formatters";
 import type { Categorie } from "@/types/catalog.types";
 
 export interface ArticleFormValues {
@@ -15,7 +17,10 @@ export interface ArticleFormValues {
   nom: string;
   description: string;
   prixVente: string;
-  coutAchat: string;
+  coutMatiere: string;
+  coutAccessoire: string;
+  coutMainOeuvre: string;
+  pourcentageMarge: string;
   quantiteStock: string;
   seuilAlerte: string;
   imageUrl: string;
@@ -47,6 +52,22 @@ export function ArticleFormFields({
     onChange({ ...values, [key]: value });
   }
 
+  // Calcul en direct côté client, purement informatif - le vrai calcul
+  // faisant foi reste toujours celui du backend à l'enregistrement.
+  const coutAchatCalcule = useMemo(() => {
+    const matiere = parseFloat(values.coutMatiere) || 0;
+    const accessoire = parseFloat(values.coutAccessoire) || 0;
+    const mainOeuvre = parseFloat(values.coutMainOeuvre) || 0;
+    return matiere + accessoire + mainOeuvre;
+  }, [values.coutMatiere, values.coutAccessoire, values.coutMainOeuvre]);
+
+  const prixVenteSuggere = useMemo(() => {
+    const pourcentage = parseFloat(values.pourcentageMarge);
+    if (!values.pourcentageMarge || isNaN(pourcentage)) return null;
+    return coutAchatCalcule * (1 + pourcentage / 100);
+  }, [coutAchatCalcule, values.pourcentageMarge]);
+
+  
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
@@ -97,31 +118,89 @@ export function ArticleFormFields({
         </Select>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      {/* Détail du coût de revient */}
+      <div className="rounded-lg border border-gray-200 p-3">
+        <p className="mb-2 text-xs font-semibold uppercase text-gray-500">
+          Coût de revient
+        </p>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="space-y-1.5">
+            <Label htmlFor={`${idPrefix}-coutMatiere`}>Matière</Label>
+            <Input
+              id={`${idPrefix}-coutMatiere`}
+              type="number"
+              min="0"
+              step="0.01"
+              value={values.coutMatiere}
+              onChange={(e) => update("coutMatiere", e.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor={`${idPrefix}-coutAccessoire`}>Accessoire</Label>
+            <Input
+              id={`${idPrefix}-coutAccessoire`}
+              type="number"
+              min="0"
+              step="0.01"
+              value={values.coutAccessoire}
+              onChange={(e) => update("coutAccessoire", e.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor={`${idPrefix}-coutMainOeuvre`}>Main d'œuvre</Label>
+            <Input
+              id={`${idPrefix}-coutMainOeuvre`}
+              type="number"
+              min="0"
+              step="0.01"
+              value={values.coutMainOeuvre}
+              onChange={(e) => update("coutMainOeuvre", e.target.value)}
+              required
+            />
+          </div>
+        </div>
+        <p className="mt-2 text-sm text-gray-600">
+          Coût total : <span className="font-semibold">{formatCurrency(coutAchatCalcule)}</span>
+        </p>
+      </div>
+
+      {/* Marge et prix suggéré */}
+      <div className="rounded-lg border border-gray-200 p-3">
+        <p className="mb-2 text-xs font-semibold uppercase text-gray-500">
+          Marge souhaitée (optionnel)
+        </p>
         <div className="space-y-1.5">
-          <Label htmlFor={`${idPrefix}-prixVente`}>Prix de vente (MGA)</Label>
+          <Label htmlFor={`${idPrefix}-marge`}>Pourcentage de bénéfice (%)</Label>
           <Input
-            id={`${idPrefix}-prixVente`}
+            id={`${idPrefix}-marge`}
             type="number"
             min="0"
-            step="0.01"
-            value={values.prixVente}
-            onChange={(e) => update("prixVente", e.target.value)}
-            required
+            step="1"
+            value={values.pourcentageMarge}
+            onChange={(e) => update("pourcentageMarge", e.target.value)}
+            placeholder="Ex : 50"
           />
         </div>
-        <div className="space-y-1.5">
-          <Label htmlFor={`${idPrefix}-coutAchat`}>Coût d'achat (MGA)</Label>
-          <Input
-            id={`${idPrefix}-coutAchat`}
-            type="number"
-            min="0"
-            step="0.01"
-            value={values.coutAchat}
-            onChange={(e) => update("coutAchat", e.target.value)}
-            required
-          />
-        </div>
+        {prixVenteSuggere !== null && (
+          <p className="mt-2 text-sm text-teal-700">
+            Prix de vente suggéré : <span className="font-semibold">{formatCurrency(prixVenteSuggere)}</span>
+          </p>
+        )}
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor={`${idPrefix}-prixVente`}>Prix de vente final (MGA)</Label>
+        <Input
+          id={`${idPrefix}-prixVente`}
+          type="number"
+          min="0"
+          step="0.01"
+          value={values.prixVente}
+          onChange={(e) => update("prixVente", e.target.value)}
+          required
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-3">

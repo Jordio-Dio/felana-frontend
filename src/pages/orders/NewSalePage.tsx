@@ -20,6 +20,8 @@ import type { Client } from "@/types/orders.types";
 import type { AxiosError } from "axios";
 import type { ApiErrorResponse } from "@/types/api.types";
 import { notify } from "@/lib/toast";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface CartLine {
     article: Article;
@@ -32,6 +34,7 @@ export function NewSalePage() {
     const [articles, setArticles] = useState<Article[]>([]);
     const [clients, setClients] = useState<Client[]>([]);
     const [clientId, setClientId] = useState<string>("");
+    const [remise, setRemise] = useState<string>("");
     const [cart, setCart] = useState<CartLine[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -53,10 +56,12 @@ export function NewSalePage() {
         loadRefData();
     }, []);
 
-    const total = useMemo(
+    const sousTotal = useMemo(
         () => cart.reduce((sum, line) => sum + line.article.prixVente * line.quantite, 0),
         [cart]
     );
+    const remiseValue = parseFloat(remise) || 0;
+    const total = Math.max(0, sousTotal - remiseValue);
 
     function addToCart(article: Article) {
         setCart((prev) => {
@@ -91,6 +96,11 @@ export function NewSalePage() {
     async function handleSubmit() {
         setError(null);
 
+        if (remiseValue > sousTotal) {
+            setError("La remise ne peut pas dépasser le total de la commande.");
+            return;
+        }
+
         if (!clientId) {
             setError("Veuillez sélectionner un client.");
             return;
@@ -105,6 +115,7 @@ export function NewSalePage() {
             const commande = await commandeService.create({
                 clientId: Number(clientId),
                 lignes: cart.map((line) => ({ articleId: line.article.id, quantite: line.quantite })),
+                remise: remiseValue > 0 ? remiseValue : null,
             });
             notify.success(`Vente ${commande.reference} enregistrée.`);
             navigate(`/commandes/${commande.id}`);
@@ -211,6 +222,33 @@ export function NewSalePage() {
 
                 <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
                     <h2 className="mb-3 text-sm font-semibold text-gray-900">Récapitulatif</h2>
+
+                    <div className="space-y-1.5">
+                        <Label htmlFor="remise">Remise (MGA)</Label>
+                        <Input
+                            id="remise"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={remise}
+                            onChange={(e) => setRemise(e.target.value)}
+                            placeholder="0"
+                        />
+                    </div>
+
+                    <div className="mt-3 space-y-1 border-t border-gray-100 pt-3 text-sm">
+                        <div className="flex justify-between text-gray-600">
+                            <span>Sous-total</span>
+                            <span>{formatCurrency(sousTotal)}</span>
+                        </div>
+                        {remiseValue > 0 && (
+                            <div className="flex justify-between text-red-600">
+                                <span>Remise</span>
+                                <span>- {formatCurrency(remiseValue)}</span>
+                            </div>
+                        )}
+                    </div>
+
                     <div className="flex items-center justify-between border-t border-gray-100 pt-3 text-base font-semibold text-gray-900">
                         <span>Total</span>
                         <span>{formatCurrency(total)}</span>
