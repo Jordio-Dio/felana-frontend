@@ -27,7 +27,8 @@ const EMPTY_FORM: ArticleFormValues = {
   pourcentageMarge: "",
   quantiteStock: "",
   seuilAlerte: "",
-  imageUrl: "",
+  imageUrls: [],
+  publieVitrine: false,
   categorieId: "",
   actif: true,
 };
@@ -68,7 +69,8 @@ export function CreateArticleDialog({ categories, onCreated }: CreateArticleDial
           : null,
         quantiteStock: parseInt(values.quantiteStock, 10),
         seuilAlerte: values.seuilAlerte ? parseInt(values.seuilAlerte, 10) : null,
-        imageUrl: values.imageUrl || null,
+        imageUrls: values.imageUrls ,
+        publieVitrine: values.publieVitrine,
         categorieId: parseInt(values.categorieId, 10),
       });
       setOpen(false);

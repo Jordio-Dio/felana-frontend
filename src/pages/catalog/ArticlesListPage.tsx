@@ -190,10 +190,23 @@ export function ArticlesListPage() {
                 articles.map((article) => (
                   <TableRow key={article.id}>
                     <TableCell>
-                      <div className="font-medium">{article.nom}</div>
-                      {article.reference && (
-                        <div className="text-xs text-gray-400">Réf. {article.reference}</div>
-                      )}
+                      <div className="flex items-center gap-2.5">
+                        {article.imageUrls.length > 0 ? (
+                          <img
+                            src={article.imageUrls[0]}
+                            alt=""
+                            className="h-9 w-9 rounded-md object-cover"
+                          />
+                        ) : (
+                          <div className="h-9 w-9 rounded-md bg-gray-100" />
+                        )}
+                        <div>
+                          <div className="font-medium">{article.nom}</div>
+                          {article.reference && (
+                            <div className="text-xs text-gray-400">Réf. {article.reference}</div>
+                          )}
+                        </div>
+                      </div>
                     </TableCell>
                     <TableCell className="text-gray-600">{article.categorie.nom}</TableCell>
                     <TableCell className="font-medium">{formatCurrency(article.prixVente)}</TableCell>
@@ -220,16 +233,23 @@ export function ArticlesListPage() {
                     </TableCell>
                     {isGerant && (
                       <TableCell>
-                        <Badge
-                          variant="outline"
-                          className={
-                            article.actif
-                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                              : "bg-gray-50 text-gray-500 border-gray-200"
-                          }
-                        >
-                          {article.actif ? "Actif" : "Inactif"}
-                        </Badge>
+                        <div className="flex flex-col gap-1">
+                          <Badge
+                            variant="outline"
+                            className={
+                              article.actif
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                : "bg-gray-50 text-gray-500 border-gray-200"
+                            }
+                          >
+                            {article.actif ? "Actif" : "Inactif"}
+                          </Badge>
+                          {article.publieVitrine && (
+                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                              En vitrine
+                            </Badge>
+                          )}
+                        </div>
                       </TableCell>
                     )}
                     {isGerant && (

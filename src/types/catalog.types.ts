@@ -20,7 +20,8 @@ export interface Article {
   quantiteStock: number;
   seuilAlerte?: number;
   stockBas?: boolean;
-  imageUrl: string | null;
+  imageUrls: string[];
+  publieVitrine?: boolean; // présent uniquement pour un GERANT
   actif: boolean;
   categorie: Categorie;
 }
@@ -41,7 +42,8 @@ export interface ArticleCreateRequest {
   pourcentageMarge: number | null;
   quantiteStock: number;
   seuilAlerte: number | null;
-  imageUrl: string | null;
+  imageUrls: string[];
+  publieVitrine: boolean;
   categorieId: number;
 }
 

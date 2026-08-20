@@ -38,4 +38,9 @@ export const commandeService = {
     const { data } = await axiosInstance.get<Invoice>(`/commandes/${id}/recu`);
     return data;
   },
+
+  async getNotificationCount(): Promise<number> {
+    const { data } = await axiosInstance.get<{CommandesEnAttente: number}>("/commandes/notifications/count");
+    return data.CommandesEnAttente;
+  }
 };

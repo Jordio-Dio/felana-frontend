@@ -38,7 +38,8 @@ function toFormValues(article: Article): ArticleFormValues {
         : "",
     quantiteStock: String(article.quantiteStock),
     seuilAlerte: article.seuilAlerte !== undefined ? String(article.seuilAlerte) : "",
-    imageUrl: article.imageUrl ?? "",
+    imageUrls: article.imageUrls ?? [],
+    publieVitrine: article.publieVitrine ?? false,
     categorieId: String(article.categorie.id),
     actif: article.actif,
   };
@@ -77,7 +78,8 @@ export function EditArticleDialog({ article, categories, onOpenChange, onUpdated
           : null,
         quantiteStock: parseInt(values.quantiteStock, 10),
         seuilAlerte: values.seuilAlerte ? parseInt(values.seuilAlerte, 10) : null,
-        imageUrl: values.imageUrl || null,
+        imageUrls: values.imageUrls,
+        publieVitrine: values.publieVitrine,
         categorieId: parseInt(values.categorieId, 10),
         actif: values.actif,
       });

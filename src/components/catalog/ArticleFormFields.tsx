@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ImageUploadField } from "@/components/catalog/ImageUploadField";
 import { formatCurrency } from "@/lib/formatters";
 import type { Categorie } from "@/types/catalog.types";
 
@@ -23,7 +24,8 @@ export interface ArticleFormValues {
   pourcentageMarge: string;
   quantiteStock: string;
   seuilAlerte: string;
-  imageUrl: string;
+  imageUrls: string[];
+  publieVitrine: boolean;
   categorieId: string;
   actif: boolean;
 }
@@ -36,11 +38,6 @@ interface ArticleFormFieldsProps {
   showActifToggle?: boolean;
 }
 
-/**
- * Les champs numériques sont stockés comme string dans le formulaire (pour
- * permettre un champ vide pendant la saisie) et convertis en number
- * uniquement au moment de la soumission (voir Create/EditArticleDialog).
- */
 export function ArticleFormFields({
   values,
   onChange,
@@ -52,8 +49,6 @@ export function ArticleFormFields({
     onChange({ ...values, [key]: value });
   }
 
-  // Calcul en direct côté client, purement informatif - le vrai calcul
-  // faisant foi reste toujours celui du backend à l'enregistrement.
   const coutAchatCalcule = useMemo(() => {
     const matiere = parseFloat(values.coutMatiere) || 0;
     const accessoire = parseFloat(values.coutAccessoire) || 0;
@@ -67,7 +62,6 @@ export function ArticleFormFields({
     return coutAchatCalcule * (1 + pourcentage / 100);
   }, [coutAchatCalcule, values.pourcentageMarge]);
 
-  
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
@@ -118,11 +112,18 @@ export function ArticleFormFields({
         </Select>
       </div>
 
+      {/* Photos */}
+      <div className="space-y-1.5">
+        <Label>Photos de l'article</Label>
+        <ImageUploadField
+          imageUrls={values.imageUrls}
+          onChange={(urls) => update("imageUrls", urls)}
+        />
+      </div>
+
       {/* Détail du coût de revient */}
       <div className="rounded-lg border border-gray-200 p-3">
-        <p className="mb-2 text-xs font-semibold uppercase text-gray-500">
-          Coût de revient
-        </p>
+        <p className="mb-2 text-xs font-semibold uppercase text-gray-500">Coût de revient</p>
         <div className="grid grid-cols-3 gap-3">
           <div className="space-y-1.5">
             <Label htmlFor={`${idPrefix}-coutMatiere`}>Matière</Label>
@@ -168,9 +169,7 @@ export function ArticleFormFields({
 
       {/* Marge et prix suggéré */}
       <div className="rounded-lg border border-gray-200 p-3">
-        <p className="mb-2 text-xs font-semibold uppercase text-gray-500">
-          Marge souhaitée (optionnel)
-        </p>
+        <p className="mb-2 text-xs font-semibold uppercase text-gray-500">Marge souhaitée (optionnel)</p>
         <div className="space-y-1.5">
           <Label htmlFor={`${idPrefix}-marge`}>Pourcentage de bénéfice (%)</Label>
           <Input
@@ -228,28 +227,34 @@ export function ArticleFormFields({
         </div>
       </div>
 
-      <div className="space-y-1.5">
-        <Label htmlFor={`${idPrefix}-image`}>URL de l'image</Label>
-        <Input
-          id={`${idPrefix}-image`}
-          value={values.imageUrl}
-          onChange={(e) => update("imageUrl", e.target.value)}
-          placeholder="https://..."
-        />
-      </div>
-
-      {showActifToggle && (
+      <div className="space-y-2">
         <div className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2">
-          <Label htmlFor={`${idPrefix}-actif`} className="cursor-pointer">
-            Article actif (visible dans le catalogue)
-          </Label>
+          <div>
+            <Label htmlFor={`${idPrefix}-vitrine`} className="cursor-pointer">
+              Publier sur la vitrine en ligne
+            </Label>
+            <p className="text-xs text-gray-400">Visible par vos clients sur la boutique publique.</p>
+          </div>
           <Switch
-            id={`${idPrefix}-actif`}
-            checked={values.actif}
-            onCheckedChange={(checked) => update("actif", checked)}
+            id={`${idPrefix}-vitrine`}
+            checked={values.publieVitrine}
+            onCheckedChange={(checked) => update("publieVitrine", checked)}
           />
         </div>
-      )}
+
+        {showActifToggle && (
+          <div className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2">
+            <Label htmlFor={`${idPrefix}-actif`} className="cursor-pointer">
+              Article actif (visible en interne)
+            </Label>
+            <Switch
+              id={`${idPrefix}-actif`}
+              checked={values.actif}
+              onCheckedChange={(checked) => update("actif", checked)}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
