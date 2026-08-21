@@ -5,6 +5,8 @@ import { commandeService } from "@/api/commandeService";
 import type { Commande, StatutCommande } from "@/types/orders.types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useSearchParams } from "react-router-dom";
+
 import {
   Select,
   SelectContent,
@@ -27,7 +29,8 @@ const ALL_STATUS = "ALL";
 export function CommandesListPage() {
   const [commandes, setCommandes] = useState<Commande[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [statutFilter, setStatutFilter] = useState<string>(ALL_STATUS);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [statutFilter, setStatutFilter] = useState<string>(searchParams.get("statut") || ALL_STATUS);
 
   const loadCommandes = useCallback(async () => {
     setIsLoading(true);
@@ -72,6 +75,7 @@ export function CommandesListPage() {
             <SelectContent>
               <SelectItem value={ALL_STATUS}>Tous statuts</SelectItem>
               <SelectItem value="EN_ATTENTE">En attente</SelectItem>
+              <SelectItem value="EN_ATTENTE_VALIDATION">En attente de validation</SelectItem>
               <SelectItem value="PAYEE">Payée</SelectItem>
               <SelectItem value="LIVREE">Livrée</SelectItem>
               <SelectItem value="ANNULEE">Annulée</SelectItem>

@@ -29,7 +29,7 @@ export const axiosInstance = axios.create({
  * dessus par erreur.
  */
 axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const publicPaths = ["/auth/login", "/auth/refresh-token", "/auth/forgot-password", "/auth/reset-password"];
+  const publicPaths = ["/auth/login", "/auth/refresh-token", "/auth/forgot-password", "/auth/reset-password", "v1/public"];
   const isPublic = publicPaths.some((path) => config.url?.includes(path));
 
   if (!isPublic) {
