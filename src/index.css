@@ -265,3 +265,18 @@ body {
   width: 100%;
   min-height: 100svh;
 }
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-title {
+  animation: fade-in-up 0.7s ease-out;
+}
