@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { ShoppingBag, Heart } from "lucide-react";
-import { getCategoryIcon, AllCategoriesIcon } from "@/lib/CategoryIcons"
+import { getCategoryIcon, AllCategoriesIcon } from "@/lib/categoryIcons";
 import { shopService } from "@/api/shopService";
 import { useCart } from "@/context/CartContext";
 import { useShopSearch } from "@/context/ShopSearchContext";
@@ -17,12 +17,7 @@ import { formatCurrency } from "@/lib/formatters";
 import { notify } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 
-const CATEGORY_TONES = [
-  "from-teal-600 to-teal-700",
-  "from-emerald-600 to-emerald-700",
-  "from-teal-500 to-emerald-600",
-  "from-emerald-500 to-teal-600",
-];
+
 
 function ProductCard({ article, onAdd }: { article: ArticlePublic; onAdd: (a: ArticlePublic) => void }) {
   const [isFavorite, setIsFavorite] = useState(false);

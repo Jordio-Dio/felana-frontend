@@ -29,7 +29,7 @@ const ALL_STATUS = "ALL";
 export function CommandesListPage() {
   const [commandes, setCommandes] = useState<Commande[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [statutFilter, setStatutFilter] = useState<string>(searchParams.get("statut") || ALL_STATUS);
 
   const loadCommandes = useCallback(async () => {
