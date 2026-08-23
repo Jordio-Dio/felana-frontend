@@ -65,11 +65,10 @@ export function DashboardHome() {
         const [articlesPage, commandesDuJour, commandesDuMois, dernieresCommandes] =
           await Promise.all([
             articleService.search({ actif: true }),
-            commandeService.historique({ dateDebut: getStartOfDay(), size: 1000 }),
-            commandeService.historique({ dateDebut: getStartOfMonth(), size: 1000 }),
+            commandeService.historique({ dateDebut: getStartOfDay(), statut: "PAYEE", size: 1000 }),
+            commandeService.historique({ dateDebut: getStartOfMonth(), statut: "PAYEE", size: 1000 }),
             commandeService.historique({ size: 5 }),
           ]);
-
         const stockTotal = articlesPage.content.reduce((sum, a) => sum + a.quantiteStock, 0);
         const recetteDuJour = commandesDuJour.content.reduce((sum, c) => sum + c.totalAchat, 0);
 

@@ -39,8 +39,8 @@ export const commandeService = {
     return data;
   },
 
-  async getNotificationCount(): Promise<number> {
-    const { data } = await axiosInstance.get<{CommandesEnAttente: number}>("/commandes/notifications/count");
-    return data.CommandesEnAttente;
+   getNotificationCount: async (): Promise<number> => {
+    const { data } = await axiosInstance.get("/commandes/notifications/count");
+    return data.commandesEnAttente ?? 0;
   }
 };
