@@ -43,7 +43,7 @@ export function LoginPage() {
         {/* En-tête */}
         <div className="mb-3 flex flex-col items-center text-center sm:mb-8">
           <span className="mb-2 text-3xl font-bold tracking-tight text-teal-700 sm:text-4xl">
-            FELANA
+            Hiba Creation
           </span>
         
         </div>
