@@ -1,23 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-import { ShoppingBag, Heart } from "lucide-react";
-import { getCategoryIcon, AllCategoriesIcon } from "@/lib/categoryIcons";
+import { ShoppingBag, Heart, Truck, Sparkles } from "lucide-react";
 import { shopService } from "@/api/shopService";
 import { useCart } from "@/context/CartContext";
 import { useShopSearch } from "@/context/ShopSearchContext";
 import type { ArticlePublic } from "@/types/shop.types";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { ArtisanBanner } from "@/components/shop/ArtisanBanner";
+import { getCategoryIcon, AllCategoriesIcon } from "@/lib/categoryIcons";
 import { formatCurrency } from "@/lib/formatters";
 import { notify } from "@/lib/toast";
 import { cn } from "@/lib/utils";
-
-
 
 function ProductCard({ article, onAdd }: { article: ArticlePublic; onAdd: (a: ArticlePublic) => void }) {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -26,7 +18,7 @@ function ProductCard({ article, onAdd }: { article: ArticlePublic; onAdd: (a: Ar
     <div
       className={cn(
         "group relative overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm transition-all duration-300",
-        "hover:shadow-xl hover:ring-2 hover:ring-teal-600"
+        "hover:shadow-xl hover:ring-2 hover:ring-rose-600"
       )}
     >
       <div className="relative aspect-[4/5] overflow-hidden rounded-t-3xl bg-gray-100">
@@ -53,7 +45,7 @@ function ProductCard({ article, onAdd }: { article: ArticlePublic; onAdd: (a: Ar
         <button
           type="button"
           onClick={() => setIsFavorite((prev) => !prev)}
-          className="absolute bottom-3 right-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-md transition-colors hover:bg-white"
+          className="absolute bottom-3 right-3 z-[1] flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-md transition-colors hover:bg-white"
           aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
         >
           <Heart
@@ -68,7 +60,7 @@ function ProductCard({ article, onAdd }: { article: ArticlePublic; onAdd: (a: Ar
       <div className="space-y-2 p-4">
         <p className="text-[11px] uppercase tracking-wide text-gray-400">{article.categorieNom}</p>
         <p className="truncate text-sm font-semibold text-gray-900">{article.nom}</p>
-        <p className="text-base font-bold text-teal-700">{formatCurrency(article.prixVente)}</p>
+        <p className="text-base font-bold text-rose-700">{formatCurrency(article.prixVente)}</p>
 
         <Button
           size="sm"
@@ -76,7 +68,7 @@ function ProductCard({ article, onAdd }: { article: ArticlePublic; onAdd: (a: Ar
           onClick={() => onAdd(article)}
           className={cn(
             "w-full rounded-full py-2.5 font-medium shadow-sm transition-all",
-            "bg-teal-700 text-white hover:bg-teal-800 hover:shadow-md",
+            "bg-rose-700 text-white hover:bg-rose-800 hover:shadow-md",
             "disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none"
           )}
         >
@@ -113,7 +105,6 @@ export function ShopCatalogPage() {
     [articles]
   );
 
-  // Petit aperçu honnête de vraies photos d'articles, pour le badge flottant.
   const previewPhotos = useMemo(
     () =>
       articles
@@ -122,6 +113,8 @@ export function ShopCatalogPage() {
         .map((a) => a.imageUrls[0]),
     [articles]
   );
+
+  const heroImage = previewPhotos[0] ?? "/images/hero-placeholder.jpg";
 
   const filtered = articles.filter((a) => {
     const matchSearch = a.nom.toLowerCase().includes(search.toLowerCase());
@@ -140,60 +133,76 @@ export function ShopCatalogPage() {
 
   return (
     <div className="space-y-0">
-      {/* HERO */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-teal-700 to-emerald-800 px-6 py-12 text-white sm:px-10 sm:py-16">
-        <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
+      {/* HERO — inspiré Glowora, palette rose/noir dédiée à cette section */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-rose-50 to-pink-100 px-6 py-12 sm:px-10 sm:py-16">
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
+          {/* Colonne gauche : texte + CTA + confiance */}
           <div className="text-center lg:text-left">
-            <h1 className="animate-hero-title text-3xl font-bold leading-tight sm:text-4xl">
-              Découvrez nos créations
+            <span className="text-xs font-semibold uppercase tracking-widest text-rose-600">
+              Nouvelle collection
+            </span>
+            <h1 className="mt-3 text-4xl font-bold leading-tight text-gray-900 sm:text-5xl">
+              Révélez tout le charme
               <br />
-              artisanales faites main
+              du <span className="text-rose-600">fait main</span>
             </h1>
-            <p className="mx-auto mt-3 max-w-md text-sm text-teal-50 lg:mx-0">
-              Chaque pièce Hiba est pensée et confectionnée à la main, avec des matières
-              choisies et du temps donné à chaque détail.
+            <p className="mx-auto mt-4 max-w-md text-sm text-gray-600 sm:text-base lg:mx-0">
+              Des pièces uniques, tissées à la main avec des matières choisies avec soin —
+              chaque création raconte une histoire.
             </p>
 
             <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
               <Button
                 onClick={scrollToCatalogue}
-                className="rounded-full bg-white px-6 py-5 text-sm font-semibold text-teal-800 shadow-sm hover:bg-teal-50"
+                className="rounded-full bg-gray-900 px-6 py-5 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:bg-rose-600"
               >
                 <ShoppingBag className="mr-2 h-4 w-4" />
                 Voir le catalogue
               </Button>
 
-              <Select value={categorieFilter} onValueChange={setCategorieFilter}>
-                <SelectTrigger className="w-48 rounded-full border-white/30 bg-white/10 text-white [&>svg]:text-white">
-                  <SelectValue placeholder="Toutes catégories" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Toutes">Toutes catégories</SelectItem>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <a
+                href="#catalogue"
+                className="text-sm font-medium text-gray-700 underline underline-offset-4 transition-colors duration-300 hover:text-rose-600"
+              >
+                Découvrir notre histoire
+              </a>
+            </div>
+
+            <div className="mt-8 flex flex-wrap justify-center gap-6 text-xs text-gray-500 lg:justify-start">
+              <span className="flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5 text-rose-500" />
+                Fait main artisanalement
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Truck className="h-3.5 w-3.5 text-rose-500" />
+                Livraison soignée
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Heart className="h-3.5 w-3.5 text-rose-500" />
+                Pièces uniques
+              </span>
             </div>
           </div>
 
-          <div className="relative mx-auto flex h-72 w-72 items-center justify-center sm:h-80 sm:w-80">
-            <div className="absolute inset-0 rounded-full bg-white/15" />
+          {/* Colonne droite : photo produit + badge flottant */}
+          <div className="relative mx-auto w-full max-w-sm">
             <img
-              src="/images/createuse.jpg"
-              alt="Créatrice Felana au travail"
-              className="relative h-64 w-64 rounded-full border-4 border-white/80 object-cover shadow-xl sm:h-72 sm:w-72"
+              src={heroImage}
+              alt="Création artisanale Felana mise en avant"
+              className="h-72 w-full rounded-3xl object-cover shadow-xl sm:h-96"
             />
+            <div className="absolute -right-4 -top-4 flex h-20 w-20 flex-col items-center justify-center rounded-full bg-white text-center shadow-lg sm:-right-6 sm:h-24 sm:w-24">
+              <span className="text-sm font-bold text-gray-900 sm:text-base">Nouveau</span>
+              <span className="text-[10px] text-gray-500">cette semaine</span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Badge flottant : texte + aperçu photos (remplace l'ancienne recherche) */}
+      {/* Badge flottant : texte + aperçu de vraies photos */}
       <div className="relative z-[1] -mt-7 flex justify-center px-4">
         <div className="flex w-full max-w-md items-center gap-3 rounded-full bg-white px-4 py-3 shadow-lg">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-700">
             <Heart className="h-4 w-4" />
           </span>
           <div className="min-w-0 flex-1">
@@ -217,6 +226,10 @@ export function ShopCatalogPage() {
         </div>
       </div>
 
+      <div className="pt-10">
+        <ArtisanBanner onExplore={scrollToCatalogue} />
+      </div>
+
       <div className="pt-10" id="catalogue">
         <div className="mb-8 flex justify-center gap-5 overflow-x-auto px-2 pb-2 sm:gap-8">
           {[{ label: "All", value: "Toutes", Icon: AllCategoriesIcon }, ...categories.map((cat) => ({
@@ -231,13 +244,13 @@ export function ShopCatalogPage() {
                 onClick={() => setCategorieFilter(value)}
                 className={cn(
                   "flex shrink-0 flex-col items-center gap-2 rounded-2xl px-3 py-2 transition-colors",
-                  isActive ? "bg-teal-50" : "hover:bg-gray-50"
+                  isActive ? "bg-rose-50" : "hover:bg-gray-50"
                 )}
               >
                 <span
                   className={cn(
                     "flex h-11 w-11 items-center justify-center rounded-full transition-colors",
-                    isActive ? "bg-teal-600 text-white" : "bg-gray-100 text-gray-500"
+                    isActive ? "bg-rose-700 text-white" : "bg-gray-100 text-gray-500"
                   )}
                 >
                   <Icon className="h-5 w-5" />
@@ -245,7 +258,7 @@ export function ShopCatalogPage() {
                 <span
                   className={cn(
                     "whitespace-nowrap text-xs font-medium",
-                    isActive ? "text-teal-700" : "text-gray-500"
+                    isActive ? "text-rose-700" : "text-gray-500"
                   )}
                 >
                   {label}
