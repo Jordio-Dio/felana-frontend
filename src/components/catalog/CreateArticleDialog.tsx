@@ -97,7 +97,7 @@ export function CreateArticleDialog({ categories, onCreated }: CreateArticleDial
       }}
     >
       <DialogTrigger asChild>
-        <Button className="bg-teal-700 text-white hover:bg-teal-800">
+        <Button className="bg-rose-700 text-white hover:bg-rose-800">
           <Plus className="mr-2 h-4 w-4" />
           Nouvel article
         </Button>
@@ -125,7 +125,7 @@ export function CreateArticleDialog({ categories, onCreated }: CreateArticleDial
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-teal-700 text-white hover:bg-teal-800 sm:w-auto"
+              className="w-full bg-rose-700 text-white hover:bg-rose-800 sm:w-auto"
             >
               {isLoading ? (
                 <>

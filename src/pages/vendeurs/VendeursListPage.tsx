@@ -142,7 +142,7 @@ export function VendeursListPage() {
                             variant="link"
                             size="sm"
                             disabled={sendingCodeFor === vendeur.id}
-                            className="h-auto p-0 text-xs text-teal-700"
+                            className="h-auto p-0 text-xs text-rose-700"
                             onClick={() => handleStartVerification(vendeur)}
                           >
                             {sendingCodeFor === vendeur.id ? (

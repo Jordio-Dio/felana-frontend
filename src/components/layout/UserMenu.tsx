@@ -32,9 +32,9 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-2 rounded-full outline-none ring-teal-600 focus-visible:ring-2">
+        <button className="flex items-center gap-2 rounded-full outline-none ring-rose-600 focus-visible:ring-2">
           <Avatar className="h-9 w-9">
-            <AvatarFallback className="bg-teal-100 text-sm font-medium text-teal-700">
+            <AvatarFallback className="bg-rose-100 text-sm font-medium text-rose-700">
               {getInitials(user.name)}
             </AvatarFallback>
           </Avatar>

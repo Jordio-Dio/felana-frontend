@@ -87,7 +87,7 @@ export function CommandeDetailPage() {
                 <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm lg:col-span-2 print:border-none print:shadow-none">
                     <div className="mb-6 flex items-start justify-between">
                         <div>
-                            <h2 className="text-xl font-bold text-teal-700">{invoice.magasinNom}</h2>
+                            <h2 className="text-xl font-bold text-rose-700">{invoice.magasinNom}</h2>
                             <p className="text-sm text-gray-500">{invoice.magasinAdresse}</p>
                             <p className="text-sm text-gray-500">{invoice.magasinTelephone}</p>
                         </div>

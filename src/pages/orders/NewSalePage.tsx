@@ -264,7 +264,7 @@ export function NewSalePage() {
                         type="button"
                         onClick={handleSubmit}
                         disabled={isSubmitting}
-                        className="mt-4 w-full bg-teal-700 text-white hover:bg-teal-800"
+                        className="mt-4 w-full bg-rose-700 text-white hover:bg-rose-800"
                     >
                         {isSubmitting ? (
                             <>

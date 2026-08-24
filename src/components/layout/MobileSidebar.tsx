@@ -22,8 +22,8 @@ export function MobileSidebar() {
       </SheetTrigger>
       <SheetContent side="left" className="w-64 p-0">
         <SheetHeader className="h-16 justify-center border-b border-gray-200 px-6">
-          <SheetTitle className="text-xl font-bold tracking-tight text-teal-700">
-            FELANA
+          <SheetTitle className="text-xl font-bold tracking-tight text-rose-700">
+            Shop
           </SheetTitle>
         </SheetHeader>
         <div className="flex-1 overflow-y-auto py-4">

@@ -58,7 +58,7 @@ export function CommandesListPage() {
           <h2 className="text-lg font-semibold text-gray-900">Commandes</h2>
           <p className="text-sm text-gray-500">Historique de toutes les ventes enregistrées.</p>
         </div>
-        <Button asChild className="bg-teal-700 text-white hover:bg-teal-800">
+        <Button asChild className="bg-rose-700 text-white hover:bg-rose-800">
           <Link to="/commandes/nouvelle">
             <Plus className="mr-2 h-4 w-4" />
             Nouvelle vente

@@ -18,8 +18,8 @@ export function KpiCard({ label, value, icon: Icon, trend, isLoading }: KpiCardP
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-50">
-          <Icon className="h-5 w-5 text-teal-600" />
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rose-50">
+          <Icon className="h-5 w-5 text-rose-600" />
         </div>
         <span className="text-sm text-gray-500">{label}</span>
       </div>

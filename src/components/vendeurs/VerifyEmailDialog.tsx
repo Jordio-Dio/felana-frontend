@@ -84,8 +84,8 @@ export function VerifyEmailDialog({ email, onOpenChange, onVerified }: VerifyEma
     >
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
-          <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-teal-50">
-            <MailCheck className="h-5 w-5 text-teal-600" />
+          <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-rose-50">
+            <MailCheck className="h-5 w-5 text-rose-600" />
           </div>
           <DialogTitle>Vérifier l'adresse e-mail</DialogTitle>
           <DialogDescription>
@@ -117,7 +117,7 @@ export function VerifyEmailDialog({ email, onOpenChange, onVerified }: VerifyEma
             </div>
           )}
           {resendMessage && (
-            <div className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm text-teal-700">
+            <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
               {resendMessage}
             </div>
           )}
@@ -126,7 +126,7 @@ export function VerifyEmailDialog({ email, onOpenChange, onVerified }: VerifyEma
             <Button
               type="submit"
               disabled={isVerifying || code.length !== 6}
-              className="w-full bg-teal-700 text-white hover:bg-teal-800"
+              className="w-full bg-rose-700 text-white hover:bg-rose-800"
             >
               {isVerifying ? (
                 <>

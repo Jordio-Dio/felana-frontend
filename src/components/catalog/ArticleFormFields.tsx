@@ -183,7 +183,7 @@ export function ArticleFormFields({
           />
         </div>
         {prixVenteSuggere !== null && (
-          <p className="mt-2 text-sm text-teal-700">
+          <p className="mt-2 text-sm text-rose-700">
             Prix de vente suggéré : <span className="font-semibold">{formatCurrency(prixVenteSuggere)}</span>
           </p>
         )}

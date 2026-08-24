@@ -84,7 +84,7 @@ export function EditClientDialog({ client, onOpenChange, onUpdated }: EditClient
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-teal-700 text-white hover:bg-teal-800 sm:w-auto"
+                className="w-full bg-rose-700 text-white hover:bg-rose-800 sm:w-auto"
               >
                 {isLoading ? (
                   <>

@@ -148,7 +148,7 @@ export function CategoriesPage() {
                     }}
                 >
                     <DialogTrigger asChild>
-                        <Button className="bg-teal-700 text-white hover:bg-teal-800">
+                        <Button className="bg-rose-700 text-white hover:bg-rose-800">
                             <Plus className="mr-2 h-4 w-4" />
                             Nouvelle catégorie
                         </Button>
@@ -168,7 +168,7 @@ export function CategoriesPage() {
                                 <Button
                                     type="submit"
                                     disabled={isCreating}
-                                    className="w-full bg-teal-700 text-white hover:bg-teal-800 sm:w-auto"
+                                    className="w-full bg-rose-700 text-white hover:bg-rose-800 sm:w-auto"
                                 >
                                     {isCreating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Créer"}
                                 </Button>
@@ -250,7 +250,7 @@ export function CategoriesPage() {
                             <Button
                                 type="submit"
                                 disabled={isEditing}
-                                className="w-full bg-teal-700 text-white hover:bg-teal-800 sm:w-auto"
+                                className="w-full bg-rose-700 text-white hover:bg-rose-800 sm:w-auto"
                             >
                                 {isEditing ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enregistrer"}
                             </Button>

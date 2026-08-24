@@ -63,7 +63,7 @@ export function ImageUploadField({ imageUrls, onChange, maxImages = 5 }: ImageUp
           <div key={url} className="group relative aspect-square overflow-hidden rounded-lg border border-gray-200">
             <img src={url} alt="" className="h-full w-full object-cover" />
             {index === 0 && (
-              <span className="absolute left-1 top-1 rounded bg-teal-700 px-1.5 py-0.5 text-[10px] font-medium text-white">
+              <span className="absolute left-1 top-1 rounded bg-rose-700 px-1.5 py-0.5 text-[10px] font-medium text-white">
                 Couverture
               </span>
             )}
@@ -96,7 +96,7 @@ export function ImageUploadField({ imageUrls, onChange, maxImages = 5 }: ImageUp
             onClick={() => inputRef.current?.click()}
             disabled={isUploading}
             className={cn(
-              "flex aspect-square flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-gray-300 text-gray-400 hover:border-teal-400 hover:text-teal-600",
+              "flex aspect-square flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-gray-300 text-gray-400 hover:border-rose-400 hover:text-rose-600",
               isUploading && "pointer-events-none opacity-50"
             )}
           >

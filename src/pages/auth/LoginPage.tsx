@@ -42,7 +42,7 @@ export function LoginPage() {
       <div className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:max-w-md sm:p-8">
         {/* En-tête */}
         <div className="mb-3 flex flex-col items-center text-center sm:mb-8">
-          <span className="mb-2 text-3xl font-bold tracking-tight text-teal-700 sm:text-4xl">
+          <span className="mb-2 text-3xl font-bold tracking-tight text-rose-700 sm:text-4xl">
             Hiba Creation
           </span>
         
@@ -78,7 +78,7 @@ export function LoginPage() {
               </Label>
               <Link
                 to="/mot-de-passe-oublie"
-                className="text-xs font-medium text-teal-700 hover:underline"
+                className="text-xs font-medium text-rose-700 hover:underline"
               >
                 Mot de passe oublié ?
               </Link>
@@ -117,7 +117,7 @@ export function LoginPage() {
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-teal-700 text-white hover:bg-teal-800"
+            className="w-full bg-rose-700 text-white hover:bg-rose-800"
           >
             {isLoading ? (
               <>

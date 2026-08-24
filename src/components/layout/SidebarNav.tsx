@@ -32,7 +32,7 @@ export function SidebarNav({ onNavigate }: SidebarNavProps) {
               cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-teal-50 text-teal-700"
+                  ? "bg-rose-50 text-rose-700"
                   : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
               )
             }
