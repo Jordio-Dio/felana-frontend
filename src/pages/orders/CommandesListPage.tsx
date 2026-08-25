@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Plus, Eye } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
+import { Plus, Eye, Receipt } from "lucide-react";
 import { commandeService } from "@/api/commandeService";
 import type { Commande, StatutCommande } from "@/types/orders.types";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { useSearchParams } from "react-router-dom";
-
 import {
   Select,
   SelectContent,
@@ -14,23 +11,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { formatCurrency, formatDate, STATUT_LABELS, STATUT_BADGE_CLASSES } from "@/lib/formatters";
+import { ListItemCard } from "@/components/shared/ListItemCard";
+import { StatusBadge } from "@/components/shared/StatusBadge";
+import { formatCurrency, formatDate, STATUT_LABELS } from "@/lib/formatters";
 
 const ALL_STATUS = "ALL";
 
+const STATUT_TONES: Record<StatutCommande, "rose" | "pink" | "amber" | "gray" | "red"> = {
+  EN_ATTENTE: "amber",
+  EN_ATTENTE_VALIDATION: "pink",
+  EN_FABRICATION: "gray",
+  PAYEE: "rose",
+  LIVREE: "rose",
+  ANNULEE: "red",
+};
+
 export function CommandesListPage() {
+  const [searchParams] = useSearchParams();
   const [commandes, setCommandes] = useState<Commande[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchParams] = useSearchParams();
-  const [statutFilter, setStatutFilter] = useState<string>(searchParams.get("statut") || ALL_STATUS);
+  const [statutFilter, setStatutFilter] = useState<string>(searchParams.get("statut") ?? ALL_STATUS);
 
   const loadCommandes = useCallback(async () => {
     setIsLoading(true);
@@ -58,7 +58,7 @@ export function CommandesListPage() {
           <h2 className="text-lg font-semibold text-gray-900">Commandes</h2>
           <p className="text-sm text-gray-500">Historique de toutes les ventes enregistrées.</p>
         </div>
-        <Button asChild className="bg-rose-700 text-white hover:bg-rose-800">
+        <Button asChild className="rounded-full bg-rose-600 text-white hover:bg-rose-700">
           <Link to="/commandes/nouvelle">
             <Plus className="mr-2 h-4 w-4" />
             Nouvelle vente
@@ -66,80 +66,53 @@ export function CommandesListPage() {
         </Button>
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
-        <div className="mb-4">
-          <Select value={statutFilter} onValueChange={setStatutFilter}>
-            <SelectTrigger className="w-full sm:w-48">
-              <SelectValue placeholder="Statut" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL_STATUS}>Tous statuts</SelectItem>
-              <SelectItem value="EN_ATTENTE">En attente</SelectItem>
-              <SelectItem value="EN_ATTENTE_VALIDATION">En attente de validation</SelectItem>
-              <SelectItem value="PAYEE">Payée</SelectItem>
-              <SelectItem value="LIVREE">Livrée</SelectItem>
-              <SelectItem value="ANNULEE">Annulée</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <Select value={statutFilter} onValueChange={setStatutFilter}>
+        <SelectTrigger className="w-full rounded-full sm:w-56">
+          <SelectValue placeholder="Statut" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value={ALL_STATUS}>Tous statuts</SelectItem>
+          <SelectItem value="EN_ATTENTE">En attente</SelectItem>
+          <SelectItem value="EN_ATTENTE_VALIDATION">En attente de validation</SelectItem>
+          <SelectItem value="EN_FABRICATION">En fabrication</SelectItem>
+          <SelectItem value="PAYEE">Payée</SelectItem>
+          <SelectItem value="LIVREE">Livrée</SelectItem>
+          <SelectItem value="ANNULEE">Annulée</SelectItem>
+        </SelectContent>
+      </Select>
 
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Référence</TableHead>
-                <TableHead>Client</TableHead>
-                <TableHead>Vendeur</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead className="text-right">Total</TableHead>
-                <TableHead className="w-10" />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center text-sm text-gray-400">
-                    Chargement...
-                  </TableCell>
-                </TableRow>
-              ) : commandes.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center text-sm text-gray-400">
-                    Aucune commande pour le moment.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                commandes.map((commande) => (
-                  <TableRow key={commande.id}>
-                    <TableCell className="font-medium">{commande.reference}</TableCell>
-                    <TableCell>
-                      {commande.client.prenom ? `${commande.client.prenom} ` : ""}
-                      {commande.client.nom}
-                    </TableCell>
-                    <TableCell className="text-gray-600">{commande.vendeurNom}</TableCell>
-                    <TableCell className="text-gray-500">{formatDate(commande.dateCommande)}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className={STATUT_BADGE_CLASSES[commande.statut]}>
-                        {STATUT_LABELS[commande.statut]}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right font-medium">
-                      {formatCurrency(commande.totalAchat)}
-                    </TableCell>
-                    <TableCell>
-                      <Button asChild variant="ghost" size="icon" className="h-8 w-8">
-                        <Link to={`/commandes/${commande.id}`}>
-                          <Eye className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
+      <div className="space-y-3">
+        {isLoading ? (
+          <p className="py-10 text-center text-sm text-gray-400">Chargement...</p>
+        ) : commandes.length === 0 ? (
+          <p className="py-10 text-center text-sm text-gray-400">Aucune commande pour le moment.</p>
+        ) : (
+          commandes.map((commande) => (
+            <ListItemCard
+              key={commande.id}
+              leading={
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-50 text-rose-500">
+                  <Receipt className="h-5 w-5" />
+                </div>
+              }
+              title={commande.reference}
+              subtitle={`${commande.client.prenom ? commande.client.prenom + " " : ""}${commande.client.nom}`}
+              fields={[
+                { label: "Vendeur", value: commande.vendeurNom },
+                { label: "Date", value: formatDate(commande.dateCommande) },
+                { label: "Total", value: formatCurrency(commande.totalAchat) },
+              ]}
+              trailing={<StatusBadge label={STATUT_LABELS[commande.statut]} tone={STATUT_TONES[commande.statut]} />}
+              actions={
+                <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                  <Link to={`/commandes/${commande.id}`}>
+                    <Eye className="h-4 w-4" />
+                  </Link>
+                </Button>
+              }
+            />
+          ))
+        )}
       </div>
     </div>
   );

@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { MoreHorizontal, Pencil, Search, Trash2, AlertTriangle } from "lucide-react";
+import { Pencil, Trash2, MoreHorizontal, AlertTriangle, Package, Search } from "lucide-react";
 import { articleService } from "@/api/articleService";
 import { categorieService } from "@/api/categorieService";
 import { useAuth } from "@/context/AuthContext";
 import type { Article, Categorie } from "@/types/catalog.types";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -14,14 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,6 +28,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { ListItemCard } from "@/components/shared/ListItemCard";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 import { CreateArticleDialog } from "@/components/catalog/CreateArticleDialog";
 import { EditArticleDialog } from "@/components/catalog/EditArticleDialog";
 import { formatCurrency } from "@/lib/formatters";
@@ -63,7 +55,6 @@ export function ArticlesListPage() {
   const [deleteTarget, setDeleteTarget] = useState<Article | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Debounce simple : évite un appel réseau à chaque frappe.
   useEffect(() => {
     const timeout = setTimeout(() => setDebouncedSearch(search), 350);
     return () => clearTimeout(timeout);
@@ -120,168 +111,136 @@ export function ArticlesListPage() {
         {isGerant && <CreateArticleDialog categories={categories} onCreated={loadArticles} />}
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
-        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="relative max-w-sm flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Rechercher un article..."
-              className="pl-9"
-            />
-          </div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative max-w-sm flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Rechercher un article..."
+            className="rounded-full pl-9"
+          />
+        </div>
 
-          <Select value={categorieFilter} onValueChange={setCategorieFilter}>
-            <SelectTrigger className="w-full sm:w-48">
-              <SelectValue placeholder="Toutes catégories" />
+        <Select value={categorieFilter} onValueChange={setCategorieFilter}>
+          <SelectTrigger className="w-full rounded-full sm:w-48">
+            <SelectValue placeholder="Toutes catégories" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={ALL_CATEGORIES}>Toutes catégories</SelectItem>
+            {categories.map((cat) => (
+              <SelectItem key={cat.id} value={String(cat.id)}>
+                {cat.nom}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {isGerant && (
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-full rounded-full sm:w-40">
+              <SelectValue placeholder="Statut" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={ALL_CATEGORIES}>Toutes catégories</SelectItem>
-              {categories.map((cat) => (
-                <SelectItem key={cat.id} value={String(cat.id)}>
-                  {cat.nom}
-                </SelectItem>
-              ))}
+              <SelectItem value={ALL_STATUS}>Tous statuts</SelectItem>
+              <SelectItem value="true">Actifs</SelectItem>
+              <SelectItem value="false">Inactifs</SelectItem>
             </SelectContent>
           </Select>
+        )}
+      </div>
 
-          {isGerant && (
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-40">
-                <SelectValue placeholder="Statut" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={ALL_STATUS}>Tous statuts</SelectItem>
-                <SelectItem value="true">Actifs</SelectItem>
-                <SelectItem value="false">Inactifs</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-        </div>
-
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Article</TableHead>
-                <TableHead>Catégorie</TableHead>
-                <TableHead>Prix de vente</TableHead>
-                {isGerant && <TableHead>Coût / Marge</TableHead>}
-                <TableHead>Stock</TableHead>
-                {isGerant && <TableHead>Statut</TableHead>}
-                {isGerant && <TableHead className="w-10" />}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center text-sm text-gray-400">
-                    Chargement...
-                  </TableCell>
-                </TableRow>
-              ) : articles.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center text-sm text-gray-400">
-                    Aucun article ne correspond à votre recherche.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                articles.map((article) => (
-                  <TableRow key={article.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-2.5">
-                        {article.imageUrls.length > 0 ? (
-                          <img
-                            src={article.imageUrls[0]}
-                            alt=""
-                            className="h-9 w-9 rounded-md object-cover"
-                          />
-                        ) : (
-                          <div className="h-9 w-9 rounded-md bg-gray-100" />
-                        )}
-                        <div>
-                          <div className="font-medium">{article.nom}</div>
-                          {article.reference && (
-                            <div className="text-xs text-gray-400">Réf. {article.reference}</div>
-                          )}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-gray-600">{article.categorie.nom}</TableCell>
-                    <TableCell className="font-medium">{formatCurrency(article.prixVente)}</TableCell>
-                    {isGerant && (
-                      <TableCell className="text-gray-600">
-                        <div>{article.coutAchat !== undefined ? formatCurrency(article.coutAchat) : "—"}</div>
-                        {article.marge !== undefined && (
-                          <div className="text-xs text-emerald-600">+{formatCurrency(article.marge)} marge</div>
-                        )}
-                        {article.prixVenteSuggere !== undefined && article.prixVenteSuggere !== null && (
-                          <div className="text-xs text-gray-400">
-                            Suggéré : {formatCurrency(article.prixVenteSuggere)}
-                          </div>
-                        )}
-                      </TableCell>
-                    )}
-                    <TableCell>
-                      <div className="flex items-center gap-1.5">
-                        {article.quantiteStock}
-                        {isGerant && article.stockBas && (
-                          <AlertTriangle className="h-3.5 w-3.5 text-amber-500" aria-label="Stock bas" />
-                        )}
-                      </div>
-                    </TableCell>
-                    {isGerant && (
-                      <TableCell>
-                        <div className="flex flex-col gap-1">
-                          <Badge
-                            variant="outline"
-                            className={
-                              article.actif
-                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                : "bg-gray-50 text-gray-500 border-gray-200"
-                            }
-                          >
-                            {article.actif ? "Actif" : "Inactif"}
-                          </Badge>
-                          {article.publieVitrine && (
-                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                              En vitrine
-                            </Badge>
-                          )}
-                        </div>
-                      </TableCell>
-                    )}
-                    {isGerant && (
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => setEditTarget(article)}>
-                              <Pencil className="mr-2 h-4 w-4" />
-                              Modifier
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => setDeleteTarget(article)}
-                              className="text-red-600 focus:bg-red-50 focus:text-red-700"
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Supprimer
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
+      <div className="space-y-3">
+        {isLoading ? (
+          <p className="py-10 text-center text-sm text-gray-400">Chargement...</p>
+        ) : articles.length === 0 ? (
+          <p className="py-10 text-center text-sm text-gray-400">Aucun article ne correspond à votre recherche.</p>
+        ) : (
+          articles.map((article) => (
+            <ListItemCard
+              key={article.id}
+              leading={
+                article.imageUrls.length > 0 ? (
+                  <img
+                    src={article.imageUrls[0]}
+                    alt=""
+                    className="h-11 w-11 shrink-0 rounded-xl object-cover"
+                  />
+                ) : (
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-50 text-rose-400">
+                    <Package className="h-5 w-5" />
+                  </div>
+                )
+              }
+              title={article.nom}
+              subtitle={article.reference ? `Réf. ${article.reference}` : undefined}
+              fields={[
+                { label: "Catégorie", value: article.categorie.nom },
+                { label: "Prix de vente", value: formatCurrency(article.prixVente) },
+                ...(isGerant
+                  ? [
+                      {
+                        label: "Coût / Marge",
+                        value: (
+                          <span>
+                            {article.coutAchat !== undefined ? formatCurrency(article.coutAchat) : "—"}
+                            {article.marge !== undefined && (
+                              <span className="ml-1 text-xs text-emerald-600">
+                                (+{formatCurrency(article.marge)})
+                              </span>
+                            )}
+                          </span>
+                        ),
+                      },
+                    ]
+                  : []),
+                {
+                  label: "Stock",
+                  value: (
+                    <span className="flex items-center gap-1">
+                      {article.quantiteStock}
+                      {isGerant && article.stockBas && (
+                        <AlertTriangle className="h-3.5 w-3.5 text-amber-500" aria-label="Stock bas" />
+                      )}
+                    </span>
+                  ),
+                },
+              ]}
+              trailing={
+                isGerant ? (
+                  <div className="flex flex-col items-end gap-1">
+                    <StatusBadge label={article.actif ? "Actif" : "Inactif"} tone={article.actif ? "rose" : "gray"} />
+                    {article.publieVitrine && <StatusBadge label="En vitrine" tone="pink" />}
+                  </div>
+                ) : undefined
+              }
+              actions={
+                isGerant ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 hover:bg-gray-50 hover:text-gray-600">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => setEditTarget(article)}>
+                        <Pencil className="mr-2 h-4 w-4" />
+                        Modifier
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setDeleteTarget(article)}
+                        className="text-red-600 focus:bg-red-50 focus:text-red-700"
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Supprimer
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : undefined
+              }
+            />
+          ))
+        )}
       </div>
 
       {isGerant && (

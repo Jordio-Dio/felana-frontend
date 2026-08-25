@@ -1,4 +1,4 @@
-export type StatutCommande = "EN_ATTENTE" | "EN_FABRICATION" | "PAYEE" | "LIVREE" | "ANNULEE";
+export type StatutCommande = "EN_ATTENTE" | "EN_FABRICATION" | "EN_ATTENTE_VALIDATION" | "PAYEE" | "LIVREE" | "ANNULEE";
 
 export interface Client {
   id: number;
