@@ -141,15 +141,12 @@ export function ShopCatalogPage() {
             <span className="text-xs font-semibold uppercase tracking-widest text-rose-600">
               Nouvelle collection
             </span>
-            <h1 className="mt-3 text-4xl font-bold leading-tight text-gray-900 sm:text-5xl">
-              Révélez tout le charme
-              <br />
-              du <span className="text-rose-600">fait main</span>
+            <h1 className="text-4xl font-bold leading-tight text-gray-900 sm:text-5xl">
+              <span className="text-gray-900">Révélez tout le charme</span> <br />
+              <span className="inline-block bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">
+                du fait main
+              </span>
             </h1>
-            <p className="mx-auto mt-4 max-w-md text-sm text-gray-600 sm:text-base lg:mx-0">
-              Des pièces uniques, tissées à la main avec des matières choisies avec soin —
-              chaque création raconte une histoire.
-            </p>
 
             <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
               <Button

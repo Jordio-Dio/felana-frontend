@@ -46,13 +46,15 @@ export function ShopHeader() {
 
           {/* Recherche courte, visible dès sm */}
           <div className="relative ml-auto hidden w-52 sm:block md:ml-0">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Rechercher..."
-              className="rounded-full border-gray-200 bg-gray-50 pl-9"
-            />
+            <div className="relative flex items-center">
+              <Search className="pointer-events-none absolute left-3.5 h-4 w-4 text-gray-400" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Rechercher..."
+                className="h-10 rounded-full border-gray-200 bg-gray-50 pl-10 text-sm"
+              />
+            </div>
           </div>
 
           {/* Icônes dans pastilles rondes, façon Glowora */}
@@ -75,13 +77,15 @@ export function ShopHeader() {
 
         {/* Recherche mobile : ligne dédiée en dessous */}
         <div className="relative pb-3 sm:hidden">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Rechercher un article..."
-            className="rounded-full border-gray-200 bg-gray-50 pl-9"
-          />
+          <div className="relative flex items-center">
+            <Search className="pointer-events-none absolute left-3.5 h-4 w-4 text-gray-400" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Rechercher un article..."
+              className="h-10 rounded-full border-gray-200 bg-gray-50 pl-10 text-sm"
+            />
+          </div>
         </div>
       </div>
     </header>
