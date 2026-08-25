@@ -15,6 +15,8 @@ import { notify } from "@/lib/toast";
 import type { Categorie } from "@/types/catalog.types";
 import type { AxiosError } from "axios";
 import type { ApiErrorResponse } from "@/types/api.types";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const EMPTY_FORM: ArticleFormValues = {
   reference: "",
@@ -69,7 +71,7 @@ export function CreateArticleDialog({ categories, onCreated }: CreateArticleDial
           : null,
         quantiteStock: parseInt(values.quantiteStock, 10),
         seuilAlerte: values.seuilAlerte ? parseInt(values.seuilAlerte, 10) : null,
-        imageUrls: values.imageUrls ,
+        imageUrls: values.imageUrls,
         publieVitrine: values.publieVitrine,
         categorieId: parseInt(values.categorieId, 10),
       });
@@ -97,10 +99,29 @@ export function CreateArticleDialog({ categories, onCreated }: CreateArticleDial
       }}
     >
       <DialogTrigger asChild>
-        <Button className="bg-rose-700 text-white hover:bg-rose-800">
-          <Plus className="mr-2 h-4 w-4" />
-          Nouvel article
-        </Button>
+        <motion.button
+          whileHover={{ scale: 1.02, y: -1 }}
+          whileTap={{ scale: 0.97 }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
+          className={cn(
+            "relative inline-flex items-center gap-2 overflow-hidden rounded-full px-6 py-1.5 text-sm font-semibold text-rose-950",
+            // Dégradé de fond rose bonbon glossy
+            "bg-gradient-to-b from-pink-200 via-pink-300 to-rose-300",
+            // Bordure fine rosée et ombre portée rose douce
+            "border border-pink-300/80 shadow-md shadow-pink-400/40 transition-all hover:shadow-lg hover:shadow-pink-400/60",
+            "focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-offset-2"
+          )}
+        >
+          {/* Reflet brillant sur la moitié supérieure (Effet Glossy) */}
+          <span className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/60 to-transparent" />
+
+          <span className="relative z-10 flex h-5 w-5 items-center justify-center rounded-full bg-pink-400/30 text-rose-900">
+            <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
+          </span>
+          <span className="relative z-10 font-bold tracking-tight text-rose-900">
+            Nouvel article
+          </span>
+        </motion.button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>

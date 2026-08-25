@@ -35,6 +35,7 @@ import { EditArticleDialog } from "@/components/catalog/EditArticleDialog";
 import { formatCurrency } from "@/lib/formatters";
 import { notify } from "@/lib/toast";
 
+
 const ALL_CATEGORIES = "ALL";
 const ALL_STATUS = "ALL";
 
@@ -284,3 +285,12 @@ export function ArticlesListPage() {
     </div>
   );
 }
+
+// Animation en cascade pour le conteneur
+const listContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 },
+  },
+};

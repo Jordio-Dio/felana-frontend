@@ -10,14 +10,17 @@ import { getCategoryIcon, AllCategoriesIcon } from "@/lib/categoryIcons";
 import { formatCurrency } from "@/lib/formatters";
 import { notify } from "@/lib/toast";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 function ProductCard({ article, onAdd }: { article: ArticlePublic; onAdd: (a: ArticlePublic) => void }) {
   const [isFavorite, setIsFavorite] = useState(false);
 
   return (
-    <div
+    <motion.div
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
       className={cn(
-        "group relative overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm transition-all duration-300",
+        "group relative overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm transition-shadow duration-300",
         "hover:shadow-xl hover:ring-2 hover:ring-rose-600"
       )}
     >
@@ -42,7 +45,9 @@ function ProductCard({ article, onAdd }: { article: ArticlePublic; onAdd: (a: Ar
           )}
         </div>
 
-        <button
+        <motion.button
+          whileTap={{ scale: 0.85 }}
+          whileHover={{ scale: 1.1 }}
           type="button"
           onClick={() => setIsFavorite((prev) => !prev)}
           className="absolute bottom-3 right-3 z-[1] flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-md transition-colors hover:bg-white"
@@ -54,7 +59,7 @@ function ProductCard({ article, onAdd }: { article: ArticlePublic; onAdd: (a: Ar
               isFavorite ? "fill-red-500 text-red-500" : "text-gray-400"
             )}
           />
-        </button>
+        </motion.button>
       </div>
 
       <div className="space-y-2 p-4">
@@ -75,7 +80,7 @@ function ProductCard({ article, onAdd }: { article: ArticlePublic; onAdd: (a: Ar
           {article.disponible ? "Ajouter au panier" : "Épuisé"}
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -85,6 +90,20 @@ export function ShopCatalogPage() {
   const [articles, setArticles] = useState<ArticlePublic[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [categorieFilter, setCategorieFilter] = useState<string>("Toutes");
+
+  // Variantes d'animation
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.05 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  };
 
   useEffect(() => {
     async function load() {
@@ -270,11 +289,19 @@ export function ShopCatalogPage() {
         ) : filtered.length === 0 ? (
           <p className="text-center text-sm text-gray-400">Aucun article ne correspond à votre recherche.</p>
         ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            key={categorieFilter + search} // Réanime proprement lors du changement de filtre
+            className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+          >
             {filtered.map((article) => (
-              <ProductCard key={article.id} article={article} onAdd={handleAddToCart} />
+              <motion.div key={article.id} variants={itemVariants}>
+                <ProductCard article={article} onAdd={handleAddToCart} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
       </div>
     </div>

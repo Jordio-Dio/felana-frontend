@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { CategorieFormFields } from "@/components/catalog/CategorieFormFields";
 import { notify } from "@/lib/toast";
+import { PrimaryActionButton } from "@/components/shared/PrimaryActionButton";
 
 const EMPTY_FORM: CategorieRequest = { nom: "", description: null };
 
@@ -45,6 +46,7 @@ export function CategoriesPage() {
     const [isLoading, setIsLoading] = useState(true);
 
     const [createOpen, setCreateOpen] = useState(false);
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [createValues, setCreateValues] = useState<CategorieRequest>(EMPTY_FORM);
     const [isCreating, setIsCreating] = useState(false);
     const [createError, setCreateError] = useState<string | null>(null);
@@ -148,10 +150,8 @@ export function CategoriesPage() {
                     }}
                 >
                     <DialogTrigger asChild>
-                        <Button className="bg-rose-700 text-white hover:bg-rose-800">
-                            <Plus className="mr-2 h-4 w-4" />
-                            Nouvelle catégorie
-                        </Button>
+                        {/* 🟡 Utilisation de PrimaryActionButton au lieu de Button */}
+                        <PrimaryActionButton label="Nouvelle catégorie" />
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-sm">
                         <DialogHeader>

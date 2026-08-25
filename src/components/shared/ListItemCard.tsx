@@ -1,4 +1,17 @@
 import type { ReactNode } from "react";
+import { motion , type Variants } from "framer-motion";
+import { cn } from "@/lib/utils";
+
+
+// 1.  l'export des variantes pour les réutiliser dans les pages de listes
+export const listItemVariants : Variants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.25, ease: "easeOut" } 
+  },
+};
 
 interface Field {
   label: string;
@@ -21,7 +34,15 @@ interface ListItemCardProps {
  */
 export function ListItemCard({ leading, title, subtitle, fields, trailing, actions }: ListItemCardProps) {
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md sm:flex-row sm:items-center">
+    <motion.div
+      variants={listItemVariants}
+      whileHover={{ y: -2 }}
+      transition={{ duration: 0.2 }}
+      className={cn(
+        "flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm",
+        "transition-all duration-200 hover:border-rose-100 hover:shadow-md sm:flex-row sm:items-center"
+      )}
+    >
       <div className="flex items-center gap-3 sm:w-52 sm:shrink-0">
         {leading}
         <div className="min-w-0">
@@ -45,6 +66,6 @@ export function ListItemCard({ leading, title, subtitle, fields, trailing, actio
         {trailing}
         {actions}
       </div>
-    </div>
+    </motion.div>
   );
 }
