@@ -1,17 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { MoreHorizontal, Pencil, Search, Trash2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2, Search } from "lucide-react";
 import { clientService } from "@/api/clientService";
 import type { Client } from "@/types/client.types";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,9 +19,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { ListItemCard } from "@/components/shared/ListItemCard";
 import { CreateClientDialog } from "@/components/clients/CreateClientDialog";
 import { EditClientDialog } from "@/components/clients/EditClientDialog";
 import { notify } from "@/lib/toast";
+
+function getInitials(nom: string, prenom: string | null): string {
+  const first = prenom?.[0] ?? "";
+  const second = nom?.[0] ?? "";
+  return (first + second).toUpperCase() || "?";
+}
 
 export function ClientsListPage() {
   const [clients, setClients] = useState<Client[]>([]);
@@ -70,20 +68,20 @@ export function ClientsListPage() {
   }, [clients, search]);
 
   async function handleConfirmDelete() {
-  if (!deleteTarget) return;
-  setIsDeleting(true);
-  try {
-    await clientService.remove(deleteTarget.id);
-    setDeleteTarget(null);
-    loadClients();
-    notify.success("Client supprimé.");
-  } catch (error) {
-    console.error("Erreur lors de la suppression du client :", error);
-    notify.error("Impossible de supprimer ce client.");
-  } finally {
-    setIsDeleting(false);
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    try {
+      await clientService.remove(deleteTarget.id);
+      setDeleteTarget(null);
+      loadClients();
+      notify.success("Client supprimé.");
+    } catch (error) {
+      console.error("Erreur lors de la suppression du client :", error);
+      notify.error("Impossible de supprimer ce client.");
+    } finally {
+      setIsDeleting(false);
+    }
   }
-}
 
   return (
     <div className="space-y-4">
@@ -95,79 +93,63 @@ export function ClientsListPage() {
         <CreateClientDialog onCreated={loadClients} />
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
-        <div className="relative mb-4 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Rechercher un client..."
-            className="pl-9"
-          />
-        </div>
+      <div className="relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Rechercher un client..."
+          className="rounded-full pl-9"
+        />
+      </div>
 
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nom</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Téléphone</TableHead>
-                <TableHead>Adresse</TableHead>
-                <TableHead className="w-10" />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-sm text-gray-400">
-                    Chargement...
-                  </TableCell>
-                </TableRow>
-              ) : filteredClients.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-sm text-gray-400">
-                    {search ? "Aucun client ne correspond à la recherche." : "Aucun client pour le moment."}
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredClients.map((client) => (
-                  <TableRow key={client.id}>
-                    <TableCell className="font-medium">
-                      {client.prenom ? `${client.prenom} ` : ""}
-                      {client.nom}
-                    </TableCell>
-                    <TableCell className="text-gray-600">{client.email ?? "—"}</TableCell>
-                    <TableCell className="text-gray-600">{client.telephone ?? "—"}</TableCell>
-                    <TableCell className="text-gray-600">{client.adresse ?? "—"}</TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => setEditTarget(client)}>
-                            <Pencil className="mr-2 h-4 w-4" />
-                            Modifier
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => setDeleteTarget(client)}
-                            className="text-red-600 focus:bg-red-50 focus:text-red-700"
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Supprimer
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
+      <div className="space-y-3">
+        {isLoading ? (
+          <p className="py-10 text-center text-sm text-gray-400">Chargement...</p>
+        ) : filteredClients.length === 0 ? (
+          <p className="py-10 text-center text-sm text-gray-400">
+            {search ? "Aucun client ne correspond à la recherche." : "Aucun client pour le moment."}
+          </p>
+        ) : (
+          filteredClients.map((client) => (
+            <ListItemCard
+              key={client.id}
+              leading={
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-50 text-sm font-semibold text-rose-600">
+                  {getInitials(client.nom, client.prenom)}
+                </div>
+              }
+              title={`${client.prenom ? client.prenom + " " : ""}${client.nom}`}
+              subtitle={client.email ?? undefined}
+              fields={[
+                { label: "Téléphone", value: client.telephone ?? "—" },
+                { label: "Adresse", value: client.adresse ?? "—" },
+              ]}
+              actions={
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 hover:bg-gray-50 hover:text-gray-600">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setEditTarget(client)}>
+                      <Pencil className="mr-2 h-4 w-4" />
+                      Modifier
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setDeleteTarget(client)}
+                      className="text-red-600 focus:bg-red-50 focus:text-red-700"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Supprimer
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              }
+            />
+          ))
+        )}
       </div>
 
       <EditClientDialog
@@ -205,8 +187,9 @@ export function ClientsListPage() {
               {isDeleting ? "Suppression..." : "Supprimer"}
             </AlertDialogAction>
           </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+          </AlertDialogContent>
+        </AlertDialog>
+      
     </div>
   );
 }
