@@ -3,17 +3,12 @@ import { ShoppingCart, Package, Wallet, Trophy } from "lucide-react";
 import { KpiCard } from "@/components/shared/KpiCard";
 import { articleService } from "@/api/articleService";
 import { commandeService } from "@/api/commandeService";
-import { formatCurrency, formatDate, STATUT_LABELS, STATUT_BADGE_CLASSES } from "@/lib/formatters";
+import { formatCurrency, formatDate, STATUT_LABELS } from "@/lib/formatters";
+import { STATUT_TONES } from "@/lib/statusTones";
 import type { Commande } from "@/types/orders.types";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Receipt } from "lucide-react";
+import { ListItemCard } from "@/components/shared/ListItemCard";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 
 interface DashboardStats {
   ventesDuJour: number;
@@ -120,62 +115,37 @@ export function DashboardHome() {
       </div>
 
       {/* Tableau des dernières commandes */}
-      <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
-        <h2 className="mb-4 text-sm font-semibold text-gray-900">Dernières commandes</h2>
+      {/* Dernières commandes */}
+<div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+  <h2 className="mb-4 text-sm font-semibold text-gray-900">Dernières commandes</h2>
 
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Référence</TableHead>
-                <TableHead>Client</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead className="text-right">Total</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-sm text-gray-400">
-                    Chargement...
-                  </TableCell>
-                </TableRow>
-              ) : recentes.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-sm text-gray-400">
-                    Aucune commande pour le moment.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                recentes.map((commande) => (
-                  <TableRow key={commande.id}>
-                    <TableCell className="font-medium">{commande.reference}</TableCell>
-                    <TableCell>
-                      {commande.client.prenom ? `${commande.client.prenom} ` : ""}
-                      {commande.client.nom}
-                    </TableCell>
-                    <TableCell className="text-gray-500">
-                      {formatDate(commande.dateCommande)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className={STATUT_BADGE_CLASSES[commande.statut]}
-                      >
-                        {STATUT_LABELS[commande.statut]}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right font-medium">
-                      {formatCurrency(commande.totalAchat)}
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
+  <div className="space-y-3">
+    {isLoading ? (
+      <p className="py-6 text-center text-sm text-gray-400">Chargement...</p>
+    ) : recentes.length === 0 ? (
+      <p className="py-6 text-center text-sm text-gray-400">Aucune commande pour le moment.</p>
+    ) : (
+      recentes.map((commande) => (
+        <ListItemCard
+          key={commande.id}
+          leading={
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-50 text-rose-500">
+              <Receipt className="h-5 w-5" />
+            </div>
+          }
+          title={commande.reference}
+          subtitle={`${commande.client.prenom ? commande.client.prenom + " " : ""}${commande.client.nom}`}
+          fields={[
+            { label: "Vendeur", value: commande.vendeurNom },
+            { label: "Date", value: formatDate(commande.dateCommande) },
+            { label: "Total", value: formatCurrency(commande.totalAchat) },
+          ]}
+          trailing={<StatusBadge label={STATUT_LABELS[commande.statut]} tone={STATUT_TONES[commande.statut]} />}
+        />
+      ))
+    )}
+  </div>
+</div>
     </div>
   );
 }

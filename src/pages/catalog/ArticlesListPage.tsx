@@ -286,6 +286,7 @@ export function ArticlesListPage() {
   );
 }
 
+/*
 // Animation en cascade pour le conteneur
 const listContainerVariants = {
   hidden: { opacity: 0 },
@@ -293,4 +294,4 @@ const listContainerVariants = {
     opacity: 1,
     transition: { staggerChildren: 0.05 },
   },
-};
+};*/

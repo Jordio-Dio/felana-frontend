@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { MoreHorizontal, Pencil, Plus, Trash2, Loader2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2, Loader2 } from "lucide-react";
 import { categorieService } from "@/api/categorieService";
 import type { Categorie, CategorieRequest } from "@/types/catalog.types";
 import { Button } from "@/components/ui/button";
@@ -150,7 +150,7 @@ export function CategoriesPage() {
                     }}
                 >
                     <DialogTrigger asChild>
-                        {/* 🟡 Utilisation de PrimaryActionButton au lieu de Button */}
+                        {/*  Utilisation de PrimaryActionButton au lieu de Button */}
                         <PrimaryActionButton label="Nouvelle catégorie" />
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-sm">

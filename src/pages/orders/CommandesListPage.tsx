@@ -15,16 +15,10 @@ import { ListItemCard } from "@/components/shared/ListItemCard";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { formatCurrency, formatDate, STATUT_LABELS } from "@/lib/formatters";
 
+
 const ALL_STATUS = "ALL";
 
-const STATUT_TONES: Record<StatutCommande, "rose" | "pink" | "amber" | "gray" | "red"> = {
-  EN_ATTENTE: "amber",
-  EN_ATTENTE_VALIDATION: "pink",
-  EN_FABRICATION: "gray",
-  PAYEE: "rose",
-  LIVREE: "rose",
-  ANNULEE: "red",
-};
+import { STATUT_TONES } from "@/lib/statusTones";
 
 export function CommandesListPage() {
   const [searchParams] = useSearchParams();
@@ -58,7 +52,8 @@ export function CommandesListPage() {
           <h2 className="text-lg font-semibold text-gray-900">Commandes</h2>
           <p className="text-sm text-gray-500">Historique de toutes les ventes enregistrées.</p>
         </div>
-        <Button asChild className="rounded-full bg-rose-600 text-white hover:bg-rose-700">
+        
+        <Button asChild className="rounded-full bg-rose-400 text-white shadow-sm hover:bg-rose-500">
           <Link to="/commandes/nouvelle">
             <Plus className="mr-2 h-4 w-4" />
             Nouvelle vente
