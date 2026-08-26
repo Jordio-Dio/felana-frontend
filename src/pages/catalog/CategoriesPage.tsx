@@ -4,14 +4,6 @@ import { categorieService } from "@/api/categorieService";
 import type { Categorie, CategorieRequest } from "@/types/catalog.types";
 import { Button } from "@/components/ui/button";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
-import {
     Dialog,
     DialogContent,
     DialogFooter,
@@ -46,7 +38,6 @@ export function CategoriesPage() {
     const [isLoading, setIsLoading] = useState(true);
 
     const [createOpen, setCreateOpen] = useState(false);
-    const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [createValues, setCreateValues] = useState<CategorieRequest>(EMPTY_FORM);
     const [isCreating, setIsCreating] = useState(false);
     const [createError, setCreateError] = useState<string | null>(null);
@@ -132,11 +123,16 @@ export function CategoriesPage() {
     }
 
     return (
-        <div className="space-y-4">
-            <div className="flex items-center justify-between">
+        <div className="space-y-6 p-4 sm:p-6">
+            {/* Header de la page */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h2 className="text-lg font-semibold text-gray-900">Catégories</h2>
-                    <p className="text-sm text-gray-500">Organisez votre catalogue par catégorie.</p>
+                    <h2 className="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
+                        Catégories
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                        Organisez votre catalogue par catégorie.
+                    </p>
                 </div>
 
                 <Dialog
@@ -150,7 +146,6 @@ export function CategoriesPage() {
                     }}
                 >
                     <DialogTrigger asChild>
-                        {/*  Utilisation de PrimaryActionButton au lieu de Button */}
                         <PrimaryActionButton label="Nouvelle catégorie" />
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-sm">
@@ -178,62 +173,66 @@ export function CategoriesPage() {
                 </Dialog>
             </div>
 
-            <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Nom</TableHead>
-                            <TableHead>Description</TableHead>
-                            <TableHead className="w-10" />
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {isLoading ? (
-                            <TableRow>
-                                <TableCell colSpan={3} className="text-center text-sm text-gray-400">
-                                    Chargement...
-                                </TableCell>
-                            </TableRow>
-                        ) : categories.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={3} className="text-center text-sm text-gray-400">
-                                    Aucune catégorie pour le moment.
-                                </TableCell>
-                            </TableRow>
-                        ) : (
-                            categories.map((cat) => (
-                                <TableRow key={cat.id}>
-                                    <TableCell className="font-medium">{cat.nom}</TableCell>
-                                    <TableCell className="text-gray-600">{cat.description ?? "—"}</TableCell>
-                                    <TableCell>
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                    <MoreHorizontal className="h-4 w-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuItem onClick={() => openEdit(cat)}>
-                                                    <Pencil className="mr-2 h-4 w-4" />
-                                                    Modifier
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem
-                                                    onClick={() => setDeleteTarget(cat)}
-                                                    className="text-red-600 focus:bg-red-50 focus:text-red-700"
-                                                >
-                                                    <Trash2 className="mr-2 h-4 w-4" />
-                                                    Supprimer
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
+            {/* 🟡 AFFICHAGE EN CARTES */}
+            {isLoading ? (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {[1, 2, 3].map((i) => (
+                        <div key={i} className="h-28 animate-pulse rounded-2xl border border-gray-100 bg-gray-100/60 p-5" />
+                    ))}
+                </div>
+            ) : categories.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-gray-200 p-8 text-center">
+                    <p className="text-sm text-gray-500">Aucune catégorie pour le moment.</p>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {categories.map((cat) => (
+                        <div
+                            key={cat.id}
+                            className="group relative flex flex-col justify-between rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:border-pink-200 hover:shadow-md"
+                        >
+                            <div className="flex items-start justify-between">
+                                <div className="space-y-1 pr-6">
+                                    <h3 className="font-bold text-gray-900 group-hover:text-rose-900">
+                                        {cat.nom}
+                                    </h3>
+                                    <p className="text-xs text-gray-500 line-clamp-2">
+                                        {cat.description ?? "Aucune description"}
+                                    </p>
+                                </div>
 
+                                {/* Menu d'actions */}
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 text-gray-400 hover:text-gray-600"
+                                        >
+                                            <MoreHorizontal className="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem onClick={() => openEdit(cat)}>
+                                            <Pencil className="mr-2 h-4 w-4" />
+                                            Modifier
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            onClick={() => setDeleteTarget(cat)}
+                                            className="text-red-600 focus:bg-red-50 focus:text-red-700"
+                                        >
+                                            <Trash2 className="mr-2 h-4 w-4" />
+                                            Supprimer
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* Dialogue d'édition */}
             <Dialog open={editTarget !== null} onOpenChange={(open) => !open && setEditTarget(null)}>
                 <DialogContent className="sm:max-w-sm">
                     <DialogHeader>
@@ -259,6 +258,7 @@ export function CategoriesPage() {
                 </DialogContent>
             </Dialog>
 
+            {/* Modal de confirmation de suppression */}
             <AlertDialog open={deleteTarget !== null} onOpenChange={(open) => !open && setDeleteTarget(null)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
