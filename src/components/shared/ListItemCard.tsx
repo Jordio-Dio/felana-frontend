@@ -55,8 +55,8 @@ export function ListItemCard({ leading, title, subtitle, fields, trailing, actio
         <div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-4">
           {fields.map((f) => (
             <div key={f.label}>
-              <p className="text-[10px] uppercase tracking-wide text-gray-400">{f.label}</p>
-              <div className="text-sm font-medium text-gray-900">{f.value}</div>
+              <p className="truncate text-[10px] uppercase tracking-wide text-gray-400">{f.label}</p>
+              <div className="min-w-0 text-sm font-medium text-gray-900">{f.value}</div>
             </div>
           ))}
         </div>

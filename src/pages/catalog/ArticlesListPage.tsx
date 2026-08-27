@@ -183,14 +183,15 @@ export function ArticlesListPage() {
                       {
                         label: "Coût / Marge",
                         value: (
-                          <span>
-                            {article.coutAchat !== undefined ? formatCurrency(article.coutAchat) : "—"}
+
+                          <div className="min-w-0">
+                            <p className="trucate">
+                              {article.coutAchat !== undefined ? formatCurrency(article.coutAchat) : "_" }
+                            </p>
                             {article.marge !== undefined && (
-                              <span className="ml-1 text-xs text-emerald-600">
-                                (+{formatCurrency(article.marge)})
-                              </span>
+                              <p className="truncate text-[11px] text-rose-600">+ {formatCurrency(article.marge)}</p>
                             )}
-                          </span>
+                          </div>
                         ),
                       },
                     ]
