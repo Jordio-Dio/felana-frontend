@@ -7,6 +7,15 @@ import App from './App.tsx'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
-    <Toaster richColors position="top-right" />
+    <Toaster 
+    richColors 
+    position="top-right" 
+    toastOptions={{
+      classNames: {
+        error: "!text-pink-600",
+        success: "!text-pink-700"
+      }
+    }}
+    />
   </StrictMode>,
 );

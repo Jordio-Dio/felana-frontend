@@ -59,7 +59,7 @@ export function CreateClientDialog({ onCreated }: CreateClientDialogProps) {
       }}
     >
       <DialogTrigger asChild>
-        <Button className="bg-rose-500 text-white hover:bg-rose-800">
+        <Button className="bg-rose-400 text-white hover:bg-rose-800">
           <Plus className="mr-2 h-4 w-4" />
           Nouveau client
         </Button>

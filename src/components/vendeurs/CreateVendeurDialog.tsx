@@ -66,7 +66,7 @@ export function CreateVendeurDialog({ onCreated }: CreateVendeurDialogProps) {
       }}
     >
       <DialogTrigger asChild>
-        <Button className="bg-rose-700 text-white hover:bg-rose-800">
+        <Button className="bg-pink-600 text-white hover:bg-pink-800">
           <Plus className="mr-2 h-4 w-4" />
           Nouveau vendeur
         </Button>

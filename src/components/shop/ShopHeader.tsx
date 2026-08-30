@@ -37,7 +37,7 @@ export function ShopHeader() {
               <button
                 key={link.label}
                 onClick={() => handleNavClick(link.href)}
-                className="text-sm font-medium text-gray-600 transition-colors hover:text-teal-700"
+                className="text-sm font-medium text-gray-600 transition-colors hover:text-pink-700"
               >
                 {link.label}
               </button>
@@ -63,11 +63,11 @@ export function ShopHeader() {
               type="button"
               onClick={() => navigate("/checkout")}
               aria-label="Voir le panier"
-              className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-700 transition-colors hover:bg-teal-50 hover:text-teal-700"
+              className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-700 transition-colors hover:bg-pink-50 hover:text-pink-700"
             >
               <ShoppingCart className="h-4 w-4" />
               {itemCount > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-teal-700 px-1 text-[10px] font-medium text-white">
+                <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-pink-700 px-1 text-[10px] font-medium text-white">
                   {itemCount}
                 </span>
               )}

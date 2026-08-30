@@ -42,7 +42,7 @@ export function LoginPage() {
       <div className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:max-w-md sm:p-8">
         {/* En-tête */}
         <div className="mb-3 flex flex-col items-center text-center sm:mb-8">
-          <span className="mb-2 text-3xl font-bold tracking-tight text-rose-700 sm:text-4xl">
+          <span className="mb-2 text-3xl font-bold tracking-tight text-pink-500 sm:text-4xl">
             Hiba Creation
           </span>
         
@@ -117,7 +117,7 @@ export function LoginPage() {
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-rose-700 text-white hover:bg-rose-800"
+            className="w-full bg-pink-500 text-white hover:bg-pink-700"
           >
             {isLoading ? (
               <>
