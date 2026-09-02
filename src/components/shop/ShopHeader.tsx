@@ -3,6 +3,15 @@ import { Search, ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useShopSearch } from "@/context/ShopSearchContext";
 import { Input } from "@/components/ui/input";
+import { User, LogOut, Package } from "lucide-react";
+import { useClientAuth } from "@/context/ClientAuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const NAV_LINKS = [
   { label: "Accueil", href: "#" },
@@ -10,10 +19,13 @@ const NAV_LINKS = [
   { label: "Notre histoire", href: "#catalogue" },
 ];
 
+
 export function ShopHeader() {
   const { itemCount } = useCart();
   const { search, setSearch } = useShopSearch();
   const navigate = useNavigate();
+  const { client, isAuthenticated, logout } = useClientAuth();
+
 
   function handleNavClick(href: string) {
     if (href === "#") {
@@ -56,6 +68,42 @@ export function ShopHeader() {
               />
             </div>
           </div>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-700 transition-colors hover:bg-teal-50 hover:text-teal-700"
+                aria-label="Mon compte"
+              >
+                <User className="h-4 w-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {isAuthenticated ? (
+                <>
+                  <div className="px-2 py-1.5 text-xs text-gray-500">Bonjour, {client?.nom}</div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/shop/mes-commandes")}>
+                    <Package className="mr-2 h-4 w-4" />
+                    Mes commandes
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={logout} className="text-red-600 focus:bg-red-50 focus:text-red-700">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Se déconnecter
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem onClick={() => navigate("/shop/connexion")}>
+                    Se connecter
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/shop/inscription")}>
+                    Créer un compte
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {/* Icônes dans pastilles rondes, façon Glowora */}
           <div className="ml-auto flex items-center gap-2 sm:ml-0">
