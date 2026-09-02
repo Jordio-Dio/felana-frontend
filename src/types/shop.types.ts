@@ -17,9 +17,6 @@ export interface PublicOrderItemRequest {
 }
 
 export interface PublicOrderRequest {
-  nomClient: string;
-  telephone: string;
-  adresseLivraison: string;
   modePaiement: ModePaiement;
   items: PublicOrderItemRequest[];
 }

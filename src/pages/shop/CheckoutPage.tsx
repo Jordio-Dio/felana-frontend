@@ -1,12 +1,10 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, Navigate } from "react-router-dom";
 import { Minus, Plus, Trash2, Loader2, ArrowLeft } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useClientAuth } from "@/context/ClientAuthContext";
 import { shopService } from "@/api/shopService";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -27,14 +25,24 @@ const MODES_PAIEMENT: { value: ModePaiement; label: string }[] = [
 
 export function CheckoutPage() {
   const navigate = useNavigate();
+  const { isAuthenticated, isLoading: authLoading } = useClientAuth();
   const { lines, updateQuantite, removeFromCart, total, clearCart } = useCart();
 
-  const [nomClient, setNomClient] = useState("");
-  const [telephone, setTelephone] = useState("");
-  const [adresseLivraison, setAdresseLivraison] = useState("");
   const [modePaiement, setModePaiement] = useState<ModePaiement | "">("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Session en cours de vérification : n'affiche rien pour éviter un flash
+  // de redirection incorrecte.
+  if (authLoading) {
+    return null;
+  }
+
+  // Connexion obligatoire pour commander - redirige vers login en gardant
+  // le retour vers /checkout après connexion.
+  if (!isAuthenticated) {
+    return <Navigate to="/shop/connexion" state={{ from: "/checkout" }} replace />;
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -52,9 +60,6 @@ export function CheckoutPage() {
     setIsLoading(true);
     try {
       const response = await shopService.createOrder({
-        nomClient,
-        telephone,
-        adresseLivraison,
         modePaiement,
         items: lines.map((l) => ({ articleId: l.article.id, quantite: l.quantite })),
       });
@@ -73,7 +78,7 @@ export function CheckoutPage() {
     return (
       <div className="flex flex-col items-center gap-4 py-16 text-center">
         <p className="text-gray-500">Votre panier est vide.</p>
-        <Button asChild className="bg-rose-700 text-white hover:bg-rose-800">
+        <Button asChild className="rounded-full bg-teal-700 text-white hover:bg-teal-800">
           <Link to="/shop">Retour au catalogue</Link>
         </Button>
       </div>
@@ -88,9 +93,8 @@ export function CheckoutPage() {
       </Link>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Panier */}
         <div className="lg:col-span-2">
-          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
             <h2 className="mb-3 text-sm font-semibold text-gray-900">Votre panier</h2>
             <div className="divide-y divide-gray-100">
               {lines.map((line) => (
@@ -145,35 +149,14 @@ export function CheckoutPage() {
           </div>
         </div>
 
-        {/* Formulaire */}
         <div>
-          <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-            <h2 className="text-sm font-semibold text-gray-900">Vos informations</h2>
+          <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+            <h2 className="text-sm font-semibold text-gray-900">Finaliser la commande</h2>
 
             <div className="space-y-1.5">
-              <Label htmlFor="nomClient">Nom complet</Label>
-              <Input id="nomClient" value={nomClient} onChange={(e) => setNomClient(e.target.value)} required />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="telephone">Téléphone</Label>
-              <Input id="telephone" value={telephone} onChange={(e) => setTelephone(e.target.value)} required />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="adresse">Adresse de livraison</Label>
-              <Textarea
-                id="adresse"
-                value={adresseLivraison}
-                onChange={(e) => setAdresseLivraison(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="paiement">Mode de paiement</Label>
+              <label className="text-sm font-medium text-gray-700">Mode de paiement</label>
               <Select value={modePaiement} onValueChange={(v) => setModePaiement(v as ModePaiement)}>
-                <SelectTrigger id="paiement">
+                <SelectTrigger>
                   <SelectValue placeholder="Choisir..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -200,7 +183,7 @@ export function CheckoutPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-rose-700 text-white hover:bg-rose-800"
+              className="w-full rounded-full bg-teal-700 text-white hover:bg-teal-800"
             >
               {isLoading ? (
                 <>
