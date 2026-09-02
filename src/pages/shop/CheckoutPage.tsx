@@ -78,7 +78,7 @@ export function CheckoutPage() {
     return (
       <div className="flex flex-col items-center gap-4 py-16 text-center">
         <p className="text-gray-500">Votre panier est vide.</p>
-        <Button asChild className="rounded-full bg-teal-700 text-white hover:bg-teal-800">
+        <Button asChild className="rounded-full bg-pink-700 text-white hover:bg-pink-800">
           <Link to="/shop">Retour au catalogue</Link>
         </Button>
       </div>
@@ -183,7 +183,7 @@ export function CheckoutPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full rounded-full bg-teal-700 text-white hover:bg-teal-800"
+              className="w-full rounded-full bg-pink-700 text-white hover:bg-pink-800"
             >
               {isLoading ? (
                 <>

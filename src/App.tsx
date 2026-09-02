@@ -18,6 +18,9 @@ import { ShopCatalogPage } from "@/pages/shop/ShopCatalogPage";
 import { CheckoutPage } from "@/pages/shop/CheckoutPage";
 import { OrderSuccessPage } from "@/pages/shop/OrderSuccessPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
+import { ClientLoginPage } from "@/pages/shop/ClientLoginPage";
+import { ClientRegisterPage } from "@/pages/shop/ClientRegisterPage";
+import { MesCommandesPage } from "@/pages/shop/MesCommandesPage";
 
 function App() {
   return (
@@ -34,6 +37,9 @@ function App() {
             <Route path="/shop" element={<ShopCatalogPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/order-success" element={<OrderSuccessPage />} />
+            <Route path="/shop/connexion" element={<ClientLoginPage />} />
+            <Route path="/shop/inscription" element={<ClientRegisterPage />} />
+            <Route path="/shop/mes-commandes" element={<MesCommandesPage />} />
           </Route>
 
           <Route element={<ProtectedRoute />}>

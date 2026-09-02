@@ -1,13 +1,8 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import type { AuthResponse } from "@/types/auth.types";
-import { notify } from "@/lib/toast";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-/**
- * Clés utilisées dans localStorage. Centralisées ici pour éviter les
- * fautes de frappe / incohérences ailleurs dans le code.
- */
 export const STORAGE_KEYS = {
   ACCESS_TOKEN: "felana_access_token",
   REFRESH_TOKEN: "felana_refresh_token",
@@ -22,13 +17,11 @@ export const axiosInstance = axios.create({
 });
 
 /**
- * Intercepteur de requête : ajoute automatiquement le header
- * "Authorization: Bearer <token>" sur CHAQUE appel, sans avoir à le faire
- * manuellement dans chaque service. On exclut volontairement les routes
- * publiques (login, refresh) pour éviter d'envoyer un vieux token invalide
- * dessus par erreur.
+ * Intercepteur de requête : injecte le token staff ou le token client
  */
 axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  // ⚠️ FIX : On liste précisément les routes publiques au lieu d'utiliser "/v1/public"
+  // pour éviter de bloquer l'envoi du token sur /v1/public/orders !
   const publicPaths = [
     "/auth/login",
     "/auth/refresh-token",
@@ -40,10 +33,8 @@ axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   ];
   const isPublic = publicPaths.some((path) => config.url?.includes(path));
 
-  // Les routes protégées côté vitrine (commandes du client) utilisent le
-  // token CLIENT, jamais le token staff - même si les deux sont présents
-  // dans le même navigateur (ex: gérante qui teste aussi la boutique).
-  const isClientRoute = config.url?.includes("/v1/public/orders") ||
+  const isClientRoute =
+    config.url?.includes("/v1/public/orders") ||
     config.url?.includes("/v1/public/mes-commandes");
 
   if (isClientRoute) {
@@ -61,12 +52,6 @@ axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config;
 });
 
-/**
- * Empêche plusieurs refresh simultanés si plusieurs requêtes échouent en
- * même temps (ex: dashboard qui charge 4 endpoints en parallèle et
- * l'access token vient d'expirer) : on ne fait qu'UN SEUL appel refresh,
- * les autres attendent son résultat.
- */
 let isRefreshing = false;
 let refreshSubscribers: Array<(token: string) => void> = [];
 
@@ -80,10 +65,7 @@ function onRefreshed(newToken: string) {
 }
 
 /**
- * Intercepteur de réponse : si une requête échoue avec 401 (access token
- * expiré) ET qu'on n'a pas déjà tenté un refresh pour CETTE requête,
- * on tente de rafraîchir le token puis on rejoue la requête originale.
- * Si le refresh échoue aussi -> déconnexion complète (tokens invalides).
+ * Intercepteur de réponse : gère le refresh token staff et la déconnexion client
  */
 axiosInstance.interceptors.response.use(
   (response) => response,
@@ -94,17 +76,18 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // Ne jamais tenter de refresh sur l'appel de refresh lui-même (boucle infinie sinon).
+    // ⚠️ FIX : Traitement des 401 sur les routes client (placé AU DEBUT pour éviter les boucles)
+    if (
+      originalRequest.url?.includes("/v1/public/orders") ||
+      originalRequest.url?.includes("/v1/public/mes-commandes")
+    ) {
+      localStorage.removeItem("felana_client_token");
+      localStorage.removeItem("felana_client_user");
+      window.location.href = "/shop/connexion";
+      return Promise.reject(error);
+    }
+
     if (originalRequest.url?.includes("/auth/refresh-token")) {
-      
-      // Un token client expiré ne peut pas être rafraîchi (pas de refresh token
-      // pour les clients) - on le traite comme une session expirée classique.
-      if (originalRequest.url?.includes("/v1/public/orders") || originalRequest.url?.includes("/v1/public/mes-commandes")) {
-        localStorage.removeItem("felana_client_token");
-        localStorage.removeItem("felana_client_user");
-        window.location.href = "/shop/connexion";
-        return Promise.reject(error);
-      }
       clearSession();
       return Promise.reject(error);
     }
@@ -112,7 +95,6 @@ axiosInstance.interceptors.response.use(
     originalRequest._retry = true;
 
     if (isRefreshing) {
-      // Un refresh est déjà en cours : on attend son résultat avant de rejouer.
       return new Promise((resolve) => {
         subscribeTokenRefresh((newToken: string) => {
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
@@ -149,33 +131,9 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-/**
- * Purge complète de la session locale. Utilisée en cas d'échec du refresh
- * (session définitivement invalide) ou lors d'un logout explicite.
- * Redirige vers /login pour forcer une reconnexion.
- */
 export function clearSession() {
   localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
   localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
   localStorage.removeItem(STORAGE_KEYS.USER);
   window.location.href = "/login";
 }
-
-
-
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    // Ne pas doubler la notification si le composant appelant gère déjà
-    // l'erreur lui-même (ex: formulaires avec message inline) - on ne
-    // notifie ici que les erreurs réseau/serveur "silencieuses" (5xx, pas
-    // de réponse du tout), pas les 400/401/403/404 qui sont déjà affichés
-    // dans les formulaires.
-    if (!error.response) {
-      notify.error("Impossible de contacter le serveur. Vérifiez votre connexion.");
-    } else if (error.response.status >= 500) {
-      notify.error("Une erreur serveur est survenue. Réessayez plus tard.");
-    }
-    return Promise.reject(error);
-  }
-);

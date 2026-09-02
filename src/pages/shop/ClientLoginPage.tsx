@@ -39,7 +39,7 @@ export function ClientLoginPage() {
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-sm flex-col justify-center px-4 py-10">
       <div className="mb-6 text-center">
-        <span className="text-2xl font-bold tracking-tight text-teal-700">FELANA</span>
+        <span className="text-2xl font-bold tracking-tight text-pink-700">FELANA</span>
         <h1 className="mt-2 text-lg font-semibold text-gray-900">Connexion à mon compte</h1>
       </div>
 
@@ -75,7 +75,7 @@ export function ClientLoginPage() {
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full rounded-full bg-teal-700 text-white hover:bg-teal-800"
+          className="w-full rounded-full bg-pink-700 text-white hover:bg-pink-800"
         >
           {isLoading ? (
             <>
@@ -93,7 +93,7 @@ export function ClientLoginPage() {
 
       <p className="mt-4 text-center text-sm text-gray-500">
         Pas encore de compte ?{" "}
-        <Link to="/shop/inscription" state={{ from }} className="font-medium text-teal-700 hover:underline">
+        <Link to="/shop/inscription" state={{ from }} className="font-medium text-pink-700 hover:underline">
           Créer un compte
         </Link>
       </p>

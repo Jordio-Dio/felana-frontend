@@ -53,7 +53,7 @@ export function ClientRegisterPage() {
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-sm flex-col justify-center px-4 py-10">
       <div className="mb-6 text-center">
-        <span className="text-2xl font-bold tracking-tight text-teal-700">FELANA</span>
+        <span className="text-2xl font-bold tracking-tight text-pink-700">FELANA</span>
         <h1 className="mt-2 text-lg font-semibold text-gray-900">Créer mon compte</h1>
         <p className="mt-1 text-xs text-gray-400">
           Un email ou un numéro de téléphone suffit — les deux sont acceptés.
@@ -114,7 +114,7 @@ export function ClientRegisterPage() {
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full rounded-full bg-teal-700 text-white hover:bg-teal-800"
+          className="w-full rounded-full bg-pink-700 text-white hover:bg-pink-800"
         >
           {isLoading ? (
             <>
@@ -132,7 +132,7 @@ export function ClientRegisterPage() {
 
       <p className="mt-4 text-center text-sm text-gray-500">
         Déjà un compte ?{" "}
-        <Link to="/shop/connexion" state={{ from }} className="font-medium text-teal-700 hover:underline">
+        <Link to="/shop/connexion" state={{ from }} className="font-medium text-pink-700 hover:underline">
           Se connecter
         </Link>
       </p>
