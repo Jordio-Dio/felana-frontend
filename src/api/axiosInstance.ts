@@ -29,10 +29,29 @@ export const axiosInstance = axios.create({
  * dessus par erreur.
  */
 axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const publicPaths = ["/auth/login", "/auth/refresh-token", "/auth/forgot-password", "/auth/reset-password", "v1/public"];
+  const publicPaths = [
+    "/auth/login",
+    "/auth/refresh-token",
+    "/auth/forgot-password",
+    "/auth/reset-password",
+    "/v1/public/articles",
+    "/v1/public/client/register",
+    "/v1/public/client/login",
+  ];
   const isPublic = publicPaths.some((path) => config.url?.includes(path));
 
-  if (!isPublic) {
+  // Les routes protégées côté vitrine (commandes du client) utilisent le
+  // token CLIENT, jamais le token staff - même si les deux sont présents
+  // dans le même navigateur (ex: gérante qui teste aussi la boutique).
+  const isClientRoute = config.url?.includes("/v1/public/orders") ||
+    config.url?.includes("/v1/public/mes-commandes");
+
+  if (isClientRoute) {
+    const clientToken = localStorage.getItem("felana_client_token");
+    if (clientToken) {
+      config.headers.Authorization = `Bearer ${clientToken}`;
+    }
+  } else if (!isPublic) {
     const token = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -77,6 +96,15 @@ axiosInstance.interceptors.response.use(
 
     // Ne jamais tenter de refresh sur l'appel de refresh lui-même (boucle infinie sinon).
     if (originalRequest.url?.includes("/auth/refresh-token")) {
+      
+      // Un token client expiré ne peut pas être rafraîchi (pas de refresh token
+      // pour les clients) - on le traite comme une session expirée classique.
+      if (originalRequest.url?.includes("/v1/public/orders") || originalRequest.url?.includes("/v1/public/mes-commandes")) {
+        localStorage.removeItem("felana_client_token");
+        localStorage.removeItem("felana_client_user");
+        window.location.href = "/shop/connexion";
+        return Promise.reject(error);
+      }
       clearSession();
       return Promise.reject(error);
     }
