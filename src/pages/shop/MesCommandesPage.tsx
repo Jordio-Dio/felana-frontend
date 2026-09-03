@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Eye, Receipt } from "lucide-react";
+import {  Receipt } from "lucide-react";
 import { axiosInstance } from "@/api/axiosInstance";
 import { ListItemCard } from "@/components/shared/ListItemCard";
 import { StatusBadge } from "@/components/shared/StatusBadge";
