@@ -76,7 +76,7 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // ⚠️ FIX : Traitement des 401 sur les routes client (placé AU DEBUT pour éviter les boucles)
+    //  FIX : Traitement des 401 sur les routes client (placé AU DEBUT pour éviter les boucles)
     if (
       originalRequest.url?.includes("/v1/public/orders") ||
       originalRequest.url?.includes("/v1/public/mes-commandes")
