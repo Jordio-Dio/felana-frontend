@@ -13,7 +13,6 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useClientAuth } from "@/context/ClientAuthContext"; 
 import { ImageWithSkeleton } from "@/components/shared/ImageWithSkeleton";
-import { Skeleton } from "@/components/ui/skeleton";
 
 function ProductCard({ article, onAdd , isAuthenticated}: { article: ArticlePublic; onAdd: (a: ArticlePublic) => void ; isAuthenticated: boolean }) {
   const [isFavorite, setIsFavorite] = useState(false);
