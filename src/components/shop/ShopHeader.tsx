@@ -1,10 +1,9 @@
-import { Link, useNavigate } from "react-router-dom";
-import { Search, ShoppingCart } from "lucide-react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Search, ShoppingCart, User, LogOut, Package } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useShopSearch } from "@/context/ShopSearchContext";
-import { Input } from "@/components/ui/input";
-import { User, LogOut, Package } from "lucide-react";
 import { useClientAuth } from "@/context/ClientAuthContext";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
   { label: "Accueil", href: "#" },
@@ -19,13 +19,14 @@ const NAV_LINKS = [
   { label: "Notre histoire", href: "#catalogue" },
 ];
 
-
 export function ShopHeader() {
   const { itemCount } = useCart();
   const { search, setSearch } = useShopSearch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { client, isAuthenticated, logout } = useClientAuth();
 
+  const isActive = (href: string) => href !== "#" && location.pathname === href;
 
   function handleNavClick(href: string) {
     if (href === "#") {
@@ -54,6 +55,19 @@ export function ShopHeader() {
                 {link.label}
               </button>
             ))}
+
+            {/* Lien "Mes commandes" actif si connecté */}
+            {isAuthenticated && (
+              <Link
+                to="/shop/mes-commandes"
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-pink-700",
+                  isActive("/shop/mes-commandes") ? "font-semibold text-rose-700" : "text-gray-600"
+                )}
+              >
+                Mes commandes
+              </Link>
+            )}
           </nav>
 
           {/* Recherche courte, visible dès sm */}
@@ -105,7 +119,7 @@ export function ShopHeader() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Icônes dans pastilles rondes, façon Glowora */}
+          {/* Icône panier */}
           <div className="ml-auto flex items-center gap-2 sm:ml-0">
             <button
               type="button"
