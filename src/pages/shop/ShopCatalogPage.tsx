@@ -172,7 +172,7 @@ export function ShopCatalogPage() {
             <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
               <Button
                 onClick={scrollToCatalogue}
-                className="rounded-full bg-gray-900 px-6 py-5 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:bg-rose-600"
+                className="rounded-full bg-gray-900 px-6 py-5 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:scale-[1.03] hover:bg-rose-600"
               >
                 <ShoppingBag className="mr-2 h-4 w-4" />
                 Voir le catalogue
@@ -206,8 +206,8 @@ export function ShopCatalogPage() {
           <div className="relative mx-auto w-full max-w-sm">
             <img
               src={heroImage}
-              alt="Création artisanale Felana mise en avant"
-              className="h-72 w-full rounded-3xl object-cover shadow-xl sm:h-96"
+              alt="Création artisanale Hiba mise en avant"
+              className="h-72 w-full rounded-3xl object-cover shadow-xl sm:h-96 text-gray-900"
             />
             <div className="absolute -right-4 -top-4 flex h-20 w-20 flex-col items-center justify-center rounded-full bg-white text-center shadow-lg sm:-right-6 sm:h-24 sm:w-24">
               <span className="text-sm font-bold text-gray-900 sm:text-base">Nouveau</span>

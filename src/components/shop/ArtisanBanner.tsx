@@ -18,15 +18,15 @@ export function ArtisanBanner({ onExplore }: ArtisanBannerProps) {
       <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,0.7fr)] lg:gap-8">
         {/* Zone gauche : texte + CTA */}
         <div className="text-center lg:text-left">
-          <h2 className="font-serif text-3xl font-bold leading-tight text-gray-900 sm:text-4xl">
+          <h2 className="font-serif text-3xl font-bold leading-tight !text-[#000000] opacity-100 sm:text-4xl">
             Créations Artisanales Hiba
           </h2>
-          <p className="mt-3 text-lg text-gray-600">Fait main, tissé avec passion</p>
+          <p className="mt-3 text-lg text-gray-700">Fait main, tissé avec passion</p>
 
           <button
             type="button"
             onClick={onExplore}
-            className="mt-6 inline-block border-b-2 border-gray-900 pb-1 text-sm font-medium text-gray-900 transition-all duration-300 hover:border-rose-500 hover:text-rose-600"
+            className="mt-6 inline-block border-b-2 border-gray-900 pb-1 text-sm font-medium text-gray-900 transition-all duration-300 hover:scale-105 hover:border-rose-500 hover:text-rose-600"
           >
             Explorer la Collection
           </button>
