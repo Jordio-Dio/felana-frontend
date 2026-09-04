@@ -34,6 +34,7 @@ import { CreateArticleDialog } from "@/components/catalog/CreateArticleDialog";
 import { EditArticleDialog } from "@/components/catalog/EditArticleDialog";
 import { formatCurrency } from "@/lib/formatters";
 import { notify } from "@/lib/toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 const ALL_CATEGORIES = "ALL";
@@ -153,7 +154,15 @@ export function ArticlesListPage() {
 
       <div className="space-y-3">
         {isLoading ? (
-          <p className="py-10 text-center text-sm text-gray-400">Chargement...</p>
+          Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-4">
+              <Skeleton className="h-11 w-11 rounded-xl" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-3 w-1/2" />
+              </div>
+            </div>
+          ))
         ) : articles.length === 0 ? (
           <p className="py-10 text-center text-sm text-gray-400">Aucun article ne correspond à votre recherche.</p>
         ) : (
@@ -180,21 +189,21 @@ export function ArticlesListPage() {
                 { label: "Prix de vente", value: formatCurrency(article.prixVente) },
                 ...(isGerant
                   ? [
-                      {
-                        label: "Coût / Marge",
-                        value: (
+                    {
+                      label: "Coût / Marge",
+                      value: (
 
-                          <div className="min-w-0">
-                            <p className="trucate">
-                              {article.coutAchat !== undefined ? formatCurrency(article.coutAchat) : "_" }
-                            </p>
-                            {article.marge !== undefined && (
-                              <p className="truncate text-[11px] text-rose-600">+ {formatCurrency(article.marge)}</p>
-                            )}
-                          </div>
-                        ),
-                      },
-                    ]
+                        <div className="min-w-0">
+                          <p className="trucate">
+                            {article.coutAchat !== undefined ? formatCurrency(article.coutAchat) : "_"}
+                          </p>
+                          {article.marge !== undefined && (
+                            <p className="truncate text-[11px] text-rose-600">+ {formatCurrency(article.marge)}</p>
+                          )}
+                        </div>
+                      ),
+                    },
+                  ]
                   : []),
                 {
                   label: "Stock",
