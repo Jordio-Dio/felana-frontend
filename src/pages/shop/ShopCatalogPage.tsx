@@ -12,6 +12,8 @@ import { notify } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useClientAuth } from "@/context/ClientAuthContext"; 
+import { ImageWithSkeleton } from "@/components/shared/ImageWithSkeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function ProductCard({ article, onAdd , isAuthenticated}: { article: ArticlePublic; onAdd: (a: ArticlePublic) => void ; isAuthenticated: boolean }) {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -204,7 +206,7 @@ export function ShopCatalogPage() {
 
           {/* Colonne droite : photo produit + badge flottant */}
           <div className="relative mx-auto w-full max-w-sm">
-            <img
+            <ImageWithSkeleton
               src={heroImage}
               alt="Création artisanale Hiba mise en avant"
               className="h-72 w-full rounded-3xl object-cover shadow-xl sm:h-96 text-gray-900"
