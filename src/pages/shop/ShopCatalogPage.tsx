@@ -11,8 +11,9 @@ import { formatCurrency } from "@/lib/formatters";
 import { notify } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useClientAuth } from "@/context/ClientAuthContext"; 
 
-function ProductCard({ article, onAdd }: { article: ArticlePublic; onAdd: (a: ArticlePublic) => void }) {
+function ProductCard({ article, onAdd , isAuthenticated}: { article: ArticlePublic; onAdd: (a: ArticlePublic) => void ; isAuthenticated: boolean }) {
   const [isFavorite, setIsFavorite] = useState(false);
 
   return (
@@ -45,7 +46,7 @@ function ProductCard({ article, onAdd }: { article: ArticlePublic; onAdd: (a: Ar
           )}
         </div>
 
-        <motion.button
+        {isAuthenticated && (<motion.button
           whileTap={{ scale: 0.85 }}
           whileHover={{ scale: 1.1 }}
           type="button"
@@ -59,7 +60,7 @@ function ProductCard({ article, onAdd }: { article: ArticlePublic; onAdd: (a: Ar
               isFavorite ? "fill-red-500 text-red-500" : "text-gray-400"
             )}
           />
-        </motion.button>
+        </motion.button> )}
       </div>
 
       <div className="space-y-2 p-4">
@@ -87,6 +88,7 @@ function ProductCard({ article, onAdd }: { article: ArticlePublic; onAdd: (a: Ar
 export function ShopCatalogPage() {
   const { addToCart } = useCart();
   const { search } = useShopSearch();
+  const { isAuthenticated } = useClientAuth();
   const [articles, setArticles] = useState<ArticlePublic[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [categorieFilter, setCategorieFilter] = useState<string>("Toutes");
@@ -298,7 +300,7 @@ export function ShopCatalogPage() {
           >
             {filtered.map((article) => (
               <motion.div key={article.id} variants={itemVariants}>
-                <ProductCard article={article} onAdd={handleAddToCart} />
+                <ProductCard article={article} onAdd={handleAddToCart} isAuthenticated={isAuthenticated} />
               </motion.div>
             ))}
           </motion.div>
