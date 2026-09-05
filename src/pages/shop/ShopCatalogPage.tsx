@@ -11,10 +11,11 @@ import { formatCurrency } from "@/lib/formatters";
 import { notify } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { useClientAuth } from "@/context/ClientAuthContext"; 
+import { useClientAuth } from "@/context/ClientAuthContext";
 import { ImageWithSkeleton } from "@/components/shared/ImageWithSkeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
-function ProductCard({ article, onAdd , isAuthenticated}: { article: ArticlePublic; onAdd: (a: ArticlePublic) => void ; isAuthenticated: boolean }) {
+function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePublic; onAdd: (a: ArticlePublic) => void; isAuthenticated: boolean }) {
   const [isFavorite, setIsFavorite] = useState(false);
 
   return (
@@ -61,7 +62,7 @@ function ProductCard({ article, onAdd , isAuthenticated}: { article: ArticlePubl
               isFavorite ? "fill-red-500 text-red-500" : "text-gray-400"
             )}
           />
-        </motion.button> )}
+        </motion.button>)}
       </div>
 
       <div className="space-y-2 p-4">
@@ -251,44 +252,66 @@ export function ShopCatalogPage() {
 
       <div className="pt-10" id="catalogue">
         <div className="mb-8 flex justify-center gap-5 overflow-x-auto px-2 pb-2 sm:gap-8">
-          {[{ label: "All", value: "Toutes", Icon: AllCategoriesIcon }, ...categories.map((cat) => ({
-            label: cat,
-            value: cat,
-            Icon: getCategoryIcon(cat),
-          }))].map(({ label, value, Icon }) => {
-            const isActive = categorieFilter === value;
-            return (
-              <button
-                key={value}
-                onClick={() => setCategorieFilter(value)}
-                className={cn(
-                  "flex shrink-0 flex-col items-center gap-2 rounded-2xl px-3 py-2 transition-colors",
-                  isActive ? "bg-rose-50" : "hover:bg-gray-50"
-                )}
-              >
-                <span
+          {isLoading ? (
+            Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex flex-col items-center gap-2 px-3 py-2">
+                <Skeleton className="h-11 w-11 rounded-full" />
+                <Skeleton className="h-3 w-10" />
+              </div>
+            ))
+          ) : (
+            [{ label: "All", value: "Toutes", Icon: AllCategoriesIcon }, ...categories.map((cat) => ({
+              label: cat,
+              value: cat,
+              Icon: getCategoryIcon(cat),
+            }))].map(({ label, value, Icon }) => {
+              const isActive = categorieFilter === value;
+              return (
+                <button
+                  key={value}
+                  onClick={() => setCategorieFilter(value)}
                   className={cn(
-                    "flex h-11 w-11 items-center justify-center rounded-full transition-colors",
-                    isActive ? "bg-rose-700 text-white" : "bg-gray-100 text-gray-500"
+                    "flex shrink-0 flex-col items-center gap-2 rounded-2xl px-3 py-2 transition-colors",
+                    isActive ? "bg-rose-50" : "hover:bg-gray-50"
                   )}
                 >
-                  <Icon className="h-5 w-5" />
-                </span>
-                <span
-                  className={cn(
-                    "whitespace-nowrap text-xs font-medium",
-                    isActive ? "text-rose-700" : "text-gray-500"
-                  )}
-                >
-                  {label}
-                </span>
-              </button>
-            );
-          })}
+                  <span
+                    className={cn(
+                      "flex h-11 w-11 items-center justify-center rounded-full transition-colors",
+                      isActive ? "bg-rose-700 text-white" : "bg-gray-100 text-gray-500"
+                    )}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span
+                    className={cn(
+                      "whitespace-nowrap text-xs font-medium",
+                      isActive ? "text-rose-700" : "text-gray-500"
+                    )}
+                  >
+                    {label}
+                  </span>
+                </button>
+              );
+            })
+          )}
+
         </div>
 
         {isLoading ? (
-          <p className="text-center text-sm text-gray-400">Chargement du catalogue...</p>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
+                <Skeleton className="aspect-[4/5] w-full rounded-t-3xl rounded-b-none" />
+                <div className="space-y-2 p-4">
+                  <Skeleton className="h-3 w-16" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-5 w-20" />
+                  <Skeleton className="h-9 w-full rounded-full" />
+                </div>
+              </div>
+            ))}
+          </div>
         ) : filtered.length === 0 ? (
           <p className="text-center text-sm text-gray-400">Aucun article ne correspond à votre recherche.</p>
         ) : (
