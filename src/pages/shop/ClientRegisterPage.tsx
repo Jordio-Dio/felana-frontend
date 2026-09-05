@@ -53,8 +53,8 @@ export function ClientRegisterPage() {
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-sm flex-col justify-center px-4 py-10">
       <div className="mb-6 text-center">
-        <span className="text-2xl font-bold tracking-tight text-pink-700">FELANA</span>
-        <h1 className="mt-2 text-lg font-semibold text-gray-900">Créer mon compte</h1>
+        <span className="text-2xl font-bold tracking-tight text-pink-700">HIBA</span>
+        <h2 className="mt-2 text-lg font-semibold text-gray-900">Créer mon compte</h2>
         <p className="mt-1 text-xs text-gray-400">
           Un email ou un numéro de téléphone suffit — les deux sont acceptés.
         </p>

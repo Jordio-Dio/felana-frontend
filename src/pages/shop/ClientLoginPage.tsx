@@ -39,8 +39,8 @@ export function ClientLoginPage() {
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-sm flex-col justify-center px-4 py-10">
       <div className="mb-6 text-center">
-        <span className="text-2xl font-bold tracking-tight text-pink-700">FELANA</span>
-        <h1 className="mt-2 text-lg font-semibold text-gray-900">Connexion à mon compte</h1>
+        <span className="text-2xl font-bold tracking-tight text-pink-700">Hiba</span>
+        <h2 className="mt-2 text-lg font-semibold text-gray-100">Connexion à mon compte</h2>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
