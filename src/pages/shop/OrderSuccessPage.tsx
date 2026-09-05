@@ -17,7 +17,7 @@ export function OrderSuccessPage() {
       <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-rose-50">
         <CheckCircle2 className="h-7 w-7 text-rose-600" />
       </div>
-      <h1 className="text-xl font-bold text-gray-900">Commande enregistrée !</h1>
+      <h2 className="text-xl font-bold text-gray-900">Commande enregistrée !</h2>
       <p className="mt-1 text-sm text-gray-500">
         Référence : <span className="font-medium text-gray-900">{order.reference}</span>
       </p>
