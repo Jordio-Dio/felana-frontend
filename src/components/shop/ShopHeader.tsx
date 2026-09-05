@@ -12,11 +12,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 const NAV_LINKS = [
-  { label: "Accueil", href: "#" },
-  { label: "Catalogue", href: "#catalogue" },
-  { label: "Notre histoire", href: "#catalogue" },
+  { label: "Accueil", sectionId: "hero" },
+  { label: "Catalogue", sectionId: "catalogue" },
+  { label: "Notre histoire", sectionId: "histoire" },
 ];
 
 export function ShopHeader() {
@@ -26,14 +27,44 @@ export function ShopHeader() {
   const location = useLocation();
   const { client, isAuthenticated, logout } = useClientAuth();
 
-  const isActive = (href: string) => href !== "#" && location.pathname === href;
+  const [activeSection, setActiveSection] = useState<string>("hero");
 
-  function handleNavClick(href: string) {
-    if (href === "#") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+  const isOnCommandes = location.pathname === "/shop/mes-commandes";
+
+  useEffect(() => {
+    if (isOnCommandes || location.pathname !== "/shop") return;
+
+    const sections = NAV_LINKS.map((l) => document.getElementById(l.sectionId)).filter(Boolean) as HTMLElement[];
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((e) => e.isIntersecting);
+        if (visible.length > 0) {
+          const topMost = visible.reduce((a, b) => (a.boundingClientRect.top < b.boundingClientRect.top ? a : b));
+          setActiveSection(topMost.target.id);
+        }
+      },
+      { rootMargin: "-40% 0px -50% 0px", threshold: 0 }
+    );
+
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, [location.pathname, isOnCommandes]);
+
+  function handleNavClick(sectionId: string) {
+    if (location.pathname !== "/shop") {
+      navigate("/shop");
+      setTimeout(() => {
+        document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+      }, 150);
     } else {
-      document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
     }
+  }
+
+  function isLinkActive(sectionId: string) {
+    return !isOnCommandes && location.pathname === "/shop" && activeSection === sectionId;
   }
 
   return (
@@ -49,8 +80,11 @@ export function ShopHeader() {
             {NAV_LINKS.map((link) => (
               <button
                 key={link.label}
-                onClick={() => handleNavClick(link.href)}
-                className="text-sm font-medium text-gray-600 transition-colors hover:text-pink-700"
+                onClick={() => handleNavClick(link.sectionId)}
+                className={cn(
+                  "text-sm font-medium transition-colors",
+                  isLinkActive(link.sectionId) ? "pink-pink-700" : "text-gray-600 hover:text-pink-700"
+                )}
               >
                 {link.label}
               </button>
@@ -62,7 +96,7 @@ export function ShopHeader() {
                 to="/shop/mes-commandes"
                 className={cn(
                   "text-sm font-medium transition-colors hover:text-pink-700",
-                  isActive("/shop/mes-commandes") ? "font-semibold text-rose-700" : "text-gray-600"
+                  isOnCommandes ? "font-semibold text-rose-700" : "text-gray-600"
                 )}
               >
                 Mes commandes
