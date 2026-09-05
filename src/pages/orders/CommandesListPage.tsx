@@ -19,6 +19,7 @@ import { formatCurrency, formatDate, STATUT_LABELS } from "@/lib/formatters";
 const ALL_STATUS = "ALL";
 
 import { STATUT_TONES } from "@/lib/statusTones";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function CommandesListPage() {
   const [searchParams] = useSearchParams();
@@ -99,11 +100,16 @@ export function CommandesListPage() {
               ]}
               trailing={<StatusBadge label={STATUT_LABELS[commande.statut]} tone={STATUT_TONES[commande.statut]} />}
               actions={
-                <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                  <Link to={`/commandes/${commande.id}`}>
-                    <Eye className="h-4 w-4" />
-                  </Link>
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                      <Link to={`/commandes/${commande.id}`}>
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Voir le détail</TooltipContent>
+                </Tooltip>
               }
             />
           ))

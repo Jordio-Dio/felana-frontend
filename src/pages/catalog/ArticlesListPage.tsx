@@ -35,6 +35,7 @@ import { EditArticleDialog } from "@/components/catalog/EditArticleDialog";
 import { formatCurrency } from "@/lib/formatters";
 import { notify } from "@/lib/toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 
 const ALL_CATEGORIES = "ALL";
@@ -228,11 +229,16 @@ export function ArticlesListPage() {
               actions={
                 isGerant ? (
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button className="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 hover:bg-gray-50 hover:text-gray-600">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </button>
-                    </DropdownMenuTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <DropdownMenuTrigger asChild>
+                          <button className="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 hover:bg-gray-50 hover:text-gray-600">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </button>
+                        </DropdownMenuTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>Plus d'options</TooltipContent>
+                    </Tooltip>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => setEditTarget(article)}>
                         <Pencil className="mr-2 h-4 w-4" />

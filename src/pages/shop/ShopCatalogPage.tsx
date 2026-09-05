@@ -14,6 +14,7 @@ import { motion } from "framer-motion";
 import { useClientAuth } from "@/context/ClientAuthContext";
 import { ImageWithSkeleton } from "@/components/shared/ImageWithSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePublic; onAdd: (a: ArticlePublic) => void; isAuthenticated: boolean }) {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -48,21 +49,28 @@ function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePubl
           )}
         </div>
 
-        {isAuthenticated && (<motion.button
-          whileTap={{ scale: 0.85 }}
-          whileHover={{ scale: 1.1 }}
-          type="button"
-          onClick={() => setIsFavorite((prev) => !prev)}
-          className="absolute bottom-3 right-3 z-[1] flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-md transition-colors hover:bg-white"
-          aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
-        >
-          <Heart
-            className={cn(
-              "h-4 w-4 transition-colors",
-              isFavorite ? "fill-red-500 text-red-500" : "text-gray-400"
-            )}
-          />
-        </motion.button>)}
+        {isAuthenticated && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <motion.button
+                whileTap={{ scale: 0.85 }}
+                whileHover={{ scale: 1.1 }}
+                type="button"
+                onClick={() => setIsFavorite((prev) => !prev)}
+                className="absolute bottom-3 right-3 z-[1] flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-md transition-colors hover:bg-white"
+                aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+              >
+                <Heart
+                  className={cn(
+                    "h-4 w-4 transition-colors",
+                    isFavorite ? "fill-red-500 text-red-500" : "text-gray-400"
+                  )}
+                />
+              </motion.button>
+            </TooltipTrigger>
+            <TooltipContent>{isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}</TooltipContent>
+          </Tooltip>
+        )}
       </div>
 
       <div className="space-y-2 p-4">

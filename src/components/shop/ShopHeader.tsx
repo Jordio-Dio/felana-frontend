@@ -121,15 +121,19 @@ export function ShopHeader() {
           </div>
 
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-700 transition-colors hover:bg-pink-50 hover:text-pink-700"
-                aria-label="Mon compte"
-              >
-                <User className="h-4 w-4" />
-
-              </button>
-            </DropdownMenuTrigger>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-700 transition-colors hover:bg-pink-50 hover:text-pink-700"
+                    aria-label="Mon compte"
+                  >
+                    <User className="h-4 w-4" />
+                  </button>
+                </DropdownMenuTrigger>
+              </TooltipTrigger>
+              <TooltipContent>Mon compte</TooltipContent>
+            </Tooltip>
             <DropdownMenuContent align="end" className="w-48">
               {isAuthenticated ? (
                 <>

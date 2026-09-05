@@ -1,6 +1,7 @@
 import { LogOut, User as UserIcon } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,15 +32,20 @@ export function UserMenu() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-2 rounded-full outline-none ring-rose-600 focus-visible:ring-2">
-          <Avatar className="h-9 w-9">
-            <AvatarFallback className="bg-rose-100 text-sm font-medium text-rose-700">
-              {getInitials(user.name)}
-            </AvatarFallback>
-          </Avatar>
-        </button>
-      </DropdownMenuTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger asChild>
+            <button className="flex items-center gap-2 rounded-full outline-none ring-rose-600 focus-visible:ring-2">
+              <Avatar className="h-9 w-9">
+                <AvatarFallback className="bg-rose-100 text-sm font-medium text-rose-700">
+                  {getInitials(user.name)}
+                </AvatarFallback>
+              </Avatar>
+            </button>
+          </DropdownMenuTrigger>
+        </TooltipTrigger>
+        <TooltipContent>Mon compte</TooltipContent>
+      </Tooltip>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>
           <div className="flex flex-col">
