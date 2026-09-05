@@ -34,7 +34,7 @@ export function MesCommandesPage() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-lg font-semibold text-gray-900">Mes commandes</h1>
+        <h2 className="text-lg font-semibold text-gray-900">Mes commandes</h2>
         <p className="text-sm text-gray-500">Retrouvez l'historique et le statut de vos commandes.</p>
       </div>
 
