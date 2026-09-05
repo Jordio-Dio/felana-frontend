@@ -12,8 +12,8 @@ createRoot(document.getElementById('root')!).render(
     position="top-right" 
     toastOptions={{
       classNames: {
-        error: "!text-pink-600",
-        success: "!text-pink-700"
+        error: "!text-white",
+        success: "!text-white"
       }
     }}
     />

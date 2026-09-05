@@ -21,47 +21,50 @@ import { NotFoundPage } from "@/pages/NotFoundPage";
 import { ClientLoginPage } from "@/pages/shop/ClientLoginPage";
 import { ClientRegisterPage } from "@/pages/shop/ClientRegisterPage";
 import { MesCommandesPage } from "@/pages/shop/MesCommandesPage";
+import { TooltipProvider } from "./components/ui/tooltip";
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/mot-de-passe-oublie" element={<ForgotPasswordPage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
+    <TooltipProvider delayDuration={200}>
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/mot-de-passe-oublie" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-          {/* Vitrine publique - AUCUNE authentification requise */}
-          <Route element={<ShopLayout />}>
-            <Route path="/shop" element={<ShopCatalogPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/order-success" element={<OrderSuccessPage />} />
-            <Route path="/shop/connexion" element={<ClientLoginPage />} />
-            <Route path="/shop/inscription" element={<ClientRegisterPage />} />
-            <Route path="/shop/mes-commandes" element={<MesCommandesPage />} />
-          </Route>
+            {/* Vitrine publique - AUCUNE authentification requise */}
+            <Route element={<ShopLayout />}>
+              <Route path="/shop" element={<ShopCatalogPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/order-success" element={<OrderSuccessPage />} />
+              <Route path="/shop/connexion" element={<ClientLoginPage />} />
+              <Route path="/shop/inscription" element={<ClientRegisterPage />} />
+              <Route path="/shop/mes-commandes" element={<MesCommandesPage />} />
+            </Route>
 
-          <Route element={<ProtectedRoute />}>
-            <Route element={<DashboardLayout />}>
-              <Route path="/dashboard" element={<DashboardHome />} />
-              <Route path="/clients" element={<ClientsListPage />} />
-              <Route path="/articles" element={<ArticlesListPage />} />
-              <Route path="/commandes" element={<CommandesListPage />} />
-              <Route path="/commandes/nouvelle" element={<NewSalePage />} />
-              <Route path="/commandes/:id" element={<CommandeDetailPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route element={<DashboardLayout />}>
+                <Route path="/dashboard" element={<DashboardHome />} />
+                <Route path="/clients" element={<ClientsListPage />} />
+                <Route path="/articles" element={<ArticlesListPage />} />
+                <Route path="/commandes" element={<CommandesListPage />} />
+                <Route path="/commandes/nouvelle" element={<NewSalePage />} />
+                <Route path="/commandes/:id" element={<CommandeDetailPage />} />
 
-              <Route element={<ProtectedRoute allowedRoles={["GERANT"]} />}>
-                <Route path="/vendeurs" element={<VendeursListPage />} />
-                <Route path="/categories" element={<CategoriesPage />} />
+                <Route element={<ProtectedRoute allowedRoles={["GERANT"]} />}>
+                  <Route path="/vendeurs" element={<VendeursListPage />} />
+                  <Route path="/categories" element={<CategoriesPage />} />
+                </Route>
               </Route>
             </Route>
-          </Route>
 
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </AuthProvider>
-    </BrowserRouter>
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
+    </TooltipProvider>
   );
 }
 

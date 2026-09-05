@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 const NAV_LINKS = [
   { label: "Accueil", sectionId: "hero" },
@@ -87,6 +88,8 @@ export function ShopHeader() {
                 )}
               >
                 {link.label}
+
+
               </button>
             ))}
 
@@ -124,6 +127,7 @@ export function ShopHeader() {
                 aria-label="Mon compte"
               >
                 <User className="h-4 w-4" />
+
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
@@ -155,19 +159,27 @@ export function ShopHeader() {
 
           {/* Icône panier */}
           <div className="ml-auto flex items-center gap-2 sm:ml-0">
-            <button
-              type="button"
-              onClick={() => navigate("/checkout")}
-              aria-label="Voir le panier"
-              className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-700 transition-colors hover:bg-pink-50 hover:text-pink-700"
-            >
-              <ShoppingCart className="h-4 w-4" />
-              {itemCount > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-pink-700 px-1 text-[10px] font-medium text-white">
-                  {itemCount}
-                </span>
-              )}
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={() => navigate("/checkout")}
+                  aria-label="Voir le panier"
+                  className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-700 transition-colors hover:bg-pink-50 hover:text-pink-700"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  {itemCount > 0 && (
+                    <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-pink-700 px-1 text-[10px] font-medium text-white">
+                      {itemCount}
+                    </span>
+                  )}
+                </button>
+                
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="w-auto rounded-lg bg-gray-900 px-3 py-1 text-sm text-white">
+                Voir le panier ({itemCount} article{itemCount > 1 ? "s" : ""})
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
 

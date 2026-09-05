@@ -181,7 +181,7 @@ export function ShopCatalogPage() {
               </Button>
 
               <a
-                href="#catalogue"
+                href="#histoire"
                 className="text-sm font-medium text-gray-700 underline underline-offset-4 transition-colors duration-300 hover:text-rose-600"
               >
                 Découvrir notre histoire
