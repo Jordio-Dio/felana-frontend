@@ -157,7 +157,7 @@ export function ShopCatalogPage() {
   return (
     <div className="space-y-0">
       {/* HERO — inspiré Glowora, palette rose/noir dédiée à cette section */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-rose-50 to-pink-100 px-6 py-12 sm:px-10 sm:py-16">
+      <section id="hero" className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-rose-50 to-pink-100 px-6 py-12 sm:px-10 sm:py-16">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
           {/* Colonne gauche : texte + CTA + confiance */}
           <div className="text-center lg:text-left">
@@ -246,7 +246,7 @@ export function ShopCatalogPage() {
         </div>
       </div>
 
-      <div className="pt-10">
+      <div id="histoire" className="pt-10">
         <ArtisanBanner onExplore={scrollToCatalogue} />
       </div>
 

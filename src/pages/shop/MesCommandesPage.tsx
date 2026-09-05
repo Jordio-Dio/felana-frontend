@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import {  Receipt } from "lucide-react";
+import { Receipt } from "lucide-react";
 import { axiosInstance } from "@/api/axiosInstance";
 import { ListItemCard } from "@/components/shared/ListItemCard";
 import { StatusBadge } from "@/components/shared/StatusBadge";
@@ -8,6 +8,8 @@ import { STATUT_TONES } from "@/lib/statusTones";
 import { formatCurrency, formatDate, STATUT_LABELS } from "@/lib/formatters";
 import type { Commande } from "@/types/orders.types";
 import type { PageResponse } from "@/types/api.types";
+import { Skeleton } from "@/components/ui/skeleton";
+
 
 export function MesCommandesPage() {
   const [commandes, setCommandes] = useState<Commande[]>([]);
@@ -38,7 +40,16 @@ export function MesCommandesPage() {
 
       <div className="space-y-3">
         {isLoading ? (
-          <p className="py-10 text-center text-sm text-gray-400">Chargement...</p>
+          Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-4">
+              <Skeleton className="h-11 w-11 shrink-0 rounded-xl" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-3 w-1/4" />
+              </div>
+              <Skeleton className="h-6 w-20 rounded-full" />
+            </div>
+          ))
         ) : commandes.length === 0 ? (
           <div className="py-10 text-center">
             <p className="text-sm text-gray-400">Vous n'avez pas encore passé de commande.</p>
