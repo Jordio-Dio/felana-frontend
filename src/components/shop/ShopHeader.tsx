@@ -84,7 +84,7 @@ export function ShopHeader() {
                 onClick={() => handleNavClick(link.sectionId)}
                 className={cn(
                   "text-sm font-medium transition-colors",
-                  isLinkActive(link.sectionId) ? "pink-pink-700" : "text-gray-600 hover:text-pink-700"
+                  isLinkActive(link.sectionId) ? "text-pink-700" : "text-gray-600 hover:text-pink-700"
                 )}
               >
                 {link.label}
