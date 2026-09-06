@@ -26,6 +26,7 @@ export function CommandesListPage() {
   const [commandes, setCommandes] = useState<Commande[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [statutFilter, setStatutFilter] = useState<string>(searchParams.get("statut") ?? ALL_STATUS);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const loadCommandes = useCallback(async () => {
     setIsLoading(true);
@@ -34,7 +35,11 @@ export function CommandesListPage() {
         size: 100,
         statut: statutFilter !== ALL_STATUS ? (statutFilter as StatutCommande) : undefined,
       });
-      setCommandes(page.content);
+      setCommandes(
+        [...page.content].sort(
+          (a, b) => new Date(b.dateCommande).getTime() - new Date(a.dateCommande).getTime()
+        )
+      );
     } catch (error) {
       console.error("Erreur lors du chargement des commandes :", error);
     } finally {
@@ -44,7 +49,13 @@ export function CommandesListPage() {
 
   useEffect(() => {
     loadCommandes();
-  }, [loadCommandes]);
+  }, [loadCommandes, refreshKey]);
+
+  useEffect(() => {
+    const handler = () => setRefreshKey((k) => k + 1);
+    window.addEventListener("invalidate-cache", handler);
+    return () => window.removeEventListener("invalidate-cache", handler);
+  }, []);
 
   return (
     <div className="space-y-4">

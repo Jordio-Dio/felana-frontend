@@ -24,6 +24,7 @@ export interface Article {
   publieVitrine?: boolean; // présent uniquement pour un GERANT
   actif: boolean;
   categorie: Categorie;
+  createdAt: string;
 }
 
 export interface CategorieRequest {

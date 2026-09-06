@@ -63,6 +63,8 @@ export function ArticlesListPage() {
     return () => clearTimeout(timeout);
   }, [search]);
 
+  const [refreshKey, setRefreshKey] = useState(0);
+
   const loadArticles = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -72,7 +74,11 @@ export function ArticlesListPage() {
         categorieId: categorieFilter !== ALL_CATEGORIES ? Number(categorieFilter) : undefined,
         actif: statusFilter !== ALL_STATUS ? statusFilter === "true" : undefined,
       });
-      setArticles(page.content);
+      setArticles(
+        [...page.content].sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+      );
     } catch (error) {
       console.error("Erreur lors du chargement des articles :", error);
     } finally {
@@ -82,7 +88,13 @@ export function ArticlesListPage() {
 
   useEffect(() => {
     loadArticles();
-  }, [loadArticles]);
+  }, [loadArticles, refreshKey]);
+
+  useEffect(() => {
+    const handler = () => setRefreshKey((k) => k + 1);
+    window.addEventListener("invalidate-cache", handler);
+    return () => window.removeEventListener("invalidate-cache", handler);
+  }, []);
 
   useEffect(() => {
     categorieService.findAll().then(setCategories).catch(console.error);

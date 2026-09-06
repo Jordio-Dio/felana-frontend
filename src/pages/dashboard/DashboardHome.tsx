@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ShoppingCart, Package, Wallet, Trophy } from "lucide-react";
 import { KpiCard } from "@/components/shared/KpiCard";
 import { articleService } from "@/api/articleService";
 import { commandeService } from "@/api/commandeService";
+import { salesService } from "@/api/salesService";
 import { formatCurrency, formatDate, STATUT_LABELS } from "@/lib/formatters";
 import { STATUT_TONES } from "@/lib/statusTones";
 import type { Commande } from "@/types/orders.types";
@@ -15,12 +16,6 @@ interface DashboardStats {
   recetteDuJour: number;
   stockTotal: number;
   meilleurVendeur: string;
-}
-
-function getStartOfDay(): string {
-  const now = new Date();
-  now.setHours(0, 0, 0, 0);
-  return now.toISOString();
 }
 
 function getStartOfMonth(): string {
@@ -53,35 +48,51 @@ export function DashboardHome() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [recentes, setRecentes] = useState<Commande[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const loadDashboard = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const [articlesPage, commandesDuMois, dernieresCommandes] =
+        await Promise.all([
+          articleService.search({ actif: true }),
+          commandeService.historique({ dateDebut: getStartOfMonth(), statut: "PAYEE", size: 1000 }),
+          commandeService.historique({ size: 5 }),
+        ]);
+      const stockTotal = articlesPage.content.reduce((sum, a) => sum + a.quantiteStock, 0);
+
+      let ventesDuJour: { nombreVentes: number; montantTotal: number } = { nombreVentes: 0, montantTotal: 0 };
+      try {
+        const data = await salesService.getToday();
+        ventesDuJour = { nombreVentes: data.nombreVentes ?? 0, montantTotal: data.montantTotal ?? 0 };
+      } catch {}
+
+      setStats({
+        ventesDuJour: ventesDuJour.nombreVentes,
+        recetteDuJour: ventesDuJour.montantTotal,
+        stockTotal,
+        meilleurVendeur: computeMeilleurVendeur(commandesDuMois.content),
+      });
+      setRecentes(
+        [...dernieresCommandes.content].sort(
+          (a, b) => new Date(b.dateCommande).getTime() - new Date(a.dateCommande).getTime()
+        )
+      );
+    } catch (error) {
+      console.error("Erreur lors du chargement du dashboard :", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    async function loadDashboard() {
-      try {
-        const [articlesPage, commandesDuJour, commandesDuMois, dernieresCommandes] =
-          await Promise.all([
-            articleService.search({ actif: true }),
-            commandeService.historique({ dateDebut: getStartOfDay(), statut: "PAYEE", size: 1000 }),
-            commandeService.historique({ dateDebut: getStartOfMonth(), statut: "PAYEE", size: 1000 }),
-            commandeService.historique({ size: 5 }),
-          ]);
-        const stockTotal = articlesPage.content.reduce((sum, a) => sum + a.quantiteStock, 0);
-        const recetteDuJour = commandesDuJour.content.reduce((sum, c) => sum + c.totalAchat, 0);
-
-        setStats({
-          ventesDuJour: commandesDuJour.totalElements,
-          recetteDuJour,
-          stockTotal,
-          meilleurVendeur: computeMeilleurVendeur(commandesDuMois.content),
-        });
-        setRecentes(dernieresCommandes.content);
-      } catch (error) {
-        console.error("Erreur lors du chargement du dashboard :", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
     loadDashboard();
+  }, [loadDashboard, refreshKey]);
+
+  useEffect(() => {
+    const handler = () => setRefreshKey((k) => k + 1);
+    window.addEventListener("invalidate-cache", handler);
+    return () => window.removeEventListener("invalidate-cache", handler);
   }, []);
 
   return (

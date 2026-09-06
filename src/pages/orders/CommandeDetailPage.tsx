@@ -57,6 +57,9 @@ export function CommandeDetailPage() {
             const updated = await commandeService.updateStatut(commande.id, statut);
             setCommande(updated);
             notify.success(`Statut mis à jour : ${STATUT_LABELS[statut]}.`);
+            if (statut === "PAYEE") {
+                window.dispatchEvent(new CustomEvent("invalidate-cache"));
+            }
         } catch (error) {
             console.error("Erreur lors du changement de statut :", error);
             notify.error("Impossible de mettre à jour le statut.");
