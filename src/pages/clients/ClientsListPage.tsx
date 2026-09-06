@@ -43,7 +43,7 @@ export function ClientsListPage() {
     setIsLoading(true);
     try {
       const page = await clientService.findAll({ size: 200 });
-      setClients(page.content);
+      setClients([...page.content].sort((a, b) => b.id - a.id));
     } catch (error) {
       console.error("Erreur lors du chargement des clients :", error);
     } finally {

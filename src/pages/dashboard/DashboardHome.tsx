@@ -57,7 +57,7 @@ export function DashboardHome() {
         await Promise.all([
           articleService.search({ actif: true }),
           commandeService.historique({ dateDebut: getStartOfMonth(), statut: "PAYEE", size: 1000 }),
-          commandeService.historique({ size: 5 }),
+          commandeService.historique({ size: 50 }),
         ]);
       const stockTotal = articlesPage.content.reduce((sum, a) => sum + a.quantiteStock, 0);
 
