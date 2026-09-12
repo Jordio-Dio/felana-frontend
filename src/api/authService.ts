@@ -7,6 +7,8 @@ import type {
   RegisterVendeurRequest,
   ResetPasswordRequest,
   VerifyEmailRequest,
+  UpdateStaffProfileRequest,
+  ChangePasswordRequest,
 } from "@/types/auth.types";
 
 /**
@@ -41,13 +43,27 @@ export const authService = {
     await axiosInstance.post("/auth/reset-password", payload);
   },
 
+  async getProfile(): Promise<AuthenticatedUser> {
+    const { data } = await axiosInstance.get<AuthenticatedUser>("/profile");
+    return data;
+  },
+
+  async updateProfile(payload: UpdateStaffProfileRequest): Promise<AuthenticatedUser> {
+    const { data } = await axiosInstance.patch<AuthenticatedUser>("/profile", payload);
+    return data;
+  },
+
+  async changePassword(payload: ChangePasswordRequest): Promise<void> {
+    await axiosInstance.post("/profile/change-password", payload);
+  },
+
   /** Persiste la session en localStorage après un login réussi. */
   saveSession(auth: AuthResponse): AuthenticatedUser {
     localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, auth.accessToken);
     localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, auth.refreshToken);
 
     const user: AuthenticatedUser = {
-      id: auth.id, // L'ID réel de l'utilisateur n'est pas fourni par le backend dans AuthResponse, donc on met 0 par défaut.
+      id: auth.id,
       name: auth.name,
       email: auth.email,
       role: auth.role,

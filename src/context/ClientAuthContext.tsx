@@ -13,6 +13,7 @@ interface ClientAuthContextValue {
   register: (payload: ClientRegisterRequest) => Promise<void>;
   login: (payload: ClientLoginRequest) => Promise<void>;
   logout: () => void;
+  refreshClient: () => Promise<void>;
 }
 
 const ClientAuthContext = createContext<ClientAuthContextValue | undefined>(undefined);
@@ -33,13 +34,17 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
   async function register(payload: ClientRegisterRequest) {
     const auth = await clientAuthService.register(payload);
     const saved = clientAuthService.saveSession(auth);
-    setClient(saved);
+    // Après l'inscription, récupérer le profil complet
+    const profile = await clientAuthService.getProfile();
+    setClient(profile);
   }
 
   async function login(payload: ClientLoginRequest) {
     const auth = await clientAuthService.login(payload);
     const saved = clientAuthService.saveSession(auth);
-    setClient(saved);
+    // Après le login, récupérer le profil complet
+    const profile = await clientAuthService.getProfile();
+    setClient(profile);
   }
 
   function logout() {
@@ -47,9 +52,14 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
     setClient(null);
   }
 
+  async function refreshClient() {
+    const profile = await clientAuthService.getProfile();
+    setClient(profile);
+  }
+
   return (
     <ClientAuthContext.Provider
-      value={{ client, isAuthenticated: client !== null, isLoading, register, login, logout }}
+      value={{ client, isAuthenticated: client !== null, isLoading, register, login, logout, refreshClient }}
     >
       {children}
     </ClientAuthContext.Provider>

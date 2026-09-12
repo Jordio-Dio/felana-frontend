@@ -4,6 +4,9 @@ import type {
   ClientLoginRequest,
   ClientRegisterRequest,
   AuthenticatedClient,
+  ClientProfile,
+  UpdateClientProfileRequest,
+  ChangePasswordRequest,
 } from "@/types/clientAuth.types";
 
 const CLIENT_TOKEN_KEY = "felana_client_token";
@@ -49,6 +52,20 @@ export const clientAuthService = {
   logout(): void {
     localStorage.removeItem(CLIENT_TOKEN_KEY);
     localStorage.removeItem(CLIENT_USER_KEY);
+  },
+
+  async getProfile(): Promise<ClientProfile> {
+    const { data } = await axiosInstance.get<ClientProfile>("/v1/public/client/me");
+    return data;
+  },
+
+  async updateProfile(payload: UpdateClientProfileRequest): Promise<ClientProfile> {
+    const { data } = await axiosInstance.patch<ClientProfile>("/v1/public/client/me", payload);
+    return data;
+  },
+
+  async changePassword(payload: ChangePasswordRequest): Promise<void> {
+    await axiosInstance.post("/v1/public/client/me/change-password", payload);
   },
 };
 

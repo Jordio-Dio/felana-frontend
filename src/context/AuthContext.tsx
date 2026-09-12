@@ -9,6 +9,7 @@ interface AuthContextValue {
   login: (payload: LoginRequest) => Promise<void>;
   logout: () => void;
   hasRole: (role: Role) => boolean;
+  refreshUser: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -46,6 +47,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return user?.role === role;
   }
 
+  async function refreshUser() {
+    const profile = await authService.getProfile();
+    setUser(profile);
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -55,6 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         hasRole,
+        refreshUser,
       }}
     >
       {children}
