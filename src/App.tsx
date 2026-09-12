@@ -21,6 +21,8 @@ import { NotFoundPage } from "@/pages/NotFoundPage";
 import { ClientLoginPage } from "@/pages/shop/ClientLoginPage";
 import { ClientRegisterPage } from "@/pages/shop/ClientRegisterPage";
 import { MesCommandesPage } from "@/pages/shop/MesCommandesPage";
+import { ProfilePage } from "@/pages/profile/ProfilePage";
+import { ClientProfilePage } from "@/pages/shop/ClientProfilePage";
 import { TooltipProvider } from "./components/ui/tooltip";
 
 function App() {
@@ -42,6 +44,7 @@ function App() {
               <Route path="/shop/connexion" element={<ClientLoginPage />} />
               <Route path="/shop/inscription" element={<ClientRegisterPage />} />
               <Route path="/shop/mes-commandes" element={<MesCommandesPage />} />
+              <Route path="/shop/profil" element={<ClientProfilePage />} />
             </Route>
 
             <Route element={<ProtectedRoute />}>
@@ -52,6 +55,7 @@ function App() {
                 <Route path="/commandes" element={<CommandesListPage />} />
                 <Route path="/commandes/nouvelle" element={<NewSalePage />} />
                 <Route path="/commandes/:id" element={<CommandeDetailPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
 
                 <Route element={<ProtectedRoute allowedRoles={["GERANT"]} />}>
                   <Route path="/vendeurs" element={<VendeursListPage />} />

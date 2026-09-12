@@ -1,4 +1,5 @@
 import { LogOut, User as UserIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -61,6 +62,12 @@ export function UserMenu() {
           {user.email}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link to="/profile" className="cursor-pointer">
+            <UserIcon className="mr-2 h-4 w-4" />
+            Mon profil
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem
           onClick={logout}
           className="text-red-600 focus:bg-red-50 focus:text-red-700"

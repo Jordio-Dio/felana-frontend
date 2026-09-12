@@ -139,6 +139,10 @@ export function ShopHeader() {
                 <>
                   <div className="px-2 py-1.5 text-xs text-gray-500">Bonjour, {client?.nom}</div>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/shop/profil")}>
+                    <User className="mr-2 h-4 w-4" />
+                    Mon profil
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/shop/mes-commandes")}>
                     <Package className="mr-2 h-4 w-4" />
                     Mes commandes
