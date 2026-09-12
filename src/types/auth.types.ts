@@ -46,3 +46,15 @@ export interface AuthenticatedUser {
   email: string;
   role: Role;
 }
+
+/** Pour PATCH /profile (changer l'email ou le nom). */
+export interface UpdateStaffProfileRequest {
+  nom: string;
+  email: string;
+}
+
+/** Pour POST /profile/change-password. */
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}
