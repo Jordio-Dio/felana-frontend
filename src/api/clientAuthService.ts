@@ -34,7 +34,11 @@ export const clientAuthService = {
     const client: AuthenticatedClient = {
       clientId: auth.clientId,
       nom: auth.nom,
+      email: null,
       emailVerifie: auth.emailVerifie,
+      prenom: null,
+      telephone: null,
+      adresse: null,
     };
     localStorage.setItem(CLIENT_USER_KEY, JSON.stringify(client));
     return client;
@@ -59,13 +63,20 @@ export const clientAuthService = {
     return data;
   },
 
-  async updateProfile(payload: UpdateClientProfileRequest): Promise<ClientProfile> {
-    const { data } = await axiosInstance.patch<ClientProfile>("/v1/public/client/me", payload);
+  async updateProfile(payload: UpdateClientProfileRequest): Promise<ClientAuthResponse> {
+    const { data } = await axiosInstance.patch<ClientAuthResponse>("/v1/public/client/me", payload);
+    if (data.accessToken) {
+      localStorage.setItem(CLIENT_TOKEN_KEY, data.accessToken);
+    }
     return data;
   },
 
-  async changePassword(payload: ChangePasswordRequest): Promise<void> {
-    await axiosInstance.post("/v1/public/client/me/change-password", payload);
+  async changePassword(payload: ChangePasswordRequest): Promise<ClientAuthResponse> {
+    const { data } = await axiosInstance.patch<ClientAuthResponse>("/v1/public/client/me/password", payload);
+    if (data.accessToken) {
+      localStorage.setItem(CLIENT_TOKEN_KEY, data.accessToken);
+    }
+    return data;
   },
 };
 

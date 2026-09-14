@@ -20,7 +20,7 @@ export const axiosInstance = axios.create({
  * Intercepteur de requête : injecte le token staff ou le token client
  */
 axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  // ⚠️ FIX : On liste précisément les routes publiques au lieu d'utiliser "/v1/public"
+  //  FIX : On liste précisément les routes publiques au lieu d'utiliser "/v1/public"
   // pour éviter de bloquer l'envoi du token sur /v1/public/orders !
   const publicPaths = [
     "/auth/login",
@@ -35,7 +35,8 @@ axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 
   const isClientRoute =
     config.url?.includes("/v1/public/orders") ||
-    config.url?.includes("/v1/public/mes-commandes");
+    config.url?.includes("/v1/public/mes-commandes") ||
+    config.url?.includes("/v1/public/client/me");
 
   if (isClientRoute) {
     const clientToken = localStorage.getItem("felana_client_token");

@@ -46,6 +46,7 @@ export interface ChangePasswordRequest {
 export interface AuthenticatedClient {
   clientId: number;
   nom: string;
+  email?: string | null;
   emailVerifie: boolean;
   prenom: string | null;
   telephone: string | null;

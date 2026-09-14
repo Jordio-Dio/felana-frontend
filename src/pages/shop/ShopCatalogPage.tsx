@@ -24,8 +24,8 @@ function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePubl
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
       className={cn(
-        "group relative overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm transition-shadow duration-300",
-        "hover:shadow-xl hover:ring-2 hover:ring-rose-600"
+        "group relative overflow-hidden rounded-3xl border border-[var(--border)] bg-white shadow-[var(--shadow-soft)] transition-all duration-200 ease-out",
+        "hover:shadow-xl hover:ring-2 hover:ring-[color:var(--primary)]/20"
       )}
     >
       <div className="relative aspect-[4/5] overflow-hidden rounded-t-3xl bg-gray-100">
@@ -57,7 +57,7 @@ function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePubl
                 whileHover={{ scale: 1.1 }}
                 type="button"
                 onClick={() => setIsFavorite((prev) => !prev)}
-                className="absolute bottom-3 right-3 z-[1] flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-md transition-colors hover:bg-white"
+                className="absolute bottom-3 right-3 z-[1] flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-md transition-colors duration-200 ease-out hover:bg-white"
                 aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
               >
                 <Heart
@@ -76,15 +76,15 @@ function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePubl
       <div className="space-y-2 p-4">
         <p className="text-[11px] uppercase tracking-wide text-gray-400">{article.categorieNom}</p>
         <p className="truncate text-sm font-semibold text-gray-900">{article.nom}</p>
-        <p className="text-base font-bold text-rose-700">{formatCurrency(article.prixVente)}</p>
+        <p className="text-base font-bold text-[#E86F3D]">{formatCurrency(article.prixVente)}</p>
 
         <Button
           size="sm"
           disabled={!article.disponible}
           onClick={() => onAdd(article)}
           className={cn(
-            "w-full rounded-full py-2.5 font-medium shadow-sm transition-all",
-            "bg-rose-700 text-white hover:bg-rose-800 hover:shadow-md",
+            "w-full rounded-full py-2.5 font-medium shadow-sm transition-all duration-200 ease-out",
+            "bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)] hover:shadow-md",
             "disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none"
           )}
         >
@@ -165,16 +165,16 @@ export function ShopCatalogPage() {
   return (
     <div className="space-y-0">
       {/* HERO — inspiré Glowora, palette rose/noir dédiée à cette section */}
-      <section id="hero" className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-rose-50 to-pink-100 px-6 py-12 sm:px-10 sm:py-16">
+      <section id="hero" className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#F5EBE6] to-[#F9F9F9] px-6 py-12 sm:px-10 sm:py-16">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
           {/* Colonne gauche : texte + CTA + confiance */}
           <div className="text-center lg:text-left">
-            <span className="text-xs font-semibold uppercase tracking-widest text-rose-600">
+            <span className="text-xs font-semibold uppercase tracking-widest text-[#E86F3D]">
               Nouvelle collection
             </span>
             <h1 className="text-4xl font-bold leading-tight text-gray-900 sm:text-5xl">
               <span className="text-gray-900">Révélez tout le charme</span> <br />
-              <span className="inline-block bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">
+              <span className="inline-block bg-gradient-to-r from-[#E86F3D] to-[#D95F2C] bg-clip-text text-transparent">
                 du fait main
               </span>
             </h1>
@@ -182,7 +182,7 @@ export function ShopCatalogPage() {
             <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
               <Button
                 onClick={scrollToCatalogue}
-                className="rounded-full bg-gray-900 px-6 py-5 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:scale-[1.03] hover:bg-rose-600"
+                className="rounded-full bg-[#222222] px-6 py-5 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:scale-[1.03] hover:bg-[#D95F2C]"
               >
                 <ShoppingBag className="mr-2 h-4 w-4" />
                 Voir le catalogue
@@ -190,7 +190,7 @@ export function ShopCatalogPage() {
 
               <a
                 href="#histoire"
-                className="text-sm font-medium text-gray-700 underline underline-offset-4 transition-colors duration-300 hover:text-rose-600"
+                className="text-sm font-medium text-gray-700 underline underline-offset-4 transition-colors duration-300 hover:text-[#D95F2C]"
               >
                 Découvrir notre histoire
               </a>
@@ -198,15 +198,15 @@ export function ShopCatalogPage() {
 
             <div className="mt-8 flex flex-wrap justify-center gap-6 text-xs text-gray-500 lg:justify-start">
               <span className="flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5 text-rose-500" />
+                <Sparkles className="h-3.5 w-3.5 text-[#E86F3D]" />
                 Fait main artisanalement
               </span>
               <span className="flex items-center gap-1.5">
-                <Truck className="h-3.5 w-3.5 text-rose-500" />
+                <Truck className="h-3.5 w-3.5 text-[#E86F3D]" />
                 Livraison soignée
               </span>
               <span className="flex items-center gap-1.5">
-                <Heart className="h-3.5 w-3.5 text-rose-500" />
+                <Heart className="h-3.5 w-3.5 text-[#E86F3D]" />
                 Pièces uniques
               </span>
             </div>
@@ -230,7 +230,7 @@ export function ShopCatalogPage() {
       {/* Badge flottant : texte + aperçu de vraies photos */}
       <div className="relative z-[1] -mt-7 flex justify-center px-4">
         <div className="flex w-full max-w-md items-center gap-3 rounded-full bg-white px-4 py-3 shadow-lg">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-700">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F5EBE6] text-[#E86F3D]">
             <Heart className="h-4 w-4" />
           </span>
           <div className="min-w-0 flex-1">
@@ -280,13 +280,13 @@ export function ShopCatalogPage() {
                   onClick={() => setCategorieFilter(value)}
                   className={cn(
                     "flex shrink-0 flex-col items-center gap-2 rounded-2xl px-3 py-2 transition-colors",
-                    isActive ? "bg-rose-50" : "hover:bg-gray-50"
+                    isActive ? "bg-[#F5EBE6]" : "hover:bg-gray-50"
                   )}
                 >
                   <span
                     className={cn(
                       "flex h-11 w-11 items-center justify-center rounded-full transition-colors",
-                      isActive ? "bg-rose-700 text-white" : "bg-gray-100 text-gray-500"
+                      isActive ? "bg-[#E86F3D] text-white" : "bg-gray-100 text-gray-500"
                     )}
                   >
                     <Icon className="h-5 w-5" />
@@ -294,7 +294,7 @@ export function ShopCatalogPage() {
                   <span
                     className={cn(
                       "whitespace-nowrap text-xs font-medium",
-                      isActive ? "text-rose-700" : "text-gray-500"
+                      isActive ? "text-[#E86F3D]" : "text-gray-500"
                     )}
                   >
                     {label}
@@ -321,7 +321,19 @@ export function ShopCatalogPage() {
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <p className="text-center text-sm text-gray-400">Aucun article ne correspond à votre recherche.</p>
+          <div className="rounded-3xl border border-dashed border-[var(--border)] bg-[var(--muted)] p-10 text-center shadow-sm">
+            <p className="text-base font-medium text-[var(--foreground)]">Aucun article ne correspond à votre recherche.</p>
+            <p className="mt-2 text-sm text-[var(--muted-foreground)]">Essayez une autre catégorie ou un autre mot-clé.</p>
+            <Button
+              variant="outline"
+              className="mt-5"
+              onClick={() => {
+                setCategorieFilter("Toutes");
+              }}
+            >
+              Réinitialiser le filtre
+            </Button>
+          </div>
         ) : (
           <motion.div
             variants={containerVariants}

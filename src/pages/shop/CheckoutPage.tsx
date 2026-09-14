@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate, Link, Navigate } from "react-router-dom";
-import { Minus, Plus, Trash2, Loader2, ArrowLeft } from "lucide-react";
+import { Minus, Plus, Trash2, Loader2, ArrowLeft, ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useClientAuth } from "@/context/ClientAuthContext";
 import { shopService } from "@/api/shopService";
@@ -76,9 +76,15 @@ export function CheckoutPage() {
 
   if (lines.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-4 py-16 text-center">
-        <p className="text-gray-500">Votre panier est vide.</p>
-        <Button asChild className="rounded-full bg-pink-700 text-white hover:bg-pink-800">
+      <div className="mx-auto flex max-w-lg flex-col items-center gap-4 rounded-3xl border border-dashed border-[var(--border)] bg-[var(--muted)] px-6 py-12 text-center shadow-sm">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-[var(--primary)] shadow-sm">
+          <ShoppingBag className="h-6 w-6" />
+        </div>
+        <div>
+          <p className="text-lg font-semibold text-[var(--foreground)]">Votre panier est vide.</p>
+          <p className="mt-2 text-sm text-[var(--muted-foreground)]">Ajoutez des articles pour finaliser votre commande.</p>
+        </div>
+        <Button asChild className="rounded-full bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)]">
           <Link to="/shop">Retour au catalogue</Link>
         </Button>
       </div>

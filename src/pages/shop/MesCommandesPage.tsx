@@ -53,7 +53,7 @@ export function MesCommandesPage() {
         ) : commandes.length === 0 ? (
           <div className="py-10 text-center">
             <p className="text-sm text-gray-400">Vous n'avez pas encore passé de commande.</p>
-            <Link to="/shop" className="mt-2 inline-block text-sm font-medium text-pink-700 hover:underline">
+            <Link to="/shop" className="mt-2 inline-block text-sm font-medium text-[#E86F3D] hover:underline">
               Découvrir le catalogue
             </Link>
           </div>
@@ -62,7 +62,7 @@ export function MesCommandesPage() {
             <ListItemCard
               key={commande.id}
               leading={
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-pink-50 text-pink-600">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#F5EBE6] text-[#E86F3D]">
                   <Receipt className="h-5 w-5" />
                 </div>
               }

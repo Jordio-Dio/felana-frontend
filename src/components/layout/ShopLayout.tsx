@@ -9,7 +9,7 @@ export function ShopLayout() {
     <ClientAuthProvider>
       <CartProvider>
         <ShopSearchProvider>
-          <div className="min-h-screen bg-gray-50">
+          <div className="min-h-screen bg-[#F9F9F9] text-[#222222]">
             <ShopHeader />
             <main className="mx-auto max-w-5xl px-4 py-6">
               <Outlet />

@@ -86,12 +86,12 @@ export function ProfilePage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
+              
             />
           </div>
 
           {profileError && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            <div className="rounded-lg border border-pink-200 bg-pink-50 px-3 py-2 text-sm text-pink-700">
               {profileError}
             </div>
           )}
@@ -148,7 +148,7 @@ export function ProfilePage() {
           </div>
 
           {passwordError && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            <div className="rounded-lg border border-pink-200 bg-pink-50 px-3 py-2 text-sm text-pink-700">
               {passwordError}
             </div>
           )}

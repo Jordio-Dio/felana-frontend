@@ -69,11 +69,11 @@ export function ShopHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-gray-100 bg-white">
+    <header className="sticky top-0 z-30 border-b border-[#F0E7E3] bg-white/90 backdrop-blur-sm">
       <div className="mx-auto max-w-6xl px-4">
         <div className="flex h-16 items-center gap-4">
-          <Link to="/shop" className="shrink-0 text-2xl font-bold tracking-tight text-rose-700">
-            Hiba Creation
+          <Link to="/shop" className="shrink-0 text-2xl font-bold tracking-tight text-[#222222]">
+            FELANA
           </Link>
 
           {/* Navigation centrée, visible à partir de md */}
@@ -84,7 +84,7 @@ export function ShopHeader() {
                 onClick={() => handleNavClick(link.sectionId)}
                 className={cn(
                   "text-sm font-medium transition-colors",
-                  isLinkActive(link.sectionId) ? "text-pink-700" : "text-gray-600 hover:text-pink-700"
+                  isLinkActive(link.sectionId) ? "text-[#E86F3D]" : "text-[#666666] hover:text-[#E86F3D]"
                 )}
               >
                 {link.label}
@@ -98,8 +98,8 @@ export function ShopHeader() {
               <Link
                 to="/shop/mes-commandes"
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-pink-700",
-                  isOnCommandes ? "font-semibold text-rose-700" : "text-gray-600"
+                  "text-sm font-medium transition-colors hover:text-[#E86F3D]",
+                  isOnCommandes ? "font-semibold text-[#E86F3D]" : "text-[#666666]"
                 )}
               >
                 Mes commandes
@@ -115,7 +115,7 @@ export function ShopHeader() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Rechercher..."
-                className="h-10 rounded-full border-gray-200 bg-gray-50 pl-10 text-sm"
+                className="h-10 rounded-full border-[#EAE2DD] bg-[#F9F9F9] pl-10 text-sm text-[#222222] placeholder:text-[#666666]"
               />
             </div>
           </div>
@@ -125,7 +125,7 @@ export function ShopHeader() {
               <TooltipTrigger asChild>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-700 transition-colors hover:bg-pink-50 hover:text-pink-700"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F5EBE6] text-[#222222] transition-colors hover:bg-[#F7DED0] hover:text-[#E86F3D]"
                     aria-label="Mon compte"
                   >
                     <User className="h-4 w-4" />
@@ -173,11 +173,11 @@ export function ShopHeader() {
                   type="button"
                   onClick={() => navigate("/checkout")}
                   aria-label="Voir le panier"
-                  className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-700 transition-colors hover:bg-pink-50 hover:text-pink-700"
+                  className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#F5EBE6] text-[#222222] transition-colors hover:bg-[#F7DED0] hover:text-[#E86F3D]"
                 >
                   <ShoppingCart className="h-4 w-4" />
                   {itemCount > 0 && (
-                    <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-pink-700 px-1 text-[10px] font-medium text-white">
+                    <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#E86F3D] px-1 text-[10px] font-medium text-white">
                       {itemCount}
                     </span>
                   )}

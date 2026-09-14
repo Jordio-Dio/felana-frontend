@@ -33,18 +33,34 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
 
   async function register(payload: ClientRegisterRequest) {
     const auth = await clientAuthService.register(payload);
-    const saved = clientAuthService.saveSession(auth);
+    clientAuthService.saveSession(auth);
     // Après l'inscription, récupérer le profil complet
     const profile = await clientAuthService.getProfile();
-    setClient(profile);
+    setClient({
+      clientId: profile.id,
+      nom: profile.nom,
+      email: profile.email,
+      emailVerifie: auth.emailVerifie,
+      prenom: profile.prenom,
+      telephone: profile.telephone,
+      adresse: profile.adresse,
+    });
   }
 
   async function login(payload: ClientLoginRequest) {
     const auth = await clientAuthService.login(payload);
-    const saved = clientAuthService.saveSession(auth);
+    clientAuthService.saveSession(auth);
     // Après le login, récupérer le profil complet
     const profile = await clientAuthService.getProfile();
-    setClient(profile);
+    setClient({
+      clientId: profile.id,
+      nom: profile.nom,
+      email: profile.email,
+      emailVerifie: auth.emailVerifie,
+      prenom: profile.prenom,
+      telephone: profile.telephone,
+      adresse: profile.adresse,
+    });
   }
 
   function logout() {
@@ -54,7 +70,16 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
 
   async function refreshClient() {
     const profile = await clientAuthService.getProfile();
-    setClient(profile);
+    const current = clientAuthService.getStoredClient();
+    setClient({
+      clientId: profile.id,
+      nom: profile.nom,
+      email: profile.email,
+      emailVerifie: current?.emailVerifie ?? true,
+      prenom: profile.prenom,
+      telephone: profile.telephone,
+      adresse: profile.adresse,
+    });
   }
 
   return (
