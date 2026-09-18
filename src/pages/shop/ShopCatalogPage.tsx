@@ -136,14 +136,7 @@ export function ShopCatalogPage() {
     [articles]
   );
 
-  const previewPhotos = useMemo(
-    () =>
-      articles
-        .filter((a) => a.imageUrls.length > 0)
-        .slice(0, 3)
-        .map((a) => a.imageUrls[0]),
-    [articles]
-  );
+
 
 
   const heroHighlights = useMemo(() => {
