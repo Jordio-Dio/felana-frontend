@@ -145,7 +145,6 @@ export function ShopCatalogPage() {
     [articles]
   );
 
-  const heroImage = previewPhotos[0] ?? "/images/hero-placeholder.jpg";
 
   const heroHighlights = useMemo(() => {
     const seen = new Set<string>();
