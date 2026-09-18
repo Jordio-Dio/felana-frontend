@@ -15,6 +15,7 @@ import { useClientAuth } from "@/context/ClientAuthContext";
 import { ImageWithSkeleton } from "@/components/shared/ImageWithSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { ShopHero } from "@/components/shop/ShopHero";
 
 function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePublic; onAdd: (a: ArticlePublic) => void; isAuthenticated: boolean }) {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -147,6 +148,21 @@ export function ShopCatalogPage() {
 
   const heroImage = previewPhotos[0] ?? "/images/hero-placeholder.jpg";
 
+  const heroHighlights = useMemo(() => {
+    const seen = new Set<string>();
+    const result: ArticlePublic[] = [];
+    // Tri décroissant par id = approximation de la récence (pas de champ date exposé côté vitrine)
+    const sorted = [...articles].sort((a, b) => b.id - a.id);
+    for (const article of sorted) {
+      if (!seen.has(article.categorieNom)) {
+        seen.add(article.categorieNom);
+        result.push(article);
+      }
+      if (result.length === 3) break;
+    }
+    return result;
+  }, [articles]);
+
   const filtered = articles.filter((a) => {
     const matchSearch = a.nom.toLowerCase().includes(search.toLowerCase());
     const matchCategorie = categorieFilter === "Toutes" || a.categorieNom === categorieFilter;
@@ -165,94 +181,16 @@ export function ShopCatalogPage() {
   return (
     <div className="space-y-0">
       {/* HERO — inspiré Glowora, palette rose/noir dédiée à cette section */}
-      <section id="hero" className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#F5EBE6] to-[#F9F9F9] px-6 py-12 sm:px-10 sm:py-16">
-        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
-          {/* Colonne gauche : texte + CTA + confiance */}
-          <div className="text-center lg:text-left">
-            <span className="text-xs font-semibold uppercase tracking-widest text-[#E86F3D]">
-              Nouvelle collection
-            </span>
-            <h1 className="text-4xl font-bold leading-tight text-gray-900 sm:text-5xl">
-              <span className="text-gray-900">Révélez tout le charme</span> <br />
-              <span className="inline-block bg-gradient-to-r from-[#E86F3D] to-[#D95F2C] bg-clip-text text-transparent">
-                du fait main
-              </span>
-            </h1>
+      <ShopHero
+        highlights={heroHighlights}
+        onExplore={scrollToCatalogue}
+        onSelectCategory={(cat) => {
+          setCategorieFilter(cat);
+          scrollToCatalogue();
+        }}
+      />
 
-            <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
-              <Button
-                onClick={scrollToCatalogue}
-                className="rounded-full bg-[#222222] px-6 py-5 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:scale-[1.03] hover:bg-[#D95F2C]"
-              >
-                <ShoppingBag className="mr-2 h-4 w-4" />
-                Voir le catalogue
-              </Button>
-
-              <a
-                href="#histoire"
-                className="text-sm font-medium text-gray-700 underline underline-offset-4 transition-colors duration-300 hover:text-[#D95F2C]"
-              >
-                Découvrir notre histoire
-              </a>
-            </div>
-
-            <div className="mt-8 flex flex-wrap justify-center gap-6 text-xs text-gray-500 lg:justify-start">
-              <span className="flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5 text-[#E86F3D]" />
-                Fait main artisanalement
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Truck className="h-3.5 w-3.5 text-[#E86F3D]" />
-                Livraison soignée
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Heart className="h-3.5 w-3.5 text-[#E86F3D]" />
-                Pièces uniques
-              </span>
-            </div>
-          </div>
-
-          {/* Colonne droite : photo produit + badge flottant */}
-          <div className="relative mx-auto w-full max-w-sm">
-            <ImageWithSkeleton
-              src={heroImage}
-              alt="Création artisanale Hiba mise en avant"
-              className="h-72 w-full rounded-3xl object-cover shadow-xl sm:h-96 text-gray-900"
-            />
-            <div className="absolute -right-4 -top-4 flex h-20 w-20 flex-col items-center justify-center rounded-full bg-white text-center shadow-lg sm:-right-6 sm:h-24 sm:w-24">
-              <span className="text-sm font-bold text-gray-900 sm:text-base">Nouveau</span>
-              <span className="text-[10px] text-gray-500">cette semaine</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Badge flottant : texte + aperçu de vraies photos */}
-      <div className="relative z-[1] -mt-7 flex justify-center px-4">
-        <div className="flex w-full max-w-md items-center gap-3 rounded-full bg-white px-4 py-3 shadow-lg">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F5EBE6] text-[#E86F3D]">
-            <Heart className="h-4 w-4" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-xs font-semibold text-gray-900">Fait main, avec soin</p>
-            <p className="truncate text-[11px] text-gray-400">Chaque pièce est unique</p>
-          </div>
-
-          {previewPhotos.length > 0 && (
-            <div className="flex shrink-0 -space-x-3">
-              {previewPhotos.map((url, i) => (
-                <img
-                  key={i}
-                  src={url}
-                  alt=""
-                  className="h-8 w-8 rounded-full border-2 border-white object-cover shadow-sm"
-                  style={{ zIndex: previewPhotos.length - i }}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
+      
 
       <div id="histoire" className="pt-10">
         <ArtisanBanner onExplore={scrollToCatalogue} />

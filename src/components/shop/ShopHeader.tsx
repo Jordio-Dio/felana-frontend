@@ -72,8 +72,11 @@ export function ShopHeader() {
     <header className="sticky top-0 z-30 border-b border-[#F0E7E3] bg-white/90 backdrop-blur-sm">
       <div className="mx-auto max-w-6xl px-4">
         <div className="flex h-16 items-center gap-4">
-          <Link to="/shop" className="shrink-0 text-2xl font-bold tracking-tight text-[#222222]">
-            FELANA
+          <Link
+            to="/shop"
+            className="-rotate-0 shrink-0 whitespace-nowrap font-serif text-xl italic tracking-tight text-[#6b4226] sm:text-2xl"
+          >
+            Hiba Créations Toamasina
           </Link>
 
           {/* Navigation centrée, visible à partir de md */}
@@ -182,7 +185,7 @@ export function ShopHeader() {
                     </span>
                   )}
                 </button>
-                
+
               </TooltipTrigger>
               <TooltipContent side="bottom" className="w-auto rounded-lg bg-gray-900 px-3 py-1 text-sm text-white">
                 Voir le panier ({itemCount} article{itemCount > 1 ? "s" : ""})
