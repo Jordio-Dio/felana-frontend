@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArtisanBanner } from "@/components/shop/ArtisanBanner";
-import { ShopLayout } from "@/components/layout/ShopLayout";
 
 function HeroSection() {
   return (

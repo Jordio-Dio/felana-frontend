@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ShoppingBag, Heart, Truck, Sparkles } from "lucide-react";
+import { ShoppingBag, Heart } from "lucide-react";
 import { shopService } from "@/api/shopService";
 import { useCart } from "@/context/CartContext";
 import { useShopSearch } from "@/context/ShopSearchContext";
@@ -12,7 +12,6 @@ import { notify } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useClientAuth } from "@/context/ClientAuthContext";
-import { ImageWithSkeleton } from "@/components/shared/ImageWithSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ShopHero } from "@/components/shop/ShopHero";
