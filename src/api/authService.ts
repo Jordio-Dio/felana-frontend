@@ -48,13 +48,14 @@ export const authService = {
     return data;
   },
 
-  async updateProfile(payload: UpdateStaffProfileRequest): Promise<AuthenticatedUser> {
-    const { data } = await axiosInstance.patch<AuthenticatedUser>("/profile", payload);
+  async updateProfile(payload: UpdateStaffProfileRequest): Promise<AuthResponse> {
+    const { data } = await axiosInstance.patch<AuthResponse>("/profile", payload);
     return data;
   },
 
-  async changePassword(payload: ChangePasswordRequest): Promise<void> {
-    await axiosInstance.post("/profile/change-password", payload);
+  async changePassword(payload: ChangePasswordRequest): Promise<AuthResponse> {
+    const { data } = await axiosInstance.patch<AuthResponse>("/profile/password", payload);
+    return data;
   },
 
   /** Persiste la session en localStorage après un login réussi. */
