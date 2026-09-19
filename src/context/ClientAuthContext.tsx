@@ -18,14 +18,12 @@ interface ClientAuthContextValue {
 
 const ClientAuthContext = createContext<ClientAuthContextValue | undefined>(undefined);
 
-// Helper pour vérifier si un JWT est expiré
 function isTokenExpired(token: string): boolean {
   try {
     const payloadBase64 = token.split(".")[1];
     if (!payloadBase64) return true;
     const decodedJson = JSON.parse(atob(payloadBase64));
     if (!decodedJson.exp) return false;
-    // Date d'expiration en millisecondes
     return Date.now() >= decodedJson.exp * 1000;
   } catch {
     return true;
@@ -41,7 +39,6 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
     const token = clientAuthService.getToken();
 
     if (stored && token) {
-      // Si le token a dépassé les 24h ou est invalide, on nettoie tout
       if (isTokenExpired(token)) {
         clientAuthService.logout();
         setClient(null);
@@ -106,7 +103,6 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
         adresse: profile.adresse,
       });
     } catch {
-      // Si le rafraîchissement échoue (401), déconnecter proprement
       logout();
     }
   }

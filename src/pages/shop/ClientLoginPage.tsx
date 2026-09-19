@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Loader2, LogIn } from "lucide-react";
 import { useClientAuth } from "@/context/ClientAuthContext";
@@ -20,6 +20,12 @@ export function ClientLoginPage() {
 
   // Après connexion, retourne à la page d'où le client venait (ex: checkout)
   const from = (location.state as { from?: string } | null)?.from ?? "/shop";
+
+  useEffect(() => {
+    if (isLoading) {
+      setError(null);
+    }
+  }, [isLoading]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
