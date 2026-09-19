@@ -18,6 +18,20 @@ interface ClientAuthContextValue {
 
 const ClientAuthContext = createContext<ClientAuthContextValue | undefined>(undefined);
 
+// Helper pour vérifier si un JWT est expiré
+function isTokenExpired(token: string): boolean {
+  try {
+    const payloadBase64 = token.split(".")[1];
+    if (!payloadBase64) return true;
+    const decodedJson = JSON.parse(atob(payloadBase64));
+    if (!decodedJson.exp) return false;
+    // Date d'expiration en millisecondes
+    return Date.now() >= decodedJson.exp * 1000;
+  } catch {
+    return true;
+  }
+}
+
 export function ClientAuthProvider({ children }: { children: ReactNode }) {
   const [client, setClient] = useState<AuthenticatedClient | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,8 +39,18 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const stored = clientAuthService.getStoredClient();
     const token = clientAuthService.getToken();
+
     if (stored && token) {
-      setClient(stored);
+      // Si le token a dépassé les 24h ou est invalide, on nettoie tout
+      if (isTokenExpired(token)) {
+        clientAuthService.logout();
+        setClient(null);
+      } else {
+        setClient(stored);
+      }
+    } else {
+      clientAuthService.logout();
+      setClient(null);
     }
     setIsLoading(false);
   }, []);
@@ -34,7 +58,7 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
   async function register(payload: ClientRegisterRequest) {
     const auth = await clientAuthService.register(payload);
     clientAuthService.saveSession(auth);
-    // Après l'inscription, récupérer le profil complet
+    
     const profile = await clientAuthService.getProfile();
     setClient({
       clientId: profile.id,
@@ -50,7 +74,7 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
   async function login(payload: ClientLoginRequest) {
     const auth = await clientAuthService.login(payload);
     clientAuthService.saveSession(auth);
-    // Après le login, récupérer le profil complet
+    
     const profile = await clientAuthService.getProfile();
     setClient({
       clientId: profile.id,
@@ -69,22 +93,35 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function refreshClient() {
-    const profile = await clientAuthService.getProfile();
-    const current = clientAuthService.getStoredClient();
-    setClient({
-      clientId: profile.id,
-      nom: profile.nom,
-      email: profile.email,
-      emailVerifie: current?.emailVerifie ?? true,
-      prenom: profile.prenom,
-      telephone: profile.telephone,
-      adresse: profile.adresse,
-    });
+    try {
+      const profile = await clientAuthService.getProfile();
+      const current = clientAuthService.getStoredClient();
+      setClient({
+        clientId: profile.id,
+        nom: profile.nom,
+        email: profile.email,
+        emailVerifie: current?.emailVerifie ?? true,
+        prenom: profile.prenom,
+        telephone: profile.telephone,
+        adresse: profile.adresse,
+      });
+    } catch {
+      // Si le rafraîchissement échoue (401), déconnecter proprement
+      logout();
+    }
   }
 
   return (
     <ClientAuthContext.Provider
-      value={{ client, isAuthenticated: client !== null, isLoading, register, login, logout, refreshClient }}
+      value={{
+        client,
+        isAuthenticated: client !== null,
+        isLoading,
+        register,
+        login,
+        logout,
+        refreshClient,
+      }}
     >
       {children}
     </ClientAuthContext.Provider>
@@ -93,6 +130,7 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
 
 export function useClientAuth(): ClientAuthContextValue {
   const context = useContext(ClientAuthContext);
-  if (!context) throw new Error("useClientAuth doit être utilisé à l'intérieur d'un <ClientAuthProvider>.");
+  if (!context)
+    throw new Error("useClientAuth doit être utilisé à l'intérieur d'un <ClientAuthProvider>.");
   return context;
 }
