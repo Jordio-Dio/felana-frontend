@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 const NAV_LINKS = [
   { label: "Accueil", sectionId: "hero" },
@@ -74,35 +73,45 @@ export function ShopHeader() {
         <div className="flex h-16 items-center gap-4">
           <Link
             to="/shop"
-            className="-rotate-0 shrink-0 whitespace-nowrap font-serif text-xl italic tracking-tight text-[#6b4226] sm:text-2xl"
+            className="-rotate-0 shrink-0 whitespace-nowrap font-serif text-xl italic tracking-tight text-[#4A2E1B] sm:text-2xl"
           >
             Hiba Créations Toamasina
           </Link>
 
-          {/* Navigation centrée, visible à partir de md */}
+          {/* Navigation centrée */}
           <nav className="mx-auto hidden items-center gap-8 md:flex">
             {NAV_LINKS.map((link) => (
               <button
                 key={link.label}
                 onClick={() => handleNavClick(link.sectionId)}
                 className={cn(
-                  "text-sm font-medium transition-colors",
-                  isLinkActive(link.sectionId) ? "text-[#E86F3D]" : "text-[#666666] hover:text-[#E86F3D]"
+                  "group relative py-1 text-sm font-medium transition-all duration-300",
+                  isLinkActive(link.sectionId)
+                    ? "font-semibold text-[#4A2E1B]"
+                    : "text-[#666666] hover:text-[#4A2E1B]"
                 )}
               >
                 {link.label}
 
-
+                {/* Ligne d'accentuation sous le lien actif ou au survol */}
+                <span
+                  className={cn(
+                    "absolute bottom-0 left-0 h-[2px] w-full origin-left rounded-full bg-[#4A2E1B] transition-transform duration-300",
+                    isLinkActive(link.sectionId)
+                      ? "scale-x-100"
+                      : "scale-x-0 group-hover:scale-x-100"
+                  )}
+                />
               </button>
             ))}
 
-            {/* Lien "Mes commandes" actif si connecté */}
+            {/* Lien "Mes commandes"  */}
             {isAuthenticated && (
               <Link
                 to="/shop/mes-commandes"
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-[#E86F3D]",
-                  isOnCommandes ? "font-semibold text-[#E86F3D]" : "text-[#666666]"
+                  "text-sm font-medium transition-colors hover:text-[#4A2E1B]",
+                  isOnCommandes ? "font-semibold text-[#4A2E1B]" : "text-[#666666]"
                 )}
               >
                 Mes commandes
@@ -110,7 +119,7 @@ export function ShopHeader() {
             )}
           </nav>
 
-          {/* Recherche courte, visible dès sm */}
+          {/* Recherche */}
           <div className="relative ml-auto hidden w-52 sm:block md:ml-0">
             <div className="relative flex items-center">
               <Search className="pointer-events-none absolute left-3.5 h-4 w-4 text-gray-400" />
@@ -123,20 +132,17 @@ export function ShopHeader() {
             </div>
           </div>
 
+          {/* Compte Utilisateur */}
           <DropdownMenu>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F5EBE6] text-[#222222] transition-colors hover:bg-[#F7DED0] hover:text-[#E86F3D]"
-                    aria-label="Mon compte"
-                  >
-                    <User className="h-4 w-4" />
-                  </button>
-                </DropdownMenuTrigger>
-              </TooltipTrigger>
-              <TooltipContent>Mon compte</TooltipContent>
-            </Tooltip>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F5EBE6] text-[#222222] transition-colors hover:bg-[#EADBC8] hover:text-[#311B0E]"
+                title="Mon compte"
+                aria-label="Mon compte"
+              >
+                <User className="h-4 w-4" />
+              </button>
+            </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
               {isAuthenticated ? (
                 <>
@@ -170,31 +176,24 @@ export function ShopHeader() {
 
           {/* Icône panier */}
           <div className="ml-auto flex items-center gap-2 sm:ml-0">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  onClick={() => navigate("/checkout")}
-                  aria-label="Voir le panier"
-                  className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#F5EBE6] text-[#222222] transition-colors hover:bg-[#F7DED0] hover:text-[#E86F3D]"
-                >
-                  <ShoppingCart className="h-4 w-4" />
-                  {itemCount > 0 && (
-                    <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#E86F3D] px-1 text-[10px] font-medium text-white">
-                      {itemCount}
-                    </span>
-                  )}
-                </button>
-
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="w-auto rounded-lg bg-gray-900 px-3 py-1 text-sm text-white">
-                Voir le panier ({itemCount} article{itemCount > 1 ? "s" : ""})
-              </TooltipContent>
-            </Tooltip>
+            <button
+              type="button"
+              onClick={() => navigate("/checkout")}
+              aria-label="Voir le panier"
+              title={`Voir le panier (${itemCount} article${itemCount > 1 ? "s" : ""})`}
+              className="group relative flex h-10 w-10 items-center justify-center rounded-full bg-[#F5EBE6] text-[#222222] transition-colors duration-300 hover:bg-[#EADBC8] hover:text-[#311B0E]"
+            >
+              <ShoppingCart className="h-4 w-4" />
+              {itemCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#4A2E1B] px-1 text-[10px] font-medium text-white shadow-sm ring-2 ring-white transition-transform group-hover:scale-110">
+                  {itemCount}
+                </span>
+              )}
+            </button>
           </div>
         </div>
 
-        {/* Recherche mobile : ligne dédiée en dessous */}
+        {/* Recherche mobile */}
         <div className="relative pb-3 sm:hidden">
           <div className="relative flex items-center">
             <Search className="pointer-events-none absolute left-3.5 h-4 w-4 text-gray-400" />
