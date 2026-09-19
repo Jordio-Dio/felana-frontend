@@ -32,14 +32,10 @@ export function CheckoutPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Session en cours de vérification : n'affiche rien pour éviter un flash
-  // de redirection incorrecte.
   if (authLoading) {
     return null;
   }
 
-  // Connexion obligatoire pour commander - redirige vers login en gardant
-  // le retour vers /checkout après connexion.
   if (!isAuthenticated) {
     return <Navigate to="/shop/connexion" state={{ from: "/checkout" }} replace />;
   }
@@ -74,17 +70,21 @@ export function CheckoutPage() {
     }
   }
 
+  /* --- ÉTAT PANIER VIDE HARMONISÉ --- */
   if (lines.length === 0) {
     return (
-      <div className="mx-auto flex max-w-lg flex-col items-center gap-4 rounded-3xl border border-dashed border-[var(--border)] bg-[var(--muted)] px-6 py-12 text-center shadow-sm">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-[var(--primary)] shadow-sm">
-          <ShoppingBag className="h-6 w-6" />
+      <div className="mx-auto my-12 max-w-md rounded-3xl border border-[#F0E7E3] bg-[#FAF6F0]/80 p-8 text-center shadow-sm sm:p-10">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#F5EBE6] text-[#4A2E1B] shadow-inner ring-4 ring-white">
+          <ShoppingBag className="h-7 w-7 stroke-[1.75]" />
         </div>
-        <div>
-          <p className="text-lg font-semibold text-[var(--foreground)]">Votre panier est vide.</p>
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">Ajoutez des articles pour finaliser votre commande.</p>
-        </div>
-        <Button asChild className="rounded-full bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)]">
+        <h3 className="font-serif text-xl font-semibold text-[#222222]">Votre panier est vide</h3>
+        <p className="mt-2 text-sm text-[#666666]">
+          Ajoutez des articles de notre collection pour finaliser votre commande.
+        </p>
+        <Button
+          asChild
+          className="mt-6 w-full rounded-full bg-[#4A2E1B] py-3 text-sm font-medium text-white shadow-md transition-all duration-300 hover:bg-[#311B0E] hover:shadow-lg"
+        >
           <Link to="/shop">Retour au catalogue</Link>
         </Button>
       </div>
@@ -92,82 +92,102 @@ export function CheckoutPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <Link to="/shop" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700">
-        <ArrowLeft className="h-3.5 w-3.5" />
+    <div className="mx-auto max-w-6xl space-y-6 px-4 py-6">
+      <Link
+        to="/shop"
+        className="inline-flex items-center gap-2 text-sm font-medium text-[#666666] transition-colors hover:text-[#4A2E1B]"
+      >
+        <ArrowLeft className="h-4 w-4" />
         Continuer mes achats
       </Link>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        {/* Liste des articles dans le panier */}
         <div className="lg:col-span-2">
-          <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-            <h2 className="mb-3 text-sm font-semibold text-gray-900">Votre panier</h2>
-            <div className="divide-y divide-gray-100">
+          <div className="rounded-3xl border border-[#F0E7E3] bg-white p-6 shadow-sm">
+            <h2 className="mb-4 font-serif text-lg font-semibold text-[#222222]">
+              Votre panier ({lines.length} article{lines.length > 1 ? "s" : ""})
+            </h2>
+            <div className="divide-y divide-[#F0E7E3]">
               {lines.map((line) => (
-                <div key={line.article.id} className="flex items-center gap-3 py-3">
-                  {line.article.imageUrls[0] && (
+                <div key={line.article.id} className="flex items-center gap-4 py-4">
+                  {line.article.imageUrls[0] ? (
                     <img
                       src={line.article.imageUrls[0]}
-                      alt=""
-                      className="h-12 w-12 rounded-md object-cover"
+                      alt={line.article.nom}
+                      className="h-16 w-16 rounded-xl object-cover border border-[#F0E7E3]"
                     />
+                  ) : (
+                    <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-[#F5EBE6] text-[#4A2E1B]">
+                      <ShoppingBag className="h-6 w-6 stroke-[1.5]" />
+                    </div>
                   )}
+
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900">{line.article.nom}</p>
-                    <p className="text-xs text-gray-500">{formatCurrency(line.article.prixVente)}</p>
+                    <p className="truncate text-sm font-semibold text-[#222222]">{line.article.nom}</p>
+                    <p className="text-xs text-[#666666]">{formatCurrency(line.article.prixVente)} / unité</p>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <Button
+
+                  {/* Boutons Quantité */}
+                  <div className="flex items-center gap-1 rounded-full border border-[#EAE2DD] bg-[#FAF6F0] p-1">
+                    <button
                       type="button"
-                      variant="outline"
-                      size="icon"
-                      className="h-7 w-7"
+                      className="flex h-6 w-6 items-center justify-center rounded-full text-[#4A2E1B] transition-colors hover:bg-[#EADBC8]"
                       onClick={() => updateQuantite(line.article.id, -1)}
                     >
                       <Minus className="h-3 w-3" />
-                    </Button>
-                    <span className="w-5 text-center text-sm">{line.quantite}</span>
-                    <Button
+                    </button>
+                    <span className="w-6 text-center text-xs font-semibold text-[#222222]">
+                      {line.quantite}
+                    </span>
+                    <button
                       type="button"
-                      variant="outline"
-                      size="icon"
-                      className="h-7 w-7"
+                      className="flex h-6 w-6 items-center justify-center rounded-full text-[#4A2E1B] transition-colors hover:bg-[#EADBC8]"
                       onClick={() => updateQuantite(line.article.id, 1)}
                     >
                       <Plus className="h-3 w-3" />
-                    </Button>
+                    </button>
                   </div>
-                  <span className="w-20 text-right text-sm font-medium">
+
+                  {/* Prix total ligne */}
+                  <span className="w-24 text-right text-sm font-semibold text-[#4A2E1B]">
                     {formatCurrency(line.article.prixVente * line.quantite)}
                   </span>
-                  <Button
+
+                  {/* Suppression */}
+                  <button
                     type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 text-red-500"
+                    className="p-1 text-gray-400 transition-colors hover:text-red-600"
                     onClick={() => removeFromCart(line.article.id)}
+                    title="Supprimer l'article"
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
+        {/* Bloc Récapitulatif et Paiement */}
         <div>
-          <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-            <h2 className="text-sm font-semibold text-gray-900">Finaliser la commande</h2>
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-5 rounded-3xl border border-[#F0E7E3] bg-[#FAF6F0]/50 p-6 shadow-sm backdrop-blur-sm"
+          >
+            <h2 className="font-serif text-lg font-semibold text-[#222222]">Récapitulatif</h2>
 
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700">Mode de paiement</label>
+            <div className="space-y-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-[#666666]">
+                Mode de paiement
+              </label>
               <Select value={modePaiement} onValueChange={(v) => setModePaiement(v as ModePaiement)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choisir..." />
+                <SelectTrigger className="h-11 rounded-xl border-[#EAE2DD] bg-white text-sm text-[#222222] focus:ring-[#4A2E1B]">
+                  <SelectValue placeholder="Choisir un mode de paiement..." />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="rounded-xl border-[#EAE2DD]">
                   {MODES_PAIEMENT.map((m) => (
-                    <SelectItem key={m.value} value={m.value}>
+                    <SelectItem key={m.value} value={m.value} className="text-sm">
                       {m.label}
                     </SelectItem>
                   ))}
@@ -175,13 +195,15 @@ export function CheckoutPage() {
               </Select>
             </div>
 
-            <div className="flex items-center justify-between border-t border-gray-100 pt-3 text-base font-semibold">
-              <span>Total</span>
-              <span>{formatCurrency(total)}</span>
+            <div className="flex items-center justify-between border-t border-[#EAE2DD] pt-4">
+              <span className="text-base font-semibold text-[#222222]">Total à payer</span>
+              <span className="font-serif text-xl font-bold text-[#4A2E1B]">
+                {formatCurrency(total)}
+              </span>
             </div>
 
             {error && (
-              <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700">
                 {error}
               </div>
             )}
@@ -189,12 +211,12 @@ export function CheckoutPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full rounded-full bg-pink-700 text-white hover:bg-pink-800"
+              className="w-full rounded-full bg-[#4A2E1B] py-3 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:bg-[#311B0E] hover:shadow-lg disabled:opacity-50"
             >
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Envoi...
+                  Traitement en cours...
                 </>
               ) : (
                 "Valider ma commande"
