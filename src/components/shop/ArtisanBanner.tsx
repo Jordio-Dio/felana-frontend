@@ -5,77 +5,70 @@ interface ArtisanBannerProps {
 }
 
 /**
- * Bannière promotionnelle "Créations Artisanales Hiba" — remplace la
- * section promo générique par un visuel dédié à la marque. Autonome,
- * ne dépend d'aucune logique métier (fetch, panier) : purement visuel.
+ * Bannière promotionnelle "Créations Artisanales Hiba"
+ * Utilise la même transparence sans flou que la section Hero.
  */
 export function ArtisanBanner({ onExplore }: ArtisanBannerProps) {
   return (
     <section
       aria-label="Créations artisanales Hiba"
-      className="overflow-x-hidden rounded-2xl bg-[#F8E8E8] px-6 py-10 sm:rounded-3xl sm:px-10 sm:py-14"
+      className="relative overflow-hidden rounded-3xl"
     >
-      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,0.7fr)] lg:gap-8">
-        {/* Zone gauche : texte + CTA */}
-        <div className="text-center lg:text-left">
-          <h2 className="font-serif text-3xl font-bold leading-tight !text-[#000000] opacity-100 sm:text-4xl">
-            Créations Artisanales Hiba
-          </h2>
-          <p className="mt-3 text-lg text-gray-700">Fait main, tissé avec passion</p>
+      <div className="relative h-[420px] sm:h-[480px]">
+        {/* Photo de fond sans aucun flou */}
+        <img
+          src="/images/background-artisan.jpg"
+          alt="Ambiance atelier créations artisanales Hiba"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
 
-          <button
-            type="button"
-            onClick={onExplore}
-            className="mt-6 inline-block border-b-2 border-gray-900 pb-1 text-sm font-medium text-gray-900 transition-all duration-300 hover:scale-105 hover:border-rose-500 hover:text-rose-600"
-          >
-            Explorer la Collection
-          </button>
-        </div>
+        {/* Overlay translucide identique au ShopHero */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
 
-        {/* Zone centrale : podium produits avec effet de profondeur */}
-        <div className="relative mx-auto h-56 w-full max-w-sm sm:h-72 sm:max-w-md">
-          {/* Socle bois */}
-          <div className="absolute bottom-0 left-1/2 h-6 w-40 -translate-x-1/2 rounded-full bg-amber-100/70 sm:w-56" />
+        {/* Contenu principal */}
+        <div className="relative z-[1] flex h-full flex-col justify-between p-6 sm:p-10 md:flex-row md:items-center">
+          {/* Zone texte + CTA */}
+          <div className="max-w-lg text-left">
+            <h2 className="font-serif text-3xl font-bold leading-tight text-white sm:text-5xl">
+              Créations Artisanales Hiba
+            </h2>
+            <p className="mt-3 text-sm text-white/90 sm:text-base">
+              Fait main, tissé avec passion.
+            </p>
 
-          <img
-            src="/images/sac-blanc.jpg"
-            alt="Sac en crochet blanc fait main, avec nœud décoratif"
-            className="absolute bottom-4 left-1/2 z-10 h-32 w-32 -translate-x-[85%] rotate-[-8deg] rounded-2xl object-cover shadow-lg transition-transform duration-300 hover:-translate-y-1 sm:h-44 sm:w-44"
-          />
-          <img
-            src="/images/sac-vert.jpg"
-            alt="Sac en crochet vert fait main"
-            className="absolute bottom-4 left-1/2 z-0 h-28 w-28 translate-x-[10%] rotate-[6deg] rounded-2xl object-cover shadow-md transition-transform duration-300 hover:-translate-y-1 sm:h-40 sm:w-40"
-          />
-          <img
-            src="/images/sac-rose.jpg"
-            alt="Sac en crochet rose fait main, pièce vedette"
-            className="absolute bottom-6 left-1/2 z-20 h-36 w-36 -translate-x-1/2 rounded-2xl object-cover shadow-xl transition-transform duration-300 hover:-translate-y-1 sm:h-48 sm:w-48"
-          />
-        </div>
-
-        {/* Zone droite : preuve sociale */}
-        <div className="flex flex-col items-center gap-4 lg:items-end">
-          <img
-            src="/images/createuse.jpg"
-            alt="Hiba, créatrice des sacs en crochet artisanaux"
-            className="h-16 w-16 rounded-full border-2 border-white object-cover shadow-md sm:h-20 sm:w-20"
-          />
-
-          <div className="text-center lg:text-right">
-            <p className="text-xl font-bold text-gray-900">10K+</p>
-            <p className="text-xs text-gray-500">Happy Customers</p>
+            <button
+              type="button"
+              onClick={onExplore}
+              className="mt-6 inline-block rounded-none bg-[#6b4226] px-6 py-3 text-sm font-medium text-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:bg-[#54331d]"
+            >
+              Explorer la Collection
+            </button>
           </div>
 
-          <div className="text-center lg:text-right">
-            <p className="text-xl font-bold text-gray-900">4.8</p>
-            <p className="text-xs text-gray-500">Average Rating</p>
-            <div className="mt-1 flex justify-center gap-0.5 lg:justify-end" aria-hidden="true">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
-              ))}
+          {/* Badge Preuve Sociale avec fond translucide sombre */}
+          <div className="mt-6 flex items-center gap-4 rounded-xl border border-white/20 bg-black/40 p-4 text-white shadow-lg md:mt-0 sm:gap-6">
+            <img
+              src="/images/createuse.jpg"
+              alt="Hiba, créatrice des sacs en crochet artisanaux"
+              className="h-14 w-14 rounded-full border-2 border-white object-cover shadow-sm sm:h-16 sm:w-16"
+            />
+
+            <div className="flex gap-6">
+              <div>
+                <p className="text-lg font-bold text-white sm:text-xl">10K+</p>
+                <p className="text-xs text-white/80">Happy Customers</p>
+              </div>
+
+              <div>
+                <p className="text-lg font-bold text-white sm:text-xl">4.8</p>
+                <p className="text-xs text-white/80">Average Rating</p>
+                <div className="mt-1 flex gap-0.5" aria-hidden="true">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+              </div>
             </div>
-            <span className="sr-only">Note moyenne : 4,8 sur 5 étoiles</span>
           </div>
         </div>
       </div>

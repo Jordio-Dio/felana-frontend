@@ -24,11 +24,11 @@ function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePubl
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
       className={cn(
-        "group relative overflow-hidden rounded-3xl border border-[var(--border)] bg-white shadow-[var(--shadow-soft)] transition-all duration-200 ease-out",
-        "hover:shadow-xl hover:ring-2 hover:ring-[color:var(--primary)]/20"
+        "group relative overflow-hidden rounded-3xl border border-[#F2E6E1] bg-white shadow-sm transition-all duration-200 ease-out",
+        "hover:shadow-xl hover:ring-2 hover:ring-[#E09F82]/30"
       )}
     >
-      <div className="relative aspect-[4/5] overflow-hidden rounded-t-3xl bg-gray-100">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-t-3xl bg-[#FAF6F4]">
         {article.imageUrls.length > 0 ? (
           <img
             src={article.imageUrls[0]}
@@ -37,7 +37,7 @@ function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePubl
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-gray-300">
-            <ShoppingBag className="h-10 w-10" />
+            <ShoppingBag className="h-10 w-10 text-[#D8C4BC]" />
           </div>
         )}
 
@@ -76,7 +76,8 @@ function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePubl
       <div className="space-y-2 p-4">
         <p className="text-[11px] uppercase tracking-wide text-gray-400">{article.categorieNom}</p>
         <p className="truncate text-sm font-semibold text-gray-900">{article.nom}</p>
-        <p className="text-base font-bold text-[#E86F3D]">{formatCurrency(article.prixVente)}</p>
+        {/* Changement de couleur du prix (#D9886A) */}
+        <p className="text-base font-bold text-[#D9886A]">{formatCurrency(article.prixVente)}</p>
 
         <Button
           size="sm"
@@ -84,7 +85,7 @@ function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePubl
           onClick={() => onAdd(article)}
           className={cn(
             "w-full rounded-full py-2.5 font-medium shadow-sm transition-all duration-200 ease-out",
-            "bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)] hover:shadow-md",
+            "bg-[#2B2D42] text-white hover:bg-[#1D1E2C] hover:shadow-md",
             "disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none"
           )}
         >
@@ -103,7 +104,6 @@ export function ShopCatalogPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [categorieFilter, setCategorieFilter] = useState<string>("Toutes");
 
-  // Variantes d'animation
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -136,13 +136,9 @@ export function ShopCatalogPage() {
     [articles]
   );
 
-
-
-
   const heroHighlights = useMemo(() => {
     const seen = new Set<string>();
     const result: ArticlePublic[] = [];
-    // Tri décroissant par id = approximation de la récence (pas de champ date exposé côté vitrine)
     const sorted = [...articles].sort((a, b) => b.id - a.id);
     for (const article of sorted) {
       if (!seen.has(article.categorieNom)) {
@@ -171,7 +167,6 @@ export function ShopCatalogPage() {
 
   return (
     <div className="space-y-0">
-      {/* HERO — inspiré Glowora, palette rose/noir dédiée à cette section */}
       <ShopHero
         highlights={heroHighlights}
         onExplore={scrollToCatalogue}
@@ -181,13 +176,12 @@ export function ShopCatalogPage() {
         }}
       />
 
-      
-
       <div id="histoire" className="pt-10">
         <ArtisanBanner onExplore={scrollToCatalogue} />
       </div>
 
       <div className="pt-10" id="catalogue">
+        {/* Catégories avec le nouveau thème rose/abricot */}
         <div className="mb-8 flex justify-center gap-5 overflow-x-auto px-2 pb-2 sm:gap-8">
           {isLoading ? (
             Array.from({ length: 5 }).map((_, i) => (
@@ -209,13 +203,13 @@ export function ShopCatalogPage() {
                   onClick={() => setCategorieFilter(value)}
                   className={cn(
                     "flex shrink-0 flex-col items-center gap-2 rounded-2xl px-3 py-2 transition-colors",
-                    isActive ? "bg-[#F5EBE6]" : "hover:bg-gray-50"
+                    isActive ? "bg-[#FDEEE9]" : "hover:bg-gray-50"
                   )}
                 >
                   <span
                     className={cn(
                       "flex h-11 w-11 items-center justify-center rounded-full transition-colors",
-                      isActive ? "bg-[#E86F3D] text-white" : "bg-gray-100 text-gray-500"
+                      isActive ? "bg-[#D9886A] text-white" : "bg-gray-100 text-gray-500"
                     )}
                   >
                     <Icon className="h-5 w-5" />
@@ -223,7 +217,7 @@ export function ShopCatalogPage() {
                   <span
                     className={cn(
                       "whitespace-nowrap text-xs font-medium",
-                      isActive ? "text-[#E86F3D]" : "text-gray-500"
+                      isActive ? "text-[#D9886A]" : "text-gray-500"
                     )}
                   >
                     {label}
@@ -232,7 +226,6 @@ export function ShopCatalogPage() {
               );
             })
           )}
-
         </div>
 
         {isLoading ? (
@@ -250,12 +243,12 @@ export function ShopCatalogPage() {
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-[var(--border)] bg-[var(--muted)] p-10 text-center shadow-sm">
-            <p className="text-base font-medium text-[var(--foreground)]">Aucun article ne correspond à votre recherche.</p>
-            <p className="mt-2 text-sm text-[var(--muted-foreground)]">Essayez une autre catégorie ou un autre mot-clé.</p>
+          <div className="rounded-3xl border border-dashed border-[#EAE0DA] bg-[#FAF6F4] p-10 text-center shadow-sm">
+            <p className="text-base font-medium text-gray-800">Aucun article ne correspond à votre recherche.</p>
+            <p className="mt-2 text-sm text-gray-500">Essayez une autre catégorie ou un autre mot-clé.</p>
             <Button
               variant="outline"
-              className="mt-5"
+              className="mt-5 border-[#D9886A] text-[#D9886A] hover:bg-[#FDEEE9]"
               onClick={() => {
                 setCategorieFilter("Toutes");
               }}
@@ -268,7 +261,7 @@ export function ShopCatalogPage() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            key={categorieFilter + search} // Réanime proprement lors du changement de filtre
+            key={categorieFilter + search}
             className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
           >
             {filtered.map((article) => (
