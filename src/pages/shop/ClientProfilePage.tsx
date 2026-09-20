@@ -5,12 +5,15 @@ import { clientAuthService } from "@/api/clientAuthService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { User, KeyRound, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import type { AxiosError } from "axios";
 import type { ApiErrorResponse } from "@/types/api.types";
 
 export function ClientProfilePage() {
     const { client, isLoading, refreshClient } = useClientAuth();
     const navigate = useNavigate();
+
+    const [activeTab, setActiveTab] = useState<"profile" | "password">("profile");
 
     const [isLoadingProfile, setIsLoadingProfile] = useState(false);
     const [isLoadingPassword, setIsLoadingPassword] = useState(false);
@@ -25,19 +28,20 @@ export function ClientProfilePage() {
     const [telephone, setTelephone] = useState(client?.telephone ?? "");
     const [adresse, setAdresse] = useState(client?.adresse ?? "");
 
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+
     if (isLoading) {
         return (
-            <div className="mx-auto max-w-2xl space-y-6 py-8 px-4">
-                <div className="rounded-3xl border border-[var(--border)] bg-white p-6 shadow-sm">
-                    <div className="mb-4 h-6 w-40 animate-pulse rounded-md bg-[var(--muted)]" />
-                    <div className="space-y-4">
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            <div className="h-11 animate-pulse rounded-xl bg-[var(--muted)]" />
-                            <div className="h-11 animate-pulse rounded-xl bg-[var(--muted)]" />
-                        </div>
-                        <div className="h-11 animate-pulse rounded-xl bg-[var(--muted)]" />
-                        <div className="h-11 animate-pulse rounded-xl bg-[var(--muted)]" />
-                        <div className="h-11 animate-pulse rounded-xl bg-[var(--muted)]" />
+            <div className="flex min-h-[60vh] items-center justify-center px-4">
+                <div className="w-full max-w-md rounded-3xl border border-[#F2E6E1] bg-white p-6 shadow-sm">
+                    <div className="mx-auto h-12 w-12 animate-pulse rounded-full bg-[#FAF6F4]" />
+                    <div className="mt-4 h-6 w-3/4 animate-pulse rounded-md bg-[#FAF6F4] mx-auto" />
+                    <div className="mt-6 space-y-3">
+                        <div className="h-10 animate-pulse rounded-xl bg-[#FAF6F4]" />
+                        <div className="h-10 animate-pulse rounded-xl bg-[#FAF6F4]" />
+                        <div className="h-10 animate-pulse rounded-xl bg-[#FAF6F4]" />
                     </div>
                 </div>
             </div>
@@ -46,16 +50,15 @@ export function ClientProfilePage() {
 
     if (!client) {
         return (
-            <div className="mx-auto max-w-xl rounded-3xl border border-dashed border-[var(--border)] bg-[var(--muted)] p-8 text-center shadow-sm">
-                <p className="text-lg font-semibold text-[var(--foreground)]">Profil indisponible pour le moment.</p>
-                <p className="mt-2 text-sm text-[var(--muted-foreground)]">Veuillez réessayer dans quelques instants.</p>
+            <div className="flex min-h-[60vh] items-center justify-center px-4">
+                <div className="w-full max-w-sm rounded-3xl border border-dashed border-[#E09F82]/40 bg-[#FAF6F4] p-8 text-center">
+                    <AlertCircle className="mx-auto h-8 w-8 text-[#8B3A1C]" />
+                    <p className="mt-3 text-base font-bold text-stone-900">Profil indisponible</p>
+                    <p className="mt-1 text-xs text-stone-500">Veuillez réessayer dans quelques instants.</p>
+                </div>
             </div>
         );
     }
-
-    const [currentPassword, setCurrentPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
 
     async function handleProfileSubmit(e: FormEvent) {
         e.preventDefault();
@@ -141,153 +144,234 @@ export function ClientProfilePage() {
         }
     }
 
-    return (
-        <div className="mx-auto max-w-2xl space-y-6 py-8 px-4">
-            <h1 className="text-3xl font-bold tracking-tight text-[#222222]">
-                Mon profil client
-            </h1>
+    const initials = `${prenom?.[0] ?? ""}${nom?.[0] ?? ""}`.toUpperCase() || "C";
 
-            <div className="rounded-2xl border border-[#EAE2DD] bg-white p-6 shadow-sm sm:p-8">
-                <h2 className="mb-4 text-lg font-semibold text-[#222222]">
-                    Informations personnelles
-                </h2>
-                <form onSubmit={handleProfileSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div className="space-y-1.5">
-                            <Label htmlFor="client-nom">Nom</Label>
+    return (
+        <div className="flex min-h-[80vh] items-center justify-center px-4 py-8">
+            <div className="w-full max-w-md overflow-hidden rounded-3xl border border-[#F2E6E1] bg-white p-6 shadow-xl shadow-[#8B3A1C]/5">
+                
+                {/* En-tête de profil compact */}
+                <div className="flex flex-col items-center border-b border-[#F2E6E1] pb-5 text-center">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FDEEE9] text-base font-black text-[#8B3A1C] shadow-inner">
+                        {initials}
+                    </div>
+                    <h1 className="mt-3 text-xl font-extrabold text-stone-900 tracking-tight">
+                        {prenom} {nom}
+                    </h1>
+                    <p className="text-xs text-stone-500 font-medium">{email}</p>
+                </div>
+
+                {/* Sélecteur d'onglets (Profil vs Mot de passe) */}
+                <div className="mt-5 flex rounded-xl bg-[#FAF6F4] p-1 border border-[#F2E6E1]">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setActiveTab("profile");
+                            setProfileSuccess(false);
+                            setProfileError(null);
+                        }}
+                        className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-bold transition-all ${
+                            activeTab === "profile"
+                                ? "bg-white text-[#8B3A1C] shadow-xs"
+                                : "text-stone-500 hover:text-stone-800"
+                        }`}
+                    >
+                        <User className="h-3.5 w-3.5" />
+                        Informations
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setActiveTab("password");
+                            setPasswordSuccess(false);
+                            setPasswordError(null);
+                        }}
+                        className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-bold transition-all ${
+                            activeTab === "password"
+                                ? "bg-white text-[#8B3A1C] shadow-xs"
+                                : "text-stone-500 hover:text-stone-800"
+                        }`}
+                    >
+                        <KeyRound className="h-3.5 w-3.5" />
+                        Sécurité
+                    </button>
+                </div>
+
+                {/* Formulaire Informations */}
+                {activeTab === "profile" && (
+                    <form onSubmit={handleProfileSubmit} className="mt-5 space-y-3.5">
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1">
+                                <Label htmlFor="client-nom" className="text-xs font-medium text-stone-600">
+                                    Nom
+                                </Label>
+                                <Input
+                                    id="client-nom"
+                                    value={nom}
+                                    onChange={(e) => setNom(e.target.value)}
+                                    className="h-9 rounded-xl border-[#F2E6E1] text-xs focus-visible:ring-[#8B3A1C]"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <Label htmlFor="client-prenom" className="text-xs font-medium text-stone-600">
+                                    Prénom
+                                </Label>
+                                <Input
+                                    id="client-prenom"
+                                    value={prenom}
+                                    onChange={(e) => setPrenom(e.target.value)}
+                                    className="h-9 rounded-xl border-[#F2E6E1] text-xs focus-visible:ring-[#8B3A1C]"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            <Label htmlFor="client-email" className="text-xs font-medium text-stone-600">
+                                E-mail
+                            </Label>
                             <Input
-                                id="client-nom"
-                                value={nom}
-                                onChange={(e) => setNom(e.target.value)}
+                                id="client-email"
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="h-9 rounded-xl border-[#F2E6E1] text-xs focus-visible:ring-[#8B3A1C]"
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <Label htmlFor="client-telephone" className="text-xs font-medium text-stone-600">
+                                Téléphone
+                            </Label>
+                            <Input
+                                id="client-telephone"
+                                type="tel"
+                                value={telephone}
+                                onChange={(e) => setTelephone(e.target.value)}
+                                className="h-9 rounded-xl border-[#F2E6E1] text-xs focus-visible:ring-[#8B3A1C]"
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <Label htmlFor="client-adresse" className="text-xs font-medium text-stone-600">
+                                Adresse
+                            </Label>
+                            <Input
+                                id="client-adresse"
+                                value={adresse}
+                                onChange={(e) => setAdresse(e.target.value)}
+                                className="h-9 rounded-xl border-[#F2E6E1] text-xs focus-visible:ring-[#8B3A1C]"
+                            />
+                        </div>
+
+                        {profileError && (
+                            <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-2.5 text-xs text-red-700">
+                                <AlertCircle className="h-4 w-4 shrink-0" />
+                                <span>{profileError}</span>
+                            </div>
+                        )}
+
+                        {profileSuccess && (
+                            <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-2.5 text-xs text-emerald-800">
+                                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+                                <span>Modifications enregistrées avec succès !</span>
+                            </div>
+                        )}
+
+                        <Button
+                            type="submit"
+                            disabled={isLoadingProfile}
+                            className="mt-2 h-10 w-full gap-2 rounded-xl bg-[#8B3A1C] text-xs font-bold text-white shadow-md shadow-[#8B3A1C]/20 transition-all hover:bg-[#722F16] active:scale-[0.98]"
+                        >
+                            {isLoadingProfile ? (
+                                <>
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                    <span>Enregistrement...</span>
+                                </>
+                            ) : (
+                                "Enregistrer les modifications"
+                            )}
+                        </Button>
+                    </form>
+                )}
+
+                {/* Formulaire Mot de Passe */}
+                {activeTab === "password" && (
+                    <form onSubmit={handlePasswordSubmit} className="mt-5 space-y-3.5">
+                        <div className="space-y-1">
+                            <Label htmlFor="current-password" className="text-xs font-medium text-stone-600">
+                                Mot de passe actuel
+                            </Label>
+                            <Input
+                                id="current-password"
+                                type="password"
+                                value={currentPassword}
+                                onChange={(e) => setCurrentPassword(e.target.value)}
+                                className="h-9 rounded-xl border-[#F2E6E1] text-xs focus-visible:ring-[#8B3A1C]"
                                 required
                             />
                         </div>
-                        <div className="space-y-1.5">
-                            <Label htmlFor="client-prenom">Prénom</Label>
+
+                        <div className="space-y-1">
+                            <Label htmlFor="new-password" className="text-xs font-medium text-stone-600">
+                                Nouveau mot de passe
+                            </Label>
                             <Input
-                                id="client-prenom"
-                                value={prenom}
-                                onChange={(e) => setPrenom(e.target.value)}
+                                id="new-password"
+                                type="password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                minLength={8}
+                                className="h-9 rounded-xl border-[#F2E6E1] text-xs focus-visible:ring-[#8B3A1C]"
+                                required
                             />
                         </div>
-                    </div>
 
-                    <div className="space-y-1.5">
-                        <Label htmlFor="client-email">E-mail</Label>
-                        <Input
-                            id="client-email"
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            
-                        />
-                    </div>
-
-                    <div className="space-y-1.5">
-                        <Label htmlFor="client-telephone">Téléphone</Label>
-                        <Input
-                            id="client-telephone"
-                            type="tel"
-                            value={telephone}
-                            onChange={(e) => setTelephone(e.target.value)}
-                        />
-                    </div>
-
-                    <div className="space-y-1.5">
-                        <Label htmlFor="client-adresse">Adresse</Label>
-                        <Input
-                            id="client-adresse"
-                            value={adresse}
-                            onChange={(e) => setAdresse(e.target.value)}
-                        />
-                    </div>
-
-                    {profileError && (
-                        <div className="rounded-lg border border-[#F0D2C1] bg-[#FFF5F0] px-3 py-2 text-sm text-[#B95C2C]">
-                            {profileError}
+                        <div className="space-y-1">
+                            <Label htmlFor="confirm-password" className="text-xs font-medium text-stone-600">
+                                Confirmation
+                            </Label>
+                            <Input
+                                id="confirm-password"
+                                type="password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                minLength={8}
+                                className="h-9 rounded-xl border-[#F2E6E1] text-xs focus-visible:ring-[#8B3A1C]"
+                                required
+                            />
                         </div>
-                    )}
 
-                    {profileSuccess && (
-                        <div className="rounded-lg border border-[#D9E9D5] bg-[#F4FBF3] px-3 py-2 text-sm text-[#28643B]">
-                            Modifications enregistrées avec succès !
-                        </div>
-                    )}
+                        {passwordError && (
+                            <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-2.5 text-xs text-red-700">
+                                <AlertCircle className="h-4 w-4 shrink-0" />
+                                <span>{passwordError}</span>
+                            </div>
+                        )}
 
-                    <Button
-                        type="submit"
-                        disabled={isLoadingProfile}
-                        className="w-full rounded-md bg-[#E86F3D] text-white hover:bg-[#D95F2C]"
-                    >
-                        {isLoadingProfile ? "Enregistrement..." : "Enregistrer les modifications"}
-                    </Button>
-                </form>
-            </div>
+                        {passwordSuccess && (
+                            <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-2.5 text-xs text-emerald-800">
+                                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+                                <span>Mot de passe modifié avec succès.</span>
+                            </div>
+                        )}
 
-            <div className="rounded-2xl border border-[#EAE2DD] bg-[#F9F9F9] p-6 shadow-sm sm:p-8">
-                <h2 className="mb-4 text-lg font-semibold text-[#222222]">
-                    Changer le mot de passe
-                </h2>
-                <form onSubmit={handlePasswordSubmit} className="space-y-4">
-                    <div className="space-y-1.5">
-                        <Label htmlFor="current-password">Mot de passe actuel</Label>
-                        <Input
-                            id="current-password"
-                            type="password"
-                            value={currentPassword}
-                            onChange={(e) => setCurrentPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-
-                    <div className="space-y-1.5">
-                        <Label htmlFor="new-password">Nouveau mot de passe</Label>
-                        <Input
-                            id="new-password"
-                            type="password"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            minLength={8}
-                            required
-                        />
-                    </div>
-
-                    <div className="space-y-1.5">
-                        <Label htmlFor="confirm-password">
-                            Confirmer le nouveau mot de passe
-                        </Label>
-                        <Input
-                            id="confirm-password"
-                            type="password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            minLength={8}
-                            required
-                        />
-                    </div>
-
-                    {passwordError && (
-                        <div className="rounded-lg border border-[#F0D2C1] bg-[#FFF5F0] px-3 py-2 text-sm text-[#B95C2C]">
-                            {passwordError}
-                        </div>
-                    )}
-
-                    {passwordSuccess && (
-                        <div className="rounded-lg border border-[#D9E9D5] bg-[#F4FBF3] px-3 py-2 text-sm text-[#28643B]">
-                            Mot de passe modifié avec succès.
-                        </div>
-                    )}
-
-                    <Button
-                        type="submit"
-                        disabled={isLoadingPassword}
-                        className="w-full rounded-md bg-[#E86F3D] text-white hover:bg-[#D95F2C]"
-                    >
-                        {isLoadingPassword
-                            ? "Modification..."
-                            : "Changer le mot de passe"}
-                    </Button>
-                </form>
+                        <Button
+                            type="submit"
+                            disabled={isLoadingPassword}
+                            className="mt-2 h-10 w-full gap-2 rounded-xl bg-[#8B3A1C] text-xs font-bold text-white shadow-md shadow-[#8B3A1C]/20 transition-all hover:bg-[#722F16] active:scale-[0.98]"
+                        >
+                            {isLoadingPassword ? (
+                                <>
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                    <span>Modification...</span>
+                                </>
+                            ) : (
+                                "Changer le mot de passe"
+                            )}
+                        </Button>
+                    </form>
+                )}
             </div>
         </div>
     );
