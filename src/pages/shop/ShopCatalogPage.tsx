@@ -13,10 +13,17 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useClientAuth } from "@/context/ClientAuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ShopHero } from "@/components/shop/ShopHero";
 
-function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePublic; onAdd: (a: ArticlePublic) => void; isAuthenticated: boolean }) {
+function ProductCard({
+  article,
+  onAdd,
+  isAuthenticated,
+}: {
+  article: ArticlePublic;
+  onAdd: (a: ArticlePublic) => void;
+  isAuthenticated: boolean;
+}) {
   const [isFavorite, setIsFavorite] = useState(false);
 
   return (
@@ -51,28 +58,24 @@ function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePubl
           </div>
         )}
 
-        {/* Bouton Favori avec fond flouté */}
+        {/* Bouton Favori avec l'attribut natif title */}
         {isAuthenticated && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <motion.button
-                whileTap={{ scale: 0.85 }}
-                whileHover={{ scale: 1.1 }}
-                type="button"
-                onClick={() => setIsFavorite((prev) => !prev)}
-                className="absolute right-3 top-3 z-[1] flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white/80 shadow-xs backdrop-blur-md transition-colors hover:bg-white"
-                aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
-              >
-                <Heart
-                  className={cn(
-                    "h-4 w-4 transition-colors",
-                    isFavorite ? "fill-red-500 text-red-500" : "text-stone-400 hover:text-stone-600"
-                  )}
-                />
-              </motion.button>
-            </TooltipTrigger>
-            <TooltipContent>{isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}</TooltipContent>
-          </Tooltip>
+          <motion.button
+            whileTap={{ scale: 0.85 }}
+            whileHover={{ scale: 1.1 }}
+            type="button"
+            onClick={() => setIsFavorite((prev) => !prev)}
+            title={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+            aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+            className="absolute right-3 top-3 z-[1] flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white/80 shadow-xs backdrop-blur-md transition-colors hover:bg-white"
+          >
+            <Heart
+              className={cn(
+                "h-4 w-4 transition-colors",
+                isFavorite ? "fill-red-500 text-red-500" : "text-stone-400 hover:text-stone-600"
+              )}
+            />
+          </motion.button>
         )}
       </div>
 
@@ -90,7 +93,7 @@ function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePubl
           </p>
         </div>
 
-        {/* Bouton d'action harmonisé aux couleurs du site */}
+        {/* Bouton d'action */}
         <Button
           size="sm"
           disabled={!article.disponible}
@@ -193,8 +196,8 @@ export function ShopCatalogPage() {
       </div>
 
       <div className="pt-10" id="catalogue">
-        {/* Catégories avec le nouveau thème rose/abricot */}
-        <div className="mb-8 flex justify-center gap-5 overflow-x-auto px-2 pb-2 sm:gap-8">
+        {/* Catégories avec le thème rose/abricot */}
+        <div className="mb-8 flex justify-center gap-4 overflow-x-auto px-2 pb-2 sm:gap-6">
           {isLoading ? (
             Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="flex flex-col items-center gap-2 px-3 py-2">
@@ -203,33 +206,38 @@ export function ShopCatalogPage() {
               </div>
             ))
           ) : (
-            [{ label: "All", value: "Toutes", Icon: AllCategoriesIcon }, ...categories.map((cat) => ({
-              label: cat,
-              value: cat,
-              Icon: getCategoryIcon(cat),
-            }))].map(({ label, value, Icon }) => {
+            [
+              { label: "Toutes", value: "Toutes", Icon: AllCategoriesIcon },
+              ...categories.map((cat) => ({
+                label: cat,
+                value: cat,
+                Icon: getCategoryIcon(cat),
+              })),
+            ].map(({ label, value, Icon }) => {
               const isActive = categorieFilter === value;
               return (
                 <button
                   key={value}
                   onClick={() => setCategorieFilter(value)}
                   className={cn(
-                    "flex shrink-0 flex-col items-center gap-2 rounded-2xl px-3 py-2 transition-colors",
-                    isActive ? "bg-[#FDEEE9]" : "hover:bg-gray-50"
+                    "flex shrink-0 cursor-pointer flex-col items-center gap-2 rounded-2xl px-3 py-2 transition-all duration-200",
+                    isActive ? "bg-[#FDEEE9]" : "hover:bg-stone-50"
                   )}
                 >
                   <span
                     className={cn(
-                      "flex h-11 w-11 items-center justify-center rounded-full transition-colors",
-                      isActive ? "bg-[#D9886A] text-white" : "bg-gray-100 text-gray-500"
+                      "flex h-11 w-11 items-center justify-center rounded-full transition-all duration-200",
+                      isActive
+                        ? "scale-105 bg-[#D9886A] text-white shadow-xs shadow-[#D9886A]/30"
+                        : "bg-stone-100 text-stone-500"
                     )}
                   >
                     <Icon className="h-5 w-5" />
                   </span>
                   <span
                     className={cn(
-                      "whitespace-nowrap text-xs font-medium",
-                      isActive ? "text-[#D9886A]" : "text-gray-500"
+                      "whitespace-nowrap text-xs font-semibold transition-colors",
+                      isActive ? "text-[#D9886A]" : "text-stone-500"
                     )}
                   >
                     {label}
@@ -256,8 +264,12 @@ export function ShopCatalogPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-[#EAE0DA] bg-[#FAF6F4] p-10 text-center shadow-sm">
-            <p className="text-base font-medium text-gray-800">Aucun article ne correspond à votre recherche.</p>
-            <p className="mt-2 text-sm text-gray-500">Essayez une autre catégorie ou un autre mot-clé.</p>
+            <p className="text-base font-medium text-gray-800">
+              Aucun article ne correspond à votre recherche.
+            </p>
+            <p className="mt-2 text-sm text-gray-500">
+              Essayez une autre catégorie ou un autre mot-clé.
+            </p>
             <Button
               variant="outline"
               className="mt-5 border-[#D9886A] text-[#D9886A] hover:bg-[#FDEEE9]"
@@ -278,7 +290,11 @@ export function ShopCatalogPage() {
           >
             {filtered.map((article) => (
               <motion.div key={article.id} variants={itemVariants}>
-                <ProductCard article={article} onAdd={handleAddToCart} isAuthenticated={isAuthenticated} />
+                <ProductCard
+                  article={article}
+                  onAdd={handleAddToCart}
+                  isAuthenticated={isAuthenticated}
+                />
               </motion.div>
             ))}
           </motion.div>
