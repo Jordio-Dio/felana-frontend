@@ -41,7 +41,7 @@ function ProductCard({
           <img
             src={article.imageUrls[0]}
             alt={article.nom}
-            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-106"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-gray-300">
@@ -196,7 +196,7 @@ export function ShopCatalogPage() {
       </div>
 
       <div className="pt-10" id="catalogue">
-        {/* Catégories avec le thème rose/abricot */}
+        {/* Barre de Catégories - Design Pro & Minimaliste */}
         <div className="mb-8 flex justify-center gap-4 overflow-x-auto px-2 pb-2 sm:gap-6">
           {isLoading ? (
             Array.from({ length: 5 }).map((_, i) => (
@@ -220,24 +220,28 @@ export function ShopCatalogPage() {
                   key={value}
                   onClick={() => setCategorieFilter(value)}
                   className={cn(
-                    "flex shrink-0 cursor-pointer flex-col items-center gap-2 rounded-2xl px-3 py-2 transition-all duration-200",
-                    isActive ? "bg-[#FDEEE9]" : "hover:bg-stone-50"
+                    "group flex shrink-0 cursor-pointer flex-col items-center gap-2 rounded-2xl px-3.5 py-2 transition-all duration-200",
+                    isActive
+                      ? "bg-[#FDEEE9]"
+                      : "hover:bg-stone-50/80 active:scale-95"
                   )}
                 >
                   <span
                     className={cn(
-                      "flex h-11 w-11 items-center justify-center rounded-full transition-all duration-200",
+                      "flex h-12 w-12 items-center justify-center rounded-full transition-all duration-200",
                       isActive
-                        ? "scale-105 bg-[#D9886A] text-white shadow-xs shadow-[#D9886A]/30"
-                        : "bg-stone-100 text-stone-500"
+                        ? "scale-105 bg-[#D9886A] text-white shadow-md shadow-[#D9886A]/25"
+                        : "bg-stone-100 text-stone-500 group-hover:bg-[#FDEEE9] group-hover:text-[#D9886A] group-hover:scale-105"
                     )}
                   >
-                    <Icon className="h-5 w-5" />
+                    <Icon className="h-5 w-5 transition-transform duration-200 group-hover:scale-110" />
                   </span>
                   <span
                     className={cn(
-                      "whitespace-nowrap text-xs font-semibold transition-colors",
-                      isActive ? "text-[#D9886A]" : "text-stone-500"
+                      "whitespace-nowrap text-xs font-semibold transition-colors duration-200",
+                      isActive
+                        ? "text-[#D9886A]"
+                        : "text-stone-500 group-hover:text-[#D9886A]"
                     )}
                   >
                     {label}
