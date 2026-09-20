@@ -21,19 +21,20 @@ function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePubl
 
   return (
     <motion.div
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
+      whileHover={{ y: -5 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
       className={cn(
-        "group relative overflow-hidden rounded-3xl border border-[#F2E6E1] bg-white shadow-sm transition-all duration-200 ease-out",
-        "hover:shadow-xl hover:ring-2 hover:ring-[#E09F82]/30"
+        "group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-[#F2E6E1] bg-white shadow-xs transition-all duration-300",
+        "hover:border-[#E09F82]/40 hover:shadow-xl hover:shadow-[#D9886A]/10"
       )}
     >
+      {/* Zone Image */}
       <div className="relative aspect-[4/5] overflow-hidden rounded-t-3xl bg-[#FAF6F4]">
         {article.imageUrls.length > 0 ? (
           <img
             src={article.imageUrls[0]}
             alt={article.nom}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-106"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-gray-300">
@@ -41,14 +42,16 @@ function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePubl
           </div>
         )}
 
-        <div className="absolute left-3 top-3 z-[1] flex flex-col gap-1">
-          {!article.disponible && (
-            <span className="rounded-full bg-gray-900/80 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+        {/* Badge Épuisé */}
+        {!article.disponible && (
+          <div className="absolute left-3 top-3 z-[1]">
+            <span className="rounded-full bg-stone-900/80 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-md">
               Épuisé
             </span>
-          )}
-        </div>
+          </div>
+        )}
 
+        {/* Bouton Favori avec fond flouté */}
         {isAuthenticated && (
           <Tooltip>
             <TooltipTrigger asChild>
@@ -57,13 +60,13 @@ function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePubl
                 whileHover={{ scale: 1.1 }}
                 type="button"
                 onClick={() => setIsFavorite((prev) => !prev)}
-                className="absolute bottom-3 right-3 z-[1] flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-md transition-colors duration-200 ease-out hover:bg-white"
+                className="absolute right-3 top-3 z-[1] flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white/80 shadow-xs backdrop-blur-md transition-colors hover:bg-white"
                 aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
               >
                 <Heart
                   className={cn(
                     "h-4 w-4 transition-colors",
-                    isFavorite ? "fill-red-500 text-red-500" : "text-gray-400"
+                    isFavorite ? "fill-red-500 text-red-500" : "text-stone-400 hover:text-stone-600"
                   )}
                 />
               </motion.button>
@@ -73,20 +76,29 @@ function ProductCard({ article, onAdd, isAuthenticated }: { article: ArticlePubl
         )}
       </div>
 
-      <div className="space-y-2 p-4">
-        <p className="text-[11px] uppercase tracking-wide text-gray-400">{article.categorieNom}</p>
-        <p className="truncate text-sm font-semibold text-gray-900">{article.nom}</p>
-        {/* Changement de couleur du prix (#D9886A) */}
-        <p className="text-base font-bold text-[#D9886A]">{formatCurrency(article.prixVente)}</p>
+      {/* Contenu de la Carte */}
+      <div className="flex flex-1 flex-col justify-between p-4.5">
+        <div className="space-y-1">
+          <p className="text-[10px] font-bold tracking-wider uppercase text-stone-400">
+            {article.categorieNom}
+          </p>
+          <p className="line-clamp-1 text-sm font-semibold text-stone-900 transition-colors group-hover:text-[#D9886A]">
+            {article.nom}
+          </p>
+          <p className="pt-1 text-base font-extrabold text-[#D9886A]">
+            {formatCurrency(article.prixVente)}
+          </p>
+        </div>
 
+        {/* Bouton d'action harmonisé aux couleurs du site */}
         <Button
           size="sm"
           disabled={!article.disponible}
           onClick={() => onAdd(article)}
           className={cn(
-            "w-full rounded-full py-2.5 font-medium shadow-sm transition-all duration-200 ease-out",
-            "bg-[#2B2D42] text-white hover:bg-[#1D1E2C] hover:shadow-md",
-            "disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none"
+            "mt-4 w-full rounded-2xl py-2.5 text-xs font-semibold shadow-xs transition-all duration-200",
+            "bg-[#D9886A] text-white hover:bg-[#c27558] hover:shadow-md hover:shadow-[#D9886A]/20 active:scale-[0.98]",
+            "disabled:bg-stone-200 disabled:text-stone-400 disabled:shadow-none"
           )}
         >
           {article.disponible ? "Ajouter au panier" : "Épuisé"}

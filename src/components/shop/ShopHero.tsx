@@ -2,6 +2,7 @@ import { ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ImageWithSkeleton } from "@/components/shared/ImageWithSkeleton";
 import type { ArticlePublic } from "@/types/shop.types";
+import { motion } from "framer-motion";
 
 interface ShopHeroProps {
     highlights: ArticlePublic[];
@@ -9,7 +10,29 @@ interface ShopHeroProps {
     onSelectCategory: (categorie: string) => void;
 }
 
+
+
+
 export function ShopHero({ highlights, onExplore, onSelectCategory }: ShopHeroProps) {
+
+    const textToType = "Révélez tout le charme \nde fait main";
+
+    // Configurations de l'animation typewriter pour chaque caractère du texte
+    const sentenceVariants = {
+        hidden: { opacity: 1 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.05, // Délai entre chaque caractère
+            },
+        },
+    };
+
+    const letterVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+    };
+
     return (
         <section id="hero" className="relative overflow-hidden rounded-3xl">
             {/* Photo de fond */}
@@ -22,11 +45,18 @@ export function ShopHero({ highlights, onExplore, onSelectCategory }: ShopHeroPr
                 <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
 
                 <div className="relative z-[1] flex h-full flex-col justify-center px-6 sm:px-10">
-                    <h1 className="max-w-lg font-serif text-3xl font-bold leading-tight text-white sm:text-5xl">
-                        Révélez tout le charme
-                        <br />
-                        de fait main
-                    </h1>
+                    <motion.h1
+                        variants={sentenceVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="max-w-lg font-serif text-3xl font-bold leading-tight text-white sm:text-5xl"
+                    >
+                        {textToType.split("").map((char, index) => (
+                            <motion.span key={index} variants={letterVariants}>
+                                {char === "\n" ? <br /> : char}
+                            </motion.span>
+                        ))}
+                    </motion.h1>
                     <p className="mt-3 max-w-md text-sm text-white/90 sm:text-base">
                         Artisanal, Unique, Made in Toamasina.
                     </p>
