@@ -64,11 +64,9 @@ export function ClientRegisterPage() {
         {/* En-tête de Marque VALISOA */}
         <div className="mb-8 text-center">
           <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#8B3A1C] text-white shadow-lg shadow-[#8B3A1C]/25 ring-4 ring-[#8B3A1C]/10">
-            <span className="font-serif text-2xl font-black tracking-widest">V</span>
+            <span className="font-serif text-2xl font-black tracking-widest">H</span>
           </div>
-          <h1 className="text-2xl font-black tracking-widest uppercase text-stone-900">
-            VALISOA
-          </h1>
+          
           <p className="mt-1 text-xs font-medium text-stone-500">
             Créer mon compte
           </p>
