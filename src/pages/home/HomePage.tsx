@@ -1,44 +1,145 @@
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { Link } from "react-router-dom";
+import { ArrowRight, Star, Sparkles } from "lucide-react";
 import { ArtisanBanner } from "@/components/shop/ArtisanBanner";
+
+// Typage explicite des variantes Framer Motion pour TypeScript
+const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.5, ease: "easeOut" } 
+  },
+};
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15 },
+  },
+};
 
 function HeroSection() {
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-[#f6efe4] px-6 py-16 sm:rounded-3xl sm:px-10 sm:py-20">
-      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,0.7fr)] lg:gap-8">
-        <div className="text-center lg:text-left">
-          <h1 className="font-serif text-3xl font-bold leading-tight !text-[#000000] opacity-100 sm:text-4xl">
-            Révélez tout le charme de fait main
+    <section className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#FAF6F4] via-[#F6EFE4] to-[#EFE3D3] px-6 py-12 sm:px-10 sm:py-16 lg:py-20">
+      {/* Motif décoratif d'arrière-plan */}
+      <div className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-[#8B3A1C]/5 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-[#E86F3D]/10 blur-3xl" />
+
+      <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_1.1fr_0.8fr] lg:gap-8">
+        
+        {/* Colonne Gauche : Titre & CTA */}
+        <motion.div 
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          className="text-center lg:text-left"
+        >
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#8B3A1C]/10 px-3.5 py-1.5 text-xs font-semibold text-[#8B3A1C]">
+            <Sparkles className="h-3.5 w-3.5" />
+            Fait Main à Toamasina
+          </span>
+
+          <h1 className="mt-4 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl lg:text-5xl lg:leading-[1.15]">
+            Révélez tout le charme du <span className="text-[#8B3A1C]">fait main</span>
           </h1>
-          <p className="mt-3 text-lg text-gray-700">Artisanal, Unique, Made in Toamasina.</p>
-          <Link to="/shop" className="mt-6 inline-block text-base font-medium text-[#8a6f56] underline underline-offset-4 transition-colors hover:text-[#6f5a45]">
-            Découvrir la collection
-          </Link>
-        </div>
 
-        <div className="relative mx-auto h-56 w-full max-w-sm sm:h-72 sm:max-w-md">
-          <div className="absolute bottom-0 left-1/2 h-6 w-40 -translate-x-1/2 rounded-full bg-amber-100/70 sm:w-56" />
-          <img src="/images/sac-blanc.jpg" alt="Sac en crochet blanc fait main" className="absolute bottom-4 left-1/2 z-10 h-32 w-32 -translate-x-[85%] rotate-[-8deg] rounded-2xl object-cover shadow-lg transition-transform duration-300 hover:-translate-y-1 sm:h-44 sm:w-44" />
-          <img src="/images/sac-vert.jpg" alt="Sac en crochet vert fait main" className="absolute bottom-4 left-1/2 z-0 h-28 w-28 translate-x-[10%] rotate-[6deg] rounded-2xl object-cover shadow-md transition-transform duration-300 hover:-translate-y-1 sm:h-40 sm:w-40" />
-          <img src="/images/sac-rose.jpg" alt="Sac en crochet rose fait main" className="absolute bottom-6 left-1/2 z-20 h-36 w-36 -translate-x-1/2 rounded-2xl object-cover shadow-xl transition-transform duration-300 hover:-translate-y-1 sm:h-48 sm:w-48" />
-        </div>
+          <p className="mt-4 text-base text-stone-600 sm:text-lg">
+            Des créations artisanales uniques, façonnées avec passion, élégance et authenticité.
+          </p>
 
-        <div className="flex flex-col items-center gap-4 lg:items-end">
-          <img src="/images/createuse.jpg" alt="Hiba, créatrice des sacs en crochet artisanaux" className="h-16 w-16 rounded-full border-2 border-white object-cover shadow-md sm:h-20 sm:w-20" />
-          <div className="text-center lg:text-right">
-            <p className="text-xl font-bold text-gray-900">10K+</p>
-            <p className="text-xs text-gray-500">Happy Customers</p>
+          <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start">
+            <Link
+              to="/shop"
+              className="inline-flex items-center gap-2 rounded-2xl bg-[#8B3A1C] px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#8B3A1C]/25 transition-all hover:bg-[#722F17] hover:shadow-xl hover:shadow-[#8B3A1C]/35 active:scale-95"
+            >
+              Découvrir la collection
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
-          <div className="text-center lg:text-right">
-            <p className="text-xl font-bold text-gray-900">4.8</p>
-            <p className="text-xs text-gray-500">Average Rating</p>
-            <div className="mt-1 flex justify-center gap-0.5 lg:justify-end" aria-hidden="true">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <span key={i} className="h-3.5 w-3.5 fill-amber-500 text-amber-500">★</span>
-              ))}
+        </motion.div>
+
+        {/* Colonne Centre : Composition des images de sacs */}
+        <div className="relative mx-auto flex h-64 w-full max-w-sm items-center justify-center sm:h-80 sm:max-w-md">
+          {/* Ombre portée au sol */}
+          <div className="absolute bottom-2 h-6 w-48 rounded-full bg-[#8B3A1C]/15 blur-md sm:w-64" />
+
+          {/* Sac Blanc (Gauche) */}
+          <motion.img
+            initial={{ opacity: 0, x: -30, rotate: -12 }}
+            animate={{ opacity: 1, x: "-85%", rotate: -8 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            src="/images/sac-blanc.jpg"
+            alt="Sac en crochet blanc fait main"
+            className="absolute bottom-6 left-1/2 z-10 h-36 w-36 rounded-2xl object-cover shadow-lg ring-4 ring-white transition-transform duration-300 hover:z-30 hover:scale-105 sm:h-48 sm:w-48"
+          />
+
+          {/* Sac Vert (Droite) */}
+          <motion.img
+            initial={{ opacity: 0, x: 30, rotate: 12 }}
+            animate={{ opacity: 1, x: "10%", rotate: 6 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            src="/images/sac-vert.jpg"
+            alt="Sac en crochet vert fait main"
+            className="absolute bottom-6 left-1/2 z-0 h-32 w-32 rounded-2xl object-cover shadow-md ring-4 ring-white transition-transform duration-300 hover:z-30 hover:scale-105 sm:h-44 sm:w-44"
+          />
+
+          {/* Sac Rose (Centre) */}
+          <motion.img
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            src="/images/sac-rose.jpg"
+            alt="Sac en crochet rose fait main"
+            className="absolute bottom-8 left-1/2 z-20 h-40 w-40 rounded-2xl object-cover shadow-2xl ring-4 ring-white transition-transform duration-300 hover:scale-105 sm:h-52 sm:w-52"
+          />
+        </div>
+
+        {/* Colonne Droite : Preuve sociale & Artisan */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          className="flex flex-col items-center gap-6 rounded-3xl border border-white/60 bg-white/40 p-6 backdrop-blur-md lg:items-end lg:bg-transparent lg:p-0 lg:backdrop-blur-none"
+        >
+          {/* Portrait Créatrice */}
+          <div className="flex items-center gap-3 lg:flex-row-reverse">
+            <img
+              src="/images/createuse.jpg"
+              alt="Hiba, créatrice des sacs en crochet"
+              className="h-16 w-16 rounded-full border-2 border-white object-cover shadow-md ring-2 ring-[#8B3A1C]/20 sm:h-20 sm:w-20"
+            />
+            <div className="text-left lg:text-right">
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#8B3A1C]">Créatrice</p>
+              <p className="text-sm font-bold text-stone-900">Hiba</p>
             </div>
           </div>
-        </div>
+
+          <div className="h-px w-12 bg-stone-300/60 hidden lg:block" />
+
+          {/* Statistiques */}
+          <div className="flex justify-around gap-8 text-center lg:flex-col lg:gap-4 lg:text-right">
+            <div>
+              <p className="font-mono text-2xl font-black text-stone-900 sm:text-3xl">10K+</p>
+              <p className="text-xs font-medium text-stone-500">Clients satisfaits</p>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-center gap-1 lg:justify-end">
+                <span className="font-mono text-xl font-bold text-stone-900">4.8</span>
+                <div className="flex text-amber-500">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+              </div>
+              <p className="mt-0.5 text-xs font-medium text-stone-500">Note moyenne</p>
+            </div>
+          </div>
+        </motion.div>
+
       </div>
     </section>
   );
@@ -46,45 +147,95 @@ function HeroSection() {
 
 function CategoryCards() {
   const categories = [
-    { name: "Sacs & Paniers en Raphia", img: "/images/sac-rose.jpg", desc: "Des sacs et paniers tissés à la main avec du raphia naturel." },
-    { name: "Bijoux Artisanaux", img: "/images/sac-vert.jpg", desc: "Bijoux uniques façonnés avec passion et précision." },
-    { name: "Décoration d'Intérieur", img: "/images/sac-blanc.jpg", desc: "Pièces de décoration qui apportent chaleur et caractère." },
+    {
+      name: "Sacs & Paniers en Raphia",
+      img: "/images/sac-rose.jpg",
+      desc: "Des pièces tissées à la main avec du raphia naturel sélectionné.",
+    },
+    {
+      name: "Bijoux Artisanaux",
+      img: "/images/sac-vert.jpg",
+      desc: "Créations uniques façonnées avec passion et précision.",
+    },
+    {
+      name: "Décoration d'Intérieur",
+      img: "/images/sac-blanc.jpg",
+      desc: "Objets authentiques pour apporter de la chaleur à votre intérieur.",
+    },
   ];
 
   return (
-    <section className="mt-16">
-      <div className="text-center mb-10">
-        <span className="text-xs font-semibold uppercase tracking-widest text-[#8a6f56]">Nos collections</span>
-        <h2 className="mt-2 text-3xl font-bold text-[#3b2f24] sm:text-4xl">Découvrez nos catégories</h2>
-        <p className="mt-3 text-[#8a8276] max-w-2xl mx-auto">Chaque pièce raconte une histoire — celle d'un village, d'une main habile, d'un fil transformé en masterpiece.</p>
+    <section className="mt-20">
+      {/* En-tête de section */}
+      <div className="mb-12 text-center">
+        <span className="rounded-full bg-[#FAF6F4] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#8B3A1C]">
+          Nos Collections
+        </span>
+        <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-stone-900 sm:text-4xl">
+          Découvrez nos univers
+        </h2>
+        <p className="mx-auto mt-3 max-w-2xl text-sm text-stone-500 sm:text-base">
+          Chaque pièce raconte une histoire — celle d'un savoir-faire préservé et d'un fil transformé en œuvre d'art.
+        </p>
       </div>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
+
+      {/* Grille de cartes */}
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-50px" }}
+        variants={staggerContainer}
+        className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
+      >
         {categories.map((cat, idx) => (
-          <motion.div key={idx} whileHover={{ y: -4 }} transition={{ duration: 0.2 }} className="group relative overflow-hidden rounded-3xl border border-[var(--border)] bg-white shadow-[var(--shadow-soft)] transition-all duration-200 ease-out hover:shadow-xl hover:ring-2 hover:ring-[#8a6f56]/20">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-t-3xl bg-[#f6efe4]">
-              <img src={cat.img} alt={cat.name} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4">
-                <h3 className="text-xl font-bold text-white">{cat.name}</h3>
-                <p className="mt-1 text-sm text-white/80">{cat.desc}</p>
-                <Link to="/shop" className="mt-3 inline-block text-sm font-medium text-white underline underline-offset-4 transition-colors hover:text-[#E86F3D]">
-                  Acheter →
+          <motion.div
+            key={idx}
+            variants={fadeInUp}
+            whileHover={{ y: -6 }}
+            transition={{ duration: 0.25 }}
+            className="group relative overflow-hidden rounded-3xl border border-[#F2E6E1] bg-white shadow-lg shadow-[#8B3A1C]/5 transition-all duration-300 hover:shadow-2xl hover:shadow-[#8B3A1C]/15"
+          >
+            <div className="relative aspect-[4/5] overflow-hidden bg-[#FAF6F4]">
+              <img
+                src={cat.img}
+                alt={cat.name}
+                className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+              />
+              
+              {/* Overlay Gradient sombre progressif */}
+              <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/30 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-90" />
+
+              {/* Contenu de la carte */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <h3 className="text-xl font-bold tracking-tight text-white group-hover:text-[#F6EFE4]">
+                  {cat.name}
+                </h3>
+                <p className="mt-2 line-clamp-2 text-xs text-stone-300 sm:text-sm">
+                  {cat.desc}
+                </p>
+                
+                <Link
+                  to="/shop"
+                  className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#E86F3D] transition-colors hover:text-white"
+                >
+                  Découvrir
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
                 </Link>
               </div>
             </div>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }
 
 export default function HomePage() {
   return (
-    <>
+    <div className="space-y-12 pb-12">
       <HeroSection />
       <CategoryCards />
       <ArtisanBanner onExplore={() => {}} />
-    </>
+    </div>
   );
 }

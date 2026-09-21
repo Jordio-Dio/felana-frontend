@@ -3,6 +3,7 @@ import { ImagePlus, Loader2, X, Star } from "lucide-react";
 import { uploadImageToCloudinary } from "@/lib/cloudinary";
 import { notify } from "@/lib/toast";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ImageUploadFieldProps {
   imageUrls: string[];
@@ -11,11 +12,14 @@ interface ImageUploadFieldProps {
 }
 
 /**
- * Gère l'upload de plusieurs photos par article. La première image de la
- * liste sert de couverture (visible dans le tableau et la vitrine) -
- * l'utilisateur peut réordonner en cliquant l'étoile sur une autre photo.
+ * Gère l'upload de plusieurs photos par article aux couleurs de VALISOA.
+ * La première image de la liste sert de couverture.
  */
-export function ImageUploadField({ imageUrls, onChange, maxImages = 5 }: ImageUploadFieldProps) {
+export function ImageUploadField({
+  imageUrls,
+  onChange,
+  maxImages = 5,
+}: ImageUploadFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -57,55 +61,79 @@ export function ImageUploadField({ imageUrls, onChange, maxImages = 5 }: ImageUp
   }
 
   return (
-    <div className="space-y-2">
-      <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+    <div className="space-y-2.5">
+      <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-5">
         {imageUrls.map((url, index) => (
-          <div key={url} className="group relative aspect-square overflow-hidden rounded-lg border border-gray-200">
-            <img src={url} alt="" className="h-full w-full object-cover" />
+          <div
+            key={url}
+            className="group relative aspect-square overflow-hidden rounded-2xl border border-[#F2E6E1] bg-[#FAF6F4] shadow-sm transition-all hover:shadow-md"
+          >
+            <img src={url} alt={`Photo ${index + 1}`} className="h-full w-full object-cover" />
+
+            {/* Badge de couverture pour la première image */}
             {index === 0 && (
-              <span className="absolute left-1 top-1 rounded bg-rose-700 px-1.5 py-0.5 text-[10px] font-medium text-white">
+              <span className="absolute left-1.5 top-1.5 inline-flex items-center gap-1 rounded-lg bg-[#8B3A1C] px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                <Star className="h-3 w-3 fill-amber-300 text-amber-300" />
                 Couverture
               </span>
             )}
-            <div className="absolute inset-0 flex items-center justify-center gap-1 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+
+            {/* Incrustation d'actions au survol */}
+            <div className="absolute inset-0 flex items-center justify-center gap-1.5 bg-stone-900/40 opacity-0 backdrop-blur-[2px] transition-opacity duration-200 group-hover:opacity-100">
               {index !== 0 && (
-                <button
-                  type="button"
-                  onClick={() => setCover(index)}
-                  className="rounded-full bg-white p-1.5 text-gray-700 hover:bg-gray-100"
-                  title="Définir comme couverture"
-                >
-                  <Star className="h-3.5 w-3.5" />
-                </button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={() => setCover(index)}
+                      className="flex h-7 w-7 items-center justify-center rounded-xl bg-white text-stone-700 shadow-sm transition-transform hover:scale-110 hover:bg-[#FAF6F4] hover:text-[#8B3A1C]"
+                    >
+                      <Star className="h-3.5 w-3.5" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent className="rounded-lg bg-stone-900 text-[11px] text-white">
+                    Définir comme couverture
+                  </TooltipContent>
+                </Tooltip>
               )}
-              <button
-                type="button"
-                onClick={() => removeImage(index)}
-                className="rounded-full bg-white p-1.5 text-red-600 hover:bg-gray-100"
-                title="Supprimer"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="flex h-7 w-7 items-center justify-center rounded-xl bg-white text-rose-600 shadow-sm transition-transform hover:scale-110 hover:bg-rose-50 hover:text-rose-700"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent className="rounded-lg bg-rose-950 text-[11px] text-white">
+                  Supprimer
+                </TooltipContent>
+              </Tooltip>
             </div>
           </div>
         ))}
 
+        {/* Bouton d'ajout d'image */}
         {imageUrls.length < maxImages && (
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={isUploading}
             className={cn(
-              "flex aspect-square flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-gray-300 text-gray-400 hover:border-rose-400 hover:text-rose-600",
-              isUploading && "pointer-events-none opacity-50"
+              "flex aspect-square flex-col items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-[#F2E6E1] bg-[#FAF6F4]/50 text-stone-400 transition-all duration-200 hover:border-[#8B3A1C]/50 hover:bg-[#FAF6F4] hover:text-[#8B3A1C]",
+              isUploading && "pointer-events-none opacity-60"
             )}
           >
             {isUploading ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
+              <Loader2 className="h-5 w-5 animate-spin text-[#8B3A1C]" />
             ) : (
               <>
-                <ImagePlus className="h-5 w-5" />
-                <span className="text-[10px]">Ajouter</span>
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white text-[#8B3A1C] shadow-sm ring-1 ring-[#8B3A1C]/10">
+                  <ImagePlus className="h-4 w-4" />
+                </div>
+                <span className="text-[11px] font-semibold text-stone-600">Ajouter</span>
               </>
             )}
           </button>
@@ -121,8 +149,8 @@ export function ImageUploadField({ imageUrls, onChange, maxImages = 5 }: ImageUp
         className="hidden"
       />
 
-      <p className="text-xs text-gray-400">
-        {imageUrls.length}/{maxImages} photos — cliquez l'étoile pour définir la couverture.
+      <p className="text-[11px] font-medium text-stone-400">
+        {imageUrls.length}/{maxImages} photo(s) — Cliquez sur l'étoile pour définir la couverture.
       </p>
     </div>
   );

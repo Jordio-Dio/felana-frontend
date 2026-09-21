@@ -1,12 +1,11 @@
 import { useState, type FormEvent } from "react";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -22,14 +21,14 @@ interface CreateVendeurDialogProps {
 
 export function CreateVendeurDialog({ onCreated }: CreateVendeurDialogProps) {
   const [open, setOpen] = useState(false);
-  const [name, setname] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   function resetForm() {
-    setname("");
+    setName("");
     setEmail("");
     setPassword("");
     setError(null);
@@ -66,42 +65,53 @@ export function CreateVendeurDialog({ onCreated }: CreateVendeurDialogProps) {
       }}
     >
       <DialogTrigger asChild>
-        <Button className="bg-pink-600 text-white hover:bg-pink-800">
-          <Plus className="mr-2 h-4 w-4" />
+        <Button className="h-10 rounded-xl bg-[#8B3A1C] px-4 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-[#722F17] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B3A1C]">
+          <Plus className="mr-1.5 h-4 w-4" />
           Nouveau vendeur
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Créer un compte vendeur</DialogTitle>
+
+      <DialogContent className="sm:max-w-md rounded-2xl border-[#F2E6E1] bg-white p-6 shadow-xl">
+        <DialogHeader className="pb-2">
+          <DialogTitle className="text-base font-bold text-stone-900">
+            Créer un compte vendeur
+          </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="vendeur-name">name complet</Label>
+            <Label htmlFor="vendeur-name" className="text-xs font-semibold text-stone-700">
+              Nom complet <span className="text-[#8B3A1C]">*</span>
+            </Label>
             <Input
               id="vendeur-name"
               value={name}
-              onChange={(e) => setname(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               placeholder="Rakoto Jean"
               required
+              className="h-9 rounded-xl border-[#F2E6E1] bg-[#FAF6F4]/40 text-xs text-stone-900 placeholder:text-stone-400 focus:border-[#8B3A1C] focus:ring-1 focus:ring-[#8B3A1C] transition-colors"
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="vendeur-email">Adresse e-mail</Label>
+            <Label htmlFor="vendeur-email" className="text-xs font-semibold text-stone-700">
+              Adresse e-mail <span className="text-[#8B3A1C]">*</span>
+            </Label>
             <Input
               id="vendeur-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="vendeur@felana.com"
+              placeholder="vendeur@exemple.com"
               required
+              className="h-9 rounded-xl border-[#F2E6E1] bg-[#FAF6F4]/40 text-xs text-stone-900 placeholder:text-stone-400 focus:border-[#8B3A1C] focus:ring-1 focus:ring-[#8B3A1C] transition-colors"
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="vendeur-password">Mot de passe</Label>
+            <Label htmlFor="vendeur-password" className="text-xs font-semibold text-stone-700">
+              Mot de passe <span className="text-[#8B3A1C]">*</span>
+            </Label>
             <Input
               id="vendeur-password"
               type="password"
@@ -110,20 +120,30 @@ export function CreateVendeurDialog({ onCreated }: CreateVendeurDialogProps) {
               placeholder="Au moins 8 caractères"
               minLength={8}
               required
+              className="h-9 rounded-xl border-[#F2E6E1] bg-[#FAF6F4]/40 text-xs text-stone-900 placeholder:text-stone-400 focus:border-[#8B3A1C] focus:ring-1 focus:ring-[#8B3A1C] transition-colors"
             />
           </div>
 
           {error && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-              {error}
+            <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50/80 px-3 py-2.5 text-xs text-rose-700">
+              <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
+              <span>{error}</span>
             </div>
           )}
 
-          <DialogFooter>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+              className="h-9 rounded-xl border-[#F2E6E1] text-xs text-stone-600 hover:bg-[#FAF6F4]"
+            >
+              Annuler
+            </Button>
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-rose-700 text-white hover:bg-rose-800 sm:w-auto"
+              className="h-9 rounded-xl bg-[#8B3A1C] px-5 text-xs font-semibold text-white transition-colors hover:bg-[#722F17]"
             >
               {isLoading ? (
                 <>
@@ -134,7 +154,7 @@ export function CreateVendeurDialog({ onCreated }: CreateVendeurDialogProps) {
                 "Créer le compte"
               )}
             </Button>
-          </DialogFooter>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

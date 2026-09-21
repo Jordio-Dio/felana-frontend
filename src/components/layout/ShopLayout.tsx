@@ -9,9 +9,12 @@ export function ShopLayout() {
     <ClientAuthProvider>
       <CartProvider>
         <ShopSearchProvider>
-          <div className="min-h-screen bg-[#F9F9F9] text-[#222222]">
+          <div className="min-h-screen bg-[#FAF8F5] text-stone-900 antialiased selection:bg-[#8B3A1C]/15 selection:text-[#8B3A1C]">
+            {/* Header de la boutique */}
             <ShopHeader />
-            <main className="mx-auto max-w-5xl px-4 py-6">
+
+            {/* Zone de contenu principal */}
+            <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
               <Outlet />
             </main>
           </div>

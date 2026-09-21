@@ -20,7 +20,7 @@ export function SidebarNav({ onNavigate }: SidebarNavProps) {
   );
 
   return (
-    <nav className="flex flex-col gap-1 px-2">
+    <nav className="flex flex-col gap-1.5 px-3">
       {visibleItems.map((item) => {
         const Icon = item.icon;
         return (
@@ -30,15 +30,26 @@ export function SidebarNav({ onNavigate }: SidebarNavProps) {
             onClick={onNavigate}
             className={({ isActive }) =>
               cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                "group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-all duration-200",
                 isActive
-                  ? "bg-rose-50 text-rose-700"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                  ? "bg-[#FAF6F4] text-[#8B3A1C] shadow-sm ring-1 ring-[#8B3A1C]/10"
+                  : "text-stone-600 hover:bg-[#FAF6F4]/60 hover:text-[#8B3A1C]"
               )
             }
           >
-            <Icon className="h-4 w-4 shrink-0" />
-            {item.label}
+            {({ isActive }) => (
+              <>
+                <Icon
+                  className={cn(
+                    "h-4 w-4 shrink-0 transition-colors duration-200",
+                    isActive
+                      ? "text-[#8B3A1C]"
+                      : "text-stone-400 group-hover:text-[#8B3A1C]"
+                  )}
+                />
+                <span className="truncate">{item.label}</span>
+              </>
+            )}
           </NavLink>
         );
       })}

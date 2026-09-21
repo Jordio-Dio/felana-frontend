@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Edit3, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -31,7 +31,6 @@ function toFormValues(article: Article): ArticleFormValues {
     coutMatiere: article.coutMatiere !== undefined ? String(article.coutMatiere) : "0",
     coutAccessoire: article.coutAccessoire !== undefined ? String(article.coutAccessoire) : "0",
     coutMainOeuvre: article.coutMainOeuvre !== undefined ? String(article.coutMainOeuvre) : "0",
-    // Conversion décimal (0.5) -> pourcentage lisible (50) pour l'affichage
     pourcentageMarge:
       article.pourcentageMarge !== undefined && article.pourcentageMarge !== null
         ? String(article.pourcentageMarge * 100)
@@ -45,7 +44,12 @@ function toFormValues(article: Article): ArticleFormValues {
   };
 }
 
-export function EditArticleDialog({ article, categories, onOpenChange, onUpdated }: EditArticleDialogProps) {
+export function EditArticleDialog({
+  article,
+  categories,
+  onOpenChange,
+  onUpdated,
+}: EditArticleDialogProps) {
   const [values, setValues] = useState<ArticleFormValues | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -96,13 +100,25 @@ export function EditArticleDialog({ article, categories, onOpenChange, onUpdated
 
   return (
     <Dialog open={article !== null} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>Modifier l'article</DialogTitle>
+      <DialogContent className="max-h-[90vh] overflow-y-auto rounded-3xl border-[#F2E6E1] p-6 shadow-2xl sm:max-w-lg">
+        {/* En-tête de la modale */}
+        <DialogHeader className="flex flex-row items-center gap-3 space-y-0 border-b border-[#F2E6E1] pb-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#FAF6F4] text-[#8B3A1C] ring-1 ring-[#8B3A1C]/10">
+            <Edit3 className="h-5 w-5" />
+          </div>
+          <div>
+            <DialogTitle className="text-base font-bold text-stone-900">
+              Modifier l'article
+            </DialogTitle>
+            <p className="mt-0.5 text-xs text-stone-500">
+              Ajustez les tarifs, la catégorie ou les paramètres de stock du produit.
+            </p>
+          </div>
         </DialogHeader>
 
         {values && (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5 pt-2">
+            {/* Formulaire complet */}
             <ArticleFormFields
               values={values}
               onChange={setValues}
@@ -111,25 +127,37 @@ export function EditArticleDialog({ article, categories, onOpenChange, onUpdated
               showActifToggle
             />
 
+            {/* Notification d'erreur */}
             {error && (
-              <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                {error}
+              <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50/70 p-3 text-xs font-medium text-rose-700">
+                <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
+                <span>{error}</span>
               </div>
             )}
 
-            <DialogFooter>
+            {/* Pied de page et boutons */}
+            <DialogFooter className="gap-2 border-t border-[#F2E6E1] pt-4 sm:gap-0">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isLoading}
+                onClick={() => onOpenChange(false)}
+                className="rounded-xl border-[#F2E6E1] text-xs font-semibold text-stone-700 hover:bg-[#FAF6F4]"
+              >
+                Annuler
+              </Button>
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-rose-700 text-white hover:bg-rose-800 sm:w-auto"
+                className="rounded-xl bg-[#8B3A1C] text-xs font-semibold text-white shadow-sm transition-colors hover:bg-[#722F17]"
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
                     Enregistrement...
                   </>
                 ) : (
-                  "Enregistrer"
+                  "Enregistrer les modifications"
                 )}
               </Button>
             </DialogFooter>

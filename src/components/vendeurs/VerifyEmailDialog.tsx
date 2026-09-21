@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Loader2, MailCheck } from "lucide-react";
+import { Loader2, MailCheck, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,7 +7,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -27,12 +26,10 @@ export function VerifyEmailDialog({ email, onOpenChange, onVerified }: VerifyEma
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [resendMessage, setResendMessage] = useState<string | null>(null);
 
   function resetLocalState() {
     setCode("");
     setError(null);
-    setResendMessage(null);
   }
 
   async function handleVerify(e: FormEvent) {
@@ -61,7 +58,6 @@ export function VerifyEmailDialog({ email, onOpenChange, onVerified }: VerifyEma
     if (!email) return;
 
     setError(null);
-    setResendMessage(null);
     setIsResending(true);
 
     try {
@@ -82,21 +78,25 @@ export function VerifyEmailDialog({ email, onOpenChange, onVerified }: VerifyEma
         onOpenChange(next);
       }}
     >
-      <DialogContent className="sm:max-w-sm">
-        <DialogHeader>
-          <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-rose-50">
-            <MailCheck className="h-5 w-5 text-rose-600" />
+      <DialogContent className="sm:max-w-sm rounded-2xl border-[#F2E6E1] bg-white p-6 shadow-xl">
+        <DialogHeader className="flex flex-col items-center text-center space-y-2">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FAF6F4] text-[#8B3A1C] border border-[#F2E6E1] shadow-xs">
+            <MailCheck className="h-6 w-6" />
           </div>
-          <DialogTitle>Vérifier l'adresse e-mail</DialogTitle>
-          <DialogDescription>
-            Un code à 6 chiffres a été envoyé à <strong>{email}</strong>. Saisissez-le
-            ci-dessous pour confirmer ce compte.
+          <DialogTitle className="text-base font-bold text-stone-900">
+            Vérifier l'adresse e-mail
+          </DialogTitle>
+          <DialogDescription className="text-xs text-stone-500 max-w-[#260px]">
+            Un code à 6 chiffres a été envoyé à{" "}
+            <strong className="text-stone-800 font-semibold">{email}</strong>.
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleVerify} className="space-y-4">
+        <form onSubmit={handleVerify} className="space-y-4 pt-2">
           <div className="space-y-1.5">
-            <Label htmlFor="verify-code">Code de vérification</Label>
+            <Label htmlFor="verify-code" className="text-xs font-semibold text-stone-700 block text-center">
+              Code de vérification
+            </Label>
             <Input
               id="verify-code"
               inputMode="numeric"
@@ -105,28 +105,24 @@ export function VerifyEmailDialog({ email, onOpenChange, onVerified }: VerifyEma
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
               placeholder="123456"
-              className="text-center text-lg tracking-[0.5em]"
+              className="h-11 rounded-xl border-[#F2E6E1] bg-[#FAF6F4]/40 text-center text-lg font-mono tracking-[0.5em] text-stone-900 placeholder:text-stone-300 focus:border-[#8B3A1C] focus:ring-1 focus:ring-[#8B3A1C] transition-colors"
               autoFocus
               required
             />
           </div>
 
           {error && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-              {error}
-            </div>
-          )}
-          {resendMessage && (
-            <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
-              {resendMessage}
+            <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50/80 px-3 py-2.5 text-xs text-rose-700">
+              <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
+              <span>{error}</span>
             </div>
           )}
 
-          <DialogFooter className="flex-col gap-2 sm:flex-col">
+          <div className="space-y-2 pt-2">
             <Button
               type="submit"
               disabled={isVerifying || code.length !== 6}
-              className="w-full bg-rose-700 text-white hover:bg-rose-800"
+              className="h-10 w-full rounded-xl bg-[#8B3A1C] text-xs font-semibold text-white transition-colors hover:bg-[#722F17] disabled:opacity-50"
             >
               {isVerifying ? (
                 <>
@@ -134,26 +130,27 @@ export function VerifyEmailDialog({ email, onOpenChange, onVerified }: VerifyEma
                   Vérification...
                 </>
               ) : (
-                "Vérifier"
+                "Vérifier le code"
               )}
             </Button>
+
             <Button
               type="button"
               variant="ghost"
               disabled={isResending}
               onClick={handleResend}
-              className="w-full text-gray-600"
+              className="h-9 w-full rounded-xl text-xs font-medium text-stone-600 hover:bg-[#FAF6F4] hover:text-stone-900"
             >
               {isResending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Envoi...
+                  Envoi en cours...
                 </>
               ) : (
-                "Renvoyer le code"
+                "Renvoyer un nouveau code"
               )}
             </Button>
-          </DialogFooter>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
