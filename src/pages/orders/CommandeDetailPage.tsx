@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Printer, Loader2, Store, User, FileText, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Printer, Loader2, Store, FileText } from "lucide-react";
 import { commandeService } from "@/api/commandeService";
 import { useAuth } from "@/context/AuthContext";
 import type { Commande, StatutCommande, Invoice } from "@/types/orders.types";

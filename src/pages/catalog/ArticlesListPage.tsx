@@ -6,10 +6,8 @@ import {
   AlertTriangle,
   Package,
   Search,
-  Filter,
   Layers,
-  CheckCircle2,
-  XCircle,
+  
 } from "lucide-react";
 import { articleService } from "@/api/articleService";
 import { categorieService } from "@/api/categorieService";

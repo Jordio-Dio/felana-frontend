@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Loader2, Search, UserCheck, UserX, Users } from "lucide-react";
+import { Loader2, Search,  UserX, Users } from "lucide-react";
 import { userService } from "@/api/userService";
 import { authService } from "@/api/authService";
 import { useAuth } from "@/context/AuthContext";
