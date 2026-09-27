@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Loader2, LogIn, Mail, Phone, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Loader2, LogIn, Phone, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useClientAuth } from "@/context/ClientAuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,9 +28,6 @@ export function ClientLoginPage() {
     }
   }, [isLoading]);
 
-  // Détection du format (téléphone vs email) pour changer l'icône à la volée
-  const isPhoneInput = /^[0-9+\s\-]{3,}$/.test(identifiant.trim()) && !identifiant.includes("@");
-
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
@@ -40,7 +37,7 @@ export function ClientLoginPage() {
       navigate(from, { replace: true });
     } catch (err) {
       const axiosError = err as AxiosError<ApiErrorResponse>;
-      setError(axiosError.response?.data?.error ?? "Identifiant ou mot de passe incorrect.");
+      setError(axiosError.response?.data?.error ?? "Numéro de téléphone ou mot de passe incorrect.");
     } finally {
       setIsLoading(false);
     }
@@ -50,15 +47,11 @@ export function ClientLoginPage() {
     <div className="flex min-h-[85vh] items-center justify-center px-4 py-12">
       <div className="w-full max-w-sm">
         
-        {/* En-tête de Marque VALISOA */}
+        {/* En-tête de Marque VALISOA / Hiba Création */}
         <div className="mb-8 text-center">
           <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#8B3A1C] text-white shadow-lg shadow-[#8B3A1C]/25 ring-4 ring-[#8B3A1C]/10">
             <span className="font-serif text-2xl font-black tracking-widest">H</span>
           </div>
-          {/* Titre et sous-titre 
-          <h1 className="text-2xl font-black tracking-widest uppercase text-stone-900">
-            Hiba création Toamasina
-          </h1>*/}
           <p className="mt-1 text-xs font-medium text-stone-500">
             Connexion à mon compte
           </p>
@@ -68,23 +61,19 @@ export function ClientLoginPage() {
         <div className="overflow-hidden rounded-3xl border border-[#F2E6E1] bg-white p-7 shadow-xl shadow-[#8B3A1C]/5 backdrop-blur-sm">
           <form onSubmit={handleSubmit} className="space-y-4">
             
-            {/* Champ Email ou Téléphone */}
+            {/* Champ Téléphone */}
             <div className="space-y-1.5">
               <Label htmlFor="identifiant" className="text-xs font-semibold text-stone-700">
-                Email ou téléphone
+                Numéro de téléphone
               </Label>
               <div className="relative">
-                {isPhoneInput ? (
-                  <Phone className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8B3A1C]" />
-                ) : (
-                  <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
-                )}
+                <Phone className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8B3A1C]" />
                 <Input
                   id="identifiant"
-                  type="text"
+                  type="tel"
                   value={identifiant}
                   onChange={(e) => setIdentifiant(e.target.value)}
-                  placeholder="vous@exemple.com ou 034..."
+                  placeholder="034XX... ou 032XX..."
                   required
                   className="h-10 rounded-xl border-[#F2E6E1] bg-[#FAF6F4]/50 pl-10 pr-3 text-xs text-stone-900 placeholder:text-stone-400 focus-visible:border-[#8B3A1C] focus-visible:bg-white focus-visible:ring-1 focus-visible:ring-[#8B3A1C]"
                 />

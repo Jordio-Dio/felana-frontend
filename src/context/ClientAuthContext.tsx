@@ -60,8 +60,6 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
     setClient({
       clientId: profile.id,
       nom: profile.nom,
-      email: profile.email,
-      emailVerifie: auth.emailVerifie,
       prenom: profile.prenom,
       telephone: profile.telephone,
       adresse: profile.adresse,
@@ -76,8 +74,6 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
     setClient({
       clientId: profile.id,
       nom: profile.nom,
-      email: profile.email,
-      emailVerifie: auth.emailVerifie,
       prenom: profile.prenom,
       telephone: profile.telephone,
       adresse: profile.adresse,
@@ -92,12 +88,9 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
   async function refreshClient() {
     try {
       const profile = await clientAuthService.getProfile();
-      const current = clientAuthService.getStoredClient();
       setClient({
         clientId: profile.id,
         nom: profile.nom,
-        email: profile.email,
-        emailVerifie: current?.emailVerifie ?? true,
         prenom: profile.prenom,
         telephone: profile.telephone,
         adresse: profile.adresse,
