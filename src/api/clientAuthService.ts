@@ -31,15 +31,16 @@ export const clientAuthService = {
 
   saveSession(auth: ClientAuthResponse): AuthenticatedClient {
     localStorage.setItem(CLIENT_TOKEN_KEY, auth.accessToken);
+    
+    // Construction du profil client stocké en local sans aucun champ e-mail
     const client: AuthenticatedClient = {
       clientId: auth.clientId,
       nom: auth.nom,
-      email: null,
-      emailVerifie: auth.emailVerifie,
-      prenom: null,
-      telephone: null,
-      adresse: null,
+      prenom: auth.prenom || null,
+      telephone: auth.telephone,
+      adresse: auth.adresse || null,
     };
+
     localStorage.setItem(CLIENT_USER_KEY, JSON.stringify(client));
     return client;
   },
