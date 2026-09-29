@@ -7,6 +7,8 @@ export const STORAGE_KEYS = {
   ACCESS_TOKEN: "felana_access_token",
   REFRESH_TOKEN: "felana_refresh_token",
   USER: "felana_user",
+  CLIENT_TOKEN: "felana_client_token",
+  CLIENT_USER: "felana_client_user",
 } as const;
 
 export const axiosInstance = axios.create({
@@ -20,8 +22,6 @@ export const axiosInstance = axios.create({
  * Intercepteur de requête : injecte le token staff ou le token client
  */
 axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  //  FIX : On liste précisément les routes publiques au lieu d'utiliser "/v1/public"
-  // pour éviter de bloquer l'envoi du token sur /v1/public/orders !
   const publicPaths = [
     "/auth/login",
     "/auth/refresh-token",
@@ -31,15 +31,13 @@ axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     "/v1/public/client/register",
     "/v1/public/client/login",
   ];
+  
   const isPublic = publicPaths.some((path) => config.url?.includes(path));
 
-  const isClientRoute =
-    config.url?.includes("/v1/public/orders") ||
-    config.url?.includes("/v1/public/mes-commandes") ||
-    config.url?.includes("/v1/public/client/me");
+  // Tente d'envoyer le token client s'il existe
+  const clientToken = localStorage.getItem(STORAGE_KEYS.CLIENT_TOKEN);
 
-  if (isClientRoute) {
-    const clientToken = localStorage.getItem("felana_client_token");
+  if (config.url?.includes("/v1/public/")) {
     if (clientToken) {
       config.headers.Authorization = `Bearer ${clientToken}`;
     }
@@ -66,7 +64,7 @@ function onRefreshed(newToken: string) {
 }
 
 /**
- * Intercepteur de réponse : gère le refresh token staff et la déconnexion client
+ * Intercepteur de réponse : gère le refresh token staff et les erreurs d'authentification
  */
 axiosInstance.interceptors.response.use(
   (response) => response,
@@ -77,17 +75,15 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    //  FIX : Traitement des 401 sur les routes client (placé AU DEBUT pour éviter les boucles)
-    if (
-      originalRequest.url?.includes("/v1/public/orders") ||
-      originalRequest.url?.includes("/v1/public/mes-commandes")
-    ) {
-      localStorage.removeItem("felana_client_token");
-      localStorage.removeItem("felana_client_user");
+    // Gérer spécifiquement les espaces protégés clients (ex: historique de mes commandes)
+    if (originalRequest.url?.includes("/v1/public/mes-commandes")) {
+      localStorage.removeItem(STORAGE_KEYS.CLIENT_TOKEN);
+      localStorage.removeItem(STORAGE_KEYS.CLIENT_USER);
       window.location.href = "/shop/connexion";
       return Promise.reject(error);
     }
 
+    // Si c'est le refresh-token qui a échoué -> déconnexion staff
     if (originalRequest.url?.includes("/auth/refresh-token")) {
       clearSession();
       return Promise.reject(error);

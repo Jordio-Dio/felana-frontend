@@ -16,9 +16,19 @@ export interface PublicOrderItemRequest {
   quantite: number;
 }
 
+export interface ClientInfo {
+  nom: string;
+  telephone: string;
+  adresse?: string;
+}
+
 export interface PublicOrderRequest {
+  nomClient: string;
+  telephone: string;
+  adresseLivraison: string;
   modePaiement: ModePaiement;
   items: PublicOrderItemRequest[];
+
 }
 
 export interface PublicOrderResponse {
