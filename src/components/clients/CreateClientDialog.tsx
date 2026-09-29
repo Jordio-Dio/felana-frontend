@@ -17,10 +17,9 @@ import type { ApiErrorResponse } from "@/types/api.types";
 
 const EMPTY_FORM: ClientRequest = {
   nom: "",
-  prenom: null,
-  email: null,
-  telephone: null,
-  adresse: null,
+  prenom: "",
+  telephone: "",
+  adresse: "",
 };
 
 interface CreateClientDialogProps {

@@ -23,10 +23,9 @@ interface EditClientDialogProps {
 function toRequest(client: Client): ClientRequest {
   return {
     nom: client.nom,
-    prenom: client.prenom,
-    email: client.email,
-    telephone: client.telephone,
-    adresse: client.adresse,
+    prenom: client.prenom ?? "",
+    telephone: client.telephone ?? "",
+    adresse: client.adresse ?? "",
   };
 }
 

@@ -24,7 +24,6 @@ export function ClientProfilePage() {
 
     const [nom, setNom] = useState(client?.nom ?? "");
     const [prenom, setPrenom] = useState(client?.prenom ?? "");
-    const [email, setEmail] = useState(client?.email ?? "");
     const [telephone, setTelephone] = useState(client?.telephone ?? "");
     const [adresse, setAdresse] = useState(client?.adresse ?? "");
 
@@ -70,7 +69,6 @@ export function ClientProfilePage() {
             const auth = await clientAuthService.updateProfile({
                 nom,
                 prenom,
-                email,
                 telephone,
                 adresse,
             });
@@ -158,7 +156,6 @@ export function ClientProfilePage() {
                     <h1 className="mt-3 text-xl font-extrabold text-stone-900 tracking-tight">
                         {prenom} {nom}
                     </h1>
-                    <p className="text-xs text-stone-500 font-medium">{email}</p>
                 </div>
 
                 {/* Sélecteur d'onglets (Profil vs Mot de passe) */}
@@ -230,13 +227,7 @@ export function ClientProfilePage() {
                             <Label htmlFor="client-email" className="text-xs font-medium text-stone-600">
                                 E-mail
                             </Label>
-                            <Input
-                                id="client-email"
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="h-9 rounded-xl border-[#F2E6E1] text-xs focus-visible:ring-[#8B3A1C]"
-                            />
+                           
                         </div>
 
                         <div className="space-y-1">

@@ -48,27 +48,13 @@ export function ClientFormFields({ values, onChange, idPrefix }: ClientFormField
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor={`${idPrefix}-email`} className="text-xs font-semibold text-stone-700">
-          Adresse e-mail
-        </Label>
-        <Input
-          id={`${idPrefix}-email`}
-          type="email"
-          value={values.email ?? ""}
-          onChange={(e) => update("email", e.target.value || null)}
-          placeholder="client@exemple.com"
-          className="h-9 rounded-xl border-[#F2E6E1] bg-[#FAF6F4]/40 text-xs text-stone-900 placeholder:text-stone-400 focus:border-[#8B3A1C] focus:ring-1 focus:ring-[#8B3A1C] transition-colors"
-        />
-      </div>
-
-      <div className="space-y-1.5">
         <Label htmlFor={`${idPrefix}-telephone`} className="text-xs font-semibold text-stone-700">
           Téléphone
         </Label>
         <Input
           id={`${idPrefix}-telephone`}
           value={values.telephone ?? ""}
-          onChange={(e) => update("telephone", e.target.value || null)}
+          onChange={(e) => update("telephone", e.target.value )}
           placeholder="034 XX XXX XX"
           className="h-9 rounded-xl border-[#F2E6E1] bg-[#FAF6F4]/40 text-xs text-stone-900 placeholder:text-stone-400 focus:border-[#8B3A1C] focus:ring-1 focus:ring-[#8B3A1C] transition-colors"
         />
