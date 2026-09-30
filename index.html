@@ -1,14 +1,88 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  
+  En l'état, cet HTML contient de **bonnes bases**, mais il est **moyen en termes de SEO** et comporte des **incohérences de branding** qui réduisent sa visibilité sur les moteurs de recherche.
+
+Voici l'analyse détaillée et les points d'amélioration pour optimiser le référencement et maximiser la portée auprès de vos prospects.
+
+---
+
+### Points forts actuels
+* **Balise meta description présente :** Elle contient les bons mots-clés (`Sacs`, `accessoires`, `crochet fait main`, `Madagascar`).
+* **Format responsive :** Présence de la balise `viewport`.
+* **Open Graph de base :** Utile pour la prévisualisation sur les réseaux sociaux.
+
+---
+
+### Problèmes majeurs & Améliorations SEO
+
+#### 1. Incohérence de marque (Hiba vs Felana)
+* **Problème :** Le `<title>` mentionne **Hiba**, alors que le `og:title` mentionne **Felana**. Les moteurs de recherche privilégient la clarté.
+* **Correction :** Alignez la marque exacte partout.
+
+#### 2. Absence de SEO structuré pour une Single Page Application (React)
+Les robots de recherche (Google, Bing) lisent le HTML initial. Comme tout le contenu est rendu dynamiquement via `<div id="root"></div>`, le fichier statique offre très peu d'informations textuelles à analyser au premier passage.
+* **Solution :** Ajoutez des données structurées **JSON-LD (Schema.org)** directement dans le `<head>` pour expliciter le type d'activité (*Store* ou *LocalBusiness*).
+
+#### 3. Image Open Graph relative
+* **Problème :** Les réseaux sociaux (Facebook, WhatsApp, LinkedIn) nécessitent souvent des URL absolues pour afficher correctement l'image d'aperçu.
+* **Correction :** Utilisez le domaine complet (ex: `https://votre-domaine.com/images/createuse.jpg`).
+
+#### 4. Manque de métadonnées géolocalisées et mots-clés locaux
+Pour toucher efficacement vos prospects à Madagascar ou à l'export, il convient d'expliciter la dimension artisanale locale.
+
+---
+
+### Code HTML optimisé
+
+```html
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/jpeg" href="/images/sac-blanc.jpg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hiba — Créations artisanales faites main</title>
-  <meta name="description" content="Sacs et accessoires en crochet fait main à Madagascar. Commandez en ligne." />
-  <meta property="og:title" content="Felana — Créations artisanales" />
-  <meta property="og:image" content="/images/createuse.jpg" />
+  
+  <!-- Titre optimisé (Marque + Produit + Localisation) -->
+  <title>Felana par Hiba — Sacs et accessoires en crochet fait main à Madagascar</title>
+  
+  <!-- Meta description incitative avec appel à l'action -->
+  <meta name="description" content="Découvrez les sacs et accessoires uniques faits main en crochet à Madagascar. Qualité artisanale, modèles personnalisés. Commandez votre pièce en ligne !" />
+  <meta name="keywords" content="crochet Madagascar, sac crochet fait main, artisanat malgache, accessoires mode Madagascar, Hiba création, Felana" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Felana par Hiba — Créations artisanales en crochet" />
+  <meta property="og:description" content="Sacs et accessoires en crochet fait main à Madagascar. Découvrez la collection et commandez en ligne." />
+  <meta property="og:image" content="[https://votre-domaine.com/images/createuse.jpg](https://votre-domaine.com/images/createuse.jpg)" />
+  <meta property="og:url" content="[https://votre-domaine.com](https://votre-domaine.com)" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Felana par Hiba — Créations artisanales en crochet" />
+  <meta name="twitter:description" content="Sacs et accessoires en crochet fait main à Madagascar." />
+  <meta name="twitter:image" content="[https://votre-domaine.com/images/createuse.jpg](https://votre-domaine.com/images/createuse.jpg)" />
+
+  <!-- Données structurées Schema.org pour le référencement local/commerce -->
+  <script type="application/ld+json">
+  {
+    "@context": "[https://schema.org](https://schema.org)",
+    "@type": "OnlineStore",
+    "name": "Hiba Création - Felana",
+    "description": "Sacs et accessoires en crochet fait main à Madagascar.",
+    "url": "[https://votre-domaine.com](https://votre-domaine.com)",
+    "logo": "[https://votre-domaine.com/images/sac-blanc.jpg](https://votre-domaine.com/images/sac-blanc.jpg)",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "MG"
+    }
+  }
+  </script>
 </head>
 
 <body>
