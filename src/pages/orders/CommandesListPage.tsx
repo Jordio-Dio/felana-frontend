@@ -38,6 +38,14 @@ export function CommandesListPage() {
   const [statutFilter, setStatutFilter] = useState<string>(
     searchParams.get("statut") ?? ALL_STATUS
   );
+
+  // Resynchronise le filtre si l'URL change alors que le composant est déjà
+  // monté (ex: clic sur la cloche depuis la page Commandes elle-même).
+  useEffect(() => {
+    const statutFromUrl = searchParams.get("statut") ?? ALL_STATUS;
+    setStatutFilter(statutFromUrl);
+  }, [searchParams]);
+
   const [refreshKey, setRefreshKey] = useState(0);
 
   const loadCommandes = useCallback(async () => {

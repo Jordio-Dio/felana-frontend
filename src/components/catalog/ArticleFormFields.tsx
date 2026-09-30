@@ -328,6 +328,7 @@ export function ArticleFormFields({
             id={`${idPrefix}-vitrine`}
             checked={values.publieVitrine}
             onCheckedChange={(checked) => update("publieVitrine", checked)}
+            className="data-[state=unchecked]:bg-gray-300 data-[state=unchecked]:border-2 data-[state=unchecked]:border-gray-400"
           />
         </div>
 
@@ -348,6 +349,7 @@ export function ArticleFormFields({
               id={`${idPrefix}-actif`}
               checked={values.actif}
               onCheckedChange={(checked) => update("actif", checked)}
+              className="data-[state=unchecked]:bg-gray-300 data-[state=unchecked]:border-2 data-[state=unchecked]:border-gray-400"
             />
           </div>
         )}
