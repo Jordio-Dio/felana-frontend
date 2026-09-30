@@ -22,6 +22,7 @@ export function ClientRegisterPage() {
   const [error, setError] = useState<string | null>(null);
 
   const from = (location.state as { from?: string } | null)?.from ?? "/shop";
+  const normalizePhone = (value: string) => value.replace(/\D/g, "").slice(0, 10);
 
   useEffect(() => {
     if (isLoading) {
@@ -31,10 +32,16 @@ export function ClientRegisterPage() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    const normalizedTelephone = normalizePhone(telephone);
     setError(null);
 
-    if (!telephone.trim()) {
+    if (!normalizedTelephone.trim()) {
       setError("Le numéro de téléphone est obligatoire.");
+      return;
+    }
+
+    if (!/^\d{10}$/.test(normalizedTelephone)) {
+      setError("Le numéro de téléphone doit contenir exactement 10 chiffres.");
       return;
     }
 
@@ -43,7 +50,7 @@ export function ClientRegisterPage() {
       await register({
         nom,
         prenom: prenom || null,
-        telephone,
+        telephone: normalizedTelephone,
         password,
       });
       navigate(from, { replace: true });
@@ -120,8 +127,10 @@ export function ClientRegisterPage() {
                 <Input
                   id="telephone"
                   type="tel"
+                  inputMode="numeric"
+                  maxLength={10}
                   value={telephone}
-                  onChange={(e) => setTelephone(e.target.value)}
+                  onChange={(e) => setTelephone(normalizePhone(e.target.value))}
                   required
                   placeholder="034XX..."
                   className="h-10 rounded-xl border-[#F2E6E1] bg-[#FAF6F4]/50 pl-10 pr-3 text-xs text-stone-900 placeholder:text-stone-400 focus-visible:border-[#8B3A1C] focus-visible:bg-white focus-visible:ring-1 focus-visible:ring-[#8B3A1C]"

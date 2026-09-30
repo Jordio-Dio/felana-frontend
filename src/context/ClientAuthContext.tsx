@@ -54,8 +54,13 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
 
   async function register(payload: ClientRegisterRequest) {
     const auth = await clientAuthService.register(payload);
+
+    if (!(auth?.token || auth?.accessToken)) {
+      throw new Error("Token client absent après inscription.");
+    }
+
     clientAuthService.saveSession(auth);
-    
+
     const profile = await clientAuthService.getProfile();
     setClient({
       clientId: profile.id,
@@ -68,8 +73,13 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
 
   async function login(payload: ClientLoginRequest) {
     const auth = await clientAuthService.login(payload);
+
+    if (!(auth?.token || auth?.accessToken)) {
+      throw new Error("Token client absent après connexion.");
+    }
+
     clientAuthService.saveSession(auth);
-    
+
     const profile = await clientAuthService.getProfile();
     setClient({
       clientId: profile.id,

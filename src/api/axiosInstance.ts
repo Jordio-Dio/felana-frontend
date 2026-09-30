@@ -31,19 +31,20 @@ axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     "/v1/public/client/register",
     "/v1/public/client/login",
   ];
-  
+
   const isPublic = publicPaths.some((path) => config.url?.includes(path));
 
-  // Tente d'envoyer le token client s'il existe
-  const clientToken = localStorage.getItem(STORAGE_KEYS.CLIENT_TOKEN);
-
   if (config.url?.includes("/v1/public/")) {
-    if (clientToken) {
+    const clientToken =
+      localStorage.getItem(STORAGE_KEYS.CLIENT_TOKEN) ?? localStorage.getItem("token");
+
+    // Sécurité supplémentaire : s'assurer que le token est valide avant d'injecter l'en-tête
+    if (clientToken && clientToken !== "null" && clientToken !== "undefined" && !isPublic) {
       config.headers.Authorization = `Bearer ${clientToken}`;
     }
   } else if (!isPublic) {
     const token = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-    if (token) {
+    if (token && token !== "null" && token !== "undefined") {
       config.headers.Authorization = `Bearer ${token}`;
     }
   }
@@ -71,19 +72,37 @@ axiosInstance.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
+    if (error.response?.status === 403) {
+      return Promise.reject(error);
+    }
+
     if (error.response?.status !== 401 || originalRequest._retry) {
       return Promise.reject(error);
     }
 
-    // Gérer spécifiquement les espaces protégés clients (ex: historique de mes commandes)
-    if (originalRequest.url?.includes("/v1/public/mes-commandes")) {
-      localStorage.removeItem(STORAGE_KEYS.CLIENT_TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.CLIENT_USER);
-      window.location.href = "/shop/connexion";
+    // 1. CORRECTION MAJEURE : Si le 401 provient d'une tentative de CONNEXION (login)
+    // On rejette immédiatement l'erreur SANS chercher à rafraîchir ni rediriger.
+    const isLoginEndpoint = 
+      originalRequest.url?.includes("/auth/login") || 
+      originalRequest.url?.includes("/v1/public/client/login");
+
+    if (isLoginEndpoint) {
       return Promise.reject(error);
     }
 
-    // Si c'est le refresh-token qui a échoué -> déconnexion staff
+    // 2. Gestion spécifique de l'espace client
+    if (originalRequest.url?.includes("/v1/public/")) {
+      localStorage.removeItem(STORAGE_KEYS.CLIENT_TOKEN);
+      localStorage.removeItem(STORAGE_KEYS.CLIENT_USER);
+      
+      // Si la requête client échouée concerne les commandes ou le profil client, rediriger vers la boutique
+      if (originalRequest.url?.includes("/v1/public/mes-commandes") || originalRequest.url?.includes("/v1/public/client/me")) {
+        window.location.href = "/shop/connexion";
+      }
+      return Promise.reject(error);
+    }
+
+    // 3. Si c'est l'appel refresh-token lui-même qui renvoie 401 -> déconnexion staff
     if (originalRequest.url?.includes("/auth/refresh-token")) {
       clearSession();
       return Promise.reject(error);

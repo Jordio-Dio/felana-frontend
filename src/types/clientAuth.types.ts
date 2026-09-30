@@ -11,11 +11,13 @@ export interface ClientLoginRequest {
 }
 
 export interface ClientAuthResponse {
-  clientId: number;
-  accessToken: string;
+  id?: number;
+  clientId?: number;
+  token?: string;
+  accessToken?: string;
   nom: string;
   prenom?: string | null;
-  telephone: string;
+  telephone?: string;
   adresse?: string | null;
 }
 

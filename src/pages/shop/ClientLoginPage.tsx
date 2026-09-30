@@ -22,6 +22,8 @@ export function ClientLoginPage() {
   // Après connexion, retourne à la page d'où le client venait (ex: checkout)
   const from = (location.state as { from?: string } | null)?.from ?? "/shop";
 
+  const normalizePhone = (value: string) => value.replace(/\D/g, "").slice(0, 10);
+
   useEffect(() => {
     if (isLoading) {
       setError(null);
@@ -30,14 +32,28 @@ export function ClientLoginPage() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    const normalizedIdentifiant = normalizePhone(identifiant);
+
+    if (!/^\d{10}$/.test(normalizedIdentifiant)) {
+      setError("Le numéro de téléphone doit contenir exactement 10 chiffres.");
+      return;
+    }
+
     setError(null);
     setIsLoading(true);
     try {
-      await login({ identifiant, password });
+      await login({ identifiant: normalizedIdentifiant, password });
       navigate(from, { replace: true });
     } catch (err) {
       const axiosError = err as AxiosError<ApiErrorResponse>;
-      setError(axiosError.response?.data?.error ?? "Numéro de téléphone ou mot de passe incorrect.");
+      const serverMessage = axiosError.response?.data?.error;
+      const status = axiosError.response?.status;
+
+      setError(
+        status === 403 || !serverMessage
+          ? "Numéro de téléphone ou mot de passe incorrect."
+          : serverMessage
+      );
     } finally {
       setIsLoading(false);
     }
@@ -71,8 +87,10 @@ export function ClientLoginPage() {
                 <Input
                   id="identifiant"
                   type="tel"
+                  inputMode="numeric"
+                  maxLength={10}
                   value={identifiant}
-                  onChange={(e) => setIdentifiant(e.target.value)}
+                  onChange={(e) => setIdentifiant(normalizePhone(e.target.value))}
                   placeholder="034XX... ou 032XX..."
                   required
                   className="h-10 rounded-xl border-[#F2E6E1] bg-[#FAF6F4]/50 pl-10 pr-3 text-xs text-stone-900 placeholder:text-stone-400 focus-visible:border-[#8B3A1C] focus-visible:bg-white focus-visible:ring-1 focus-visible:ring-[#8B3A1C]"
@@ -86,12 +104,13 @@ export function ClientLoginPage() {
                 <Label htmlFor="password" className="text-xs font-semibold text-stone-700">
                   Mot de passe
                 </Label>
+                {/* Lien mot de passe oublié 
                 <Link
                   to="/shop/mot-de-passe-oublie"
                   className="text-[11px] font-semibold text-[#8B3A1C] transition-colors hover:text-[#722F16]"
                 >
                   Oublié ?
-                </Link>
+                </Link>*/}
               </div>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
