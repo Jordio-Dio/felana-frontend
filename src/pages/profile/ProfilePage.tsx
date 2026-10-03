@@ -56,7 +56,7 @@ export function ProfilePage() {
     setIsLoadingProfile(true);
 
     try {
-      const updatedProfile = await authService.updateProfile({ nom, email });
+      const updatedProfile = await authService.updateProfile({ name: nom, email });
       applyNewTokenSession(updatedProfile);
 
       await refreshUser();

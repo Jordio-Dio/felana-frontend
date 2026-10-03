@@ -49,7 +49,7 @@ export interface AuthenticatedUser {
 
 /** Pour PATCH /profile (changer l'email ou le nom). */
 export interface UpdateStaffProfileRequest {
-  nom: string;
+  name: string;
   email: string;
 }
 
