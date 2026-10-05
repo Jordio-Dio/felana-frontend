@@ -34,6 +34,10 @@ export const commandeService = {
     return data;
   },
 
+  async remove(id: number): Promise<void> {
+    await axiosInstance.delete(`/commandes/${id}`);
+  },
+
   async getRecu(id: number): Promise<Invoice> {
     const { data } = await axiosInstance.get<Invoice>(`/commandes/${id}/recu`);
     return data;

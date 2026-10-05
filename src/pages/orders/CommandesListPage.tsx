@@ -8,10 +8,21 @@ import {
   ShoppingBag,
   UserCheck,
   RefreshCw,
+  Trash2,
 } from "lucide-react";
 import { commandeService } from "@/api/commandeService";
 import type { Commande, StatutCommande } from "@/types/orders.types";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   Select,
   SelectContent,
@@ -23,6 +34,7 @@ import { ListItemCard } from "@/components/shared/ListItemCard";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { formatCurrency, formatDate, STATUT_LABELS } from "@/lib/formatters";
 import { STATUT_TONES } from "@/lib/statusTones";
+import { notify } from "@/lib/toast";
 import {
   Tooltip,
   TooltipContent,
@@ -35,6 +47,8 @@ export function CommandesListPage() {
   const [searchParams] = useSearchParams();
   const [commandes, setCommandes] = useState<Commande[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState<Commande | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [statutFilter, setStatutFilter] = useState<string>(
     searchParams.get("statut") ?? ALL_STATUS
   );
@@ -81,6 +95,22 @@ export function CommandesListPage() {
     window.addEventListener("invalidate-cache", handler);
     return () => window.removeEventListener("invalidate-cache", handler);
   }, []);
+
+  async function handleDelete() {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    try {
+      await commandeService.remove(deleteTarget.id);
+      setDeleteTarget(null);
+      await loadCommandes();
+      notify.success(`Commande ${deleteTarget.reference} supprimée avec succès.`);
+    } catch (error) {
+      console.error("Erreur lors de la suppression de la commande :", error);
+      notify.error(`Impossible de supprimer la commande ${deleteTarget.reference}.`);
+    } finally {
+      setIsDeleting(false);
+    }
+  }
 
   return (
     <div className="space-y-6 pb-8">
@@ -241,28 +271,84 @@ export function CommandesListPage() {
                 />
               }
               actions={
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      asChild
-                      variant="ghost"
-                      size="icon"
-                      className="h-9 w-9 rounded-xl text-stone-400 hover:bg-[#FAF6F4] hover:text-[#8B3A1C]"
-                    >
-                      <Link to={`/commandes/${commande.id}`}>
-                        <Eye className="h-4.5 w-4.5" />
-                      </Link>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent className="rounded-lg bg-stone-900 text-xs font-medium text-white">
-                    Voir les détails
-                  </TooltipContent>
-                </Tooltip>
+                <div className="flex items-center gap-1">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        asChild
+                        variant="ghost"
+                        size="icon"
+                        className="h-9 w-9 rounded-xl text-stone-400 hover:bg-[#FAF6F4] hover:text-[#8B3A1C]"
+                      >
+                        <Link to={`/commandes/${commande.id}`}>
+                          <Eye className="h-4.5 w-4.5" />
+                        </Link>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="rounded-lg bg-stone-900 text-xs font-medium text-white">
+                      Voir les détails
+                    </TooltipContent>
+                  </Tooltip>
+
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setDeleteTarget(commande)}
+                        className="h-9 w-9 rounded-xl text-stone-400 hover:bg-rose-50 hover:text-rose-600"
+                      >
+                        <Trash2 className="h-4.5 w-4.5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="rounded-lg bg-stone-900 text-xs font-medium text-white">
+                      Supprimer la commande
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
               }
             />
           ))
         )}
       </div>
+
+      <AlertDialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+      >
+        <AlertDialogContent className="rounded-3xl border-[#F2E6E1] p-6">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-base font-bold text-stone-900">
+              Supprimer cette commande ?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-xs text-stone-500">
+              {deleteTarget && (
+                <>
+                  Vous êtes sur le point de retirer définitivement la commande
+                  <strong className="text-stone-800"> {deleteTarget.reference}</strong>.
+                  Cette action est irréversible.
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-4 gap-2">
+            <AlertDialogCancel
+              disabled={isDeleting}
+              className="rounded-xl border-[#F2E6E1] text-xs font-semibold text-stone-700 hover:bg-[#FAF6F4]"
+            >
+              Annuler
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="rounded-xl bg-rose-600 text-xs font-semibold text-white hover:bg-rose-700"
+            >
+              {isDeleting ? "Suppression en cours..." : "Confirmer la suppression"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

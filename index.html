@@ -5,16 +5,29 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/jpeg" href="/images/sac-blanc.jpg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
+
+  <!-- Content Security Policy pour débloquer Cloudinary, le backend et Vite -->
+  <meta http-equiv="Content-Security-Policy" content="
+  default-src 'self'; 
+  script-src 'self' 'unsafe-inline' 'unsafe-eval'; 
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; 
+  font-src 'self' https://fonts.gstatic.com data:; 
+  img-src 'self' data: blob: https://res.cloudinary.com https:; 
+  connect-src 'self' http://localhost:8080 http://localhost:5173 ws://localhost:5173 https://api.cloudinary.com https://*.cloudinary.com https://felana-backend.onrender.com;
+">
+
   <title>Hiba Création Toamasina — Sacs et accessoires en crochet fait main</title>
-  
-  <meta name="description" content="Hiba Création à Toamasina (Tamatave). Sacs et accessoires uniques faits main en crochet à Madagascar. Découvrez nos modèles faits main et commandez en ligne !" />
-  <meta name="keywords" content="Hiba création, Hiba création Toamasina, Hiba création Tamatave, sac crochet Toamasina, artisanat Tamatave, sac fait main Madagascar" />
+
+  <meta name="description"
+    content="Hiba Création à Toamasina (Tamatave). Sacs et accessoires uniques faits main en crochet à Madagascar. Découvrez nos modèles faits main et commandez en ligne !" />
+  <meta name="keywords"
+    content="Hiba création, Hiba création Toamasina, Hiba création Tamatave, sac crochet Toamasina, artisanat Tamatave, sac fait main Madagascar" />
   <meta name="robots" content="index, follow" />
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Hiba Création Toamasina — Artisanat en crochet fait main" />
-  <meta property="og:description" content="Sacs et accessoires en crochet fait main à Toamasina, Madagascar. Découvrez nos créations uniques." />
+  <meta property="og:description"
+    content="Sacs et accessoires en crochet fait main à Toamasina, Madagascar. Découvrez nos créations uniques." />
   <meta property="og:image" content="https://votre-domaine.com/images/createuse.jpg" />
   <meta property="og:url" content="https://votre-domaine.com" />
 
