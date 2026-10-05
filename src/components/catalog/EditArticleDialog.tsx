@@ -100,7 +100,7 @@ export function EditArticleDialog({
 
   return (
     <Dialog open={article !== null} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto rounded-3xl border-[#F2E6E1] p-6 shadow-2xl sm:max-w-lg">
+      <DialogContent className="max-h-[90vh] w-[95vw] max-w-lg overflow-y-auto rounded-3xl border-[#F2E6E1] p-6 shadow-2xl sm:w-full">
         {/* En-tête de la modale */}
         <DialogHeader className="flex flex-row items-center gap-3 space-y-0 border-b border-[#F2E6E1] pb-4">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#FAF6F4] text-[#8B3A1C] ring-1 ring-[#8B3A1C]/10">

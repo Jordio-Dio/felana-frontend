@@ -19,7 +19,7 @@ export function ClientFormFields({ values, onChange, idPrefix }: ClientFormField
 
   return (
     <div className="space-y-3.5 pt-1">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor={`${idPrefix}-nom`} className="text-xs font-semibold text-stone-700">
             Nom <span className="text-[#8B3A1C]">*</span>
