@@ -70,7 +70,8 @@ export function ArticleFormFields({
     <div className="space-y-5">
       {/* Informations de base */}
       <div className="space-y-4">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {/* Nom + Référence : côte à côte uniquement sur desktop (md), 1 colonne en mobile/tablette */}
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <div className="space-y-1.5">
             <Label
               htmlFor={`${idPrefix}-nom`}
@@ -108,8 +109,10 @@ export function ArticleFormFields({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div className="space-y-1.5">
+        {/* Catégorie + Description : chacun sur SA propre ligne (col-span-full),
+            aucun chevauchement possible et le Select reste cliquable */}
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div className="col-span-full space-y-1.5">
             <Label
               htmlFor={`${idPrefix}-categorie`}
               className="text-xs font-semibold text-stone-700"
@@ -122,11 +125,12 @@ export function ArticleFormFields({
             >
               <SelectTrigger
                 id={`${idPrefix}-categorie`}
-                className="h-10 rounded-xl border-[#F2E6E1] bg-[#FAF6F4]/50 text-xs text-stone-900 focus:border-[#8B3A1C] focus:ring-1 focus:ring-[#8B3A1C]"
+                className="h-10 w-full rounded-xl border-[#F2E6E1] bg-[#FAF6F4]/50 text-xs text-stone-900 focus:border-[#8B3A1C] focus:ring-1 focus:ring-[#8B3A1C]"
               >
                 <SelectValue placeholder="Sélectionner une catégorie" />
               </SelectTrigger>
-              <SelectContent className="rounded-xl border-[#F2E6E1]">
+              {/* z-[60] : le menu déroulant s'ouvre AU-DESSUS de la modale (z-50) */}
+              <SelectContent className="z-[60] rounded-xl border-[#F2E6E1]">
                 {categories.map((cat) => (
                   <SelectItem key={cat.id} value={String(cat.id)} className="text-xs">
                     {cat.nom}
@@ -136,7 +140,8 @@ export function ArticleFormFields({
             </Select>
           </div>
 
-          <div className="space-y-1.5">
+          {/* Description : ligne suivante, sous Catégorie */}
+          <div className="col-span-full space-y-1.5">
             <div className="flex items-center justify-between">
               <Label
                 htmlFor={`${idPrefix}-description`}

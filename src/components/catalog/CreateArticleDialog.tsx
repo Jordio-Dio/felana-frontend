@@ -112,7 +112,9 @@ export function CreateArticleDialog({ categories, onCreated }: CreateArticleDial
       </DialogTrigger>
 
       {/* Contenu du dialogue */}
-      <DialogContent className="max-h-[90vh] w-[95vw] max-w-lg overflow-y-auto rounded-3xl border-[#F2E6E1] p-6 shadow-2xl sm:w-full">
+      {/* Desktop : max-w-2xl / max-w-3xl (bat le max-w-sm par défaut de DialogContent).
+          Mobile : w-[95vw] et 1 seule colonne dans le formulaire. */}
+      <DialogContent className="max-h-[90vh] w-[95vw] max-w-lg overflow-y-auto overscroll-contain rounded-3xl border-[#F2E6E1] p-6 shadow-2xl sm:w-full sm:max-w-2xl md:max-w-3xl">
         {/* En-tête avec icône stylisée */}
         <DialogHeader className="flex flex-row items-center gap-3 space-y-0 border-b border-[#F2E6E1] pb-4">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#FAF6F4] text-[#8B3A1C] ring-1 ring-[#8B3A1C]/10">
@@ -146,7 +148,7 @@ export function CreateArticleDialog({ categories, onCreated }: CreateArticleDial
           )}
 
           {/* Actions du formulaire */}
-          <DialogFooter className="gap-2 border-t border-[#F2E6E1] pt-4 sm:gap-0">
+          <DialogFooter className="-mx-6 -mb-6 gap-2 border-t border-[#F2E6E1] pt-4 sm:gap-0">
             <Button
               type="button"
               variant="outline"
