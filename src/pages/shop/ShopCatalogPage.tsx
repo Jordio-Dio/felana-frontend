@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { ShoppingBag, Heart } from "lucide-react";
 import { shopService } from "@/api/shopService";
 import { useCart } from "@/context/CartContext";
@@ -27,11 +28,16 @@ function ProductCard({
   const [isFavorite, setIsFavorite] = useState(false);
 
   return (
+    <Link
+      to={`/shop/articles/${article.id}`}
+      aria-label={`Voir le détail de ${article.nom}`}
+      className="block h-full rounded-3xl outline-none focus-visible:ring-2 focus-visible:ring-[#D9886A]/60 focus-visible:ring-offset-2"
+    >
     <motion.div
       whileHover={{ y: -5 }}
       transition={{ duration: 0.25, ease: "easeOut" }}
       className={cn(
-        "group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-[#F2E6E1] bg-white shadow-xs transition-all duration-300",
+        "group relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border border-[#F2E6E1] bg-white shadow-xs transition-all duration-300",
         "hover:border-[#E09F82]/40 hover:shadow-xl hover:shadow-[#D9886A]/10"
       )}
     >
@@ -64,7 +70,12 @@ function ProductCard({
             whileTap={{ scale: 0.85 }}
             whileHover={{ scale: 1.1 }}
             type="button"
-            onClick={() => setIsFavorite((prev) => !prev)}
+            onClick={(e) => {
+              // On reste sur la page catalogue : la carte entière est un lien
+              e.preventDefault();
+              e.stopPropagation();
+              setIsFavorite((prev) => !prev);
+            }}
             title={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
             aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
             className="absolute right-3 top-3 z-[1] flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white/80 shadow-xs backdrop-blur-md transition-colors hover:bg-white"
@@ -97,7 +108,12 @@ function ProductCard({
         <Button
           size="sm"
           disabled={!article.disponible}
-          onClick={() => onAdd(article)}
+          onClick={(e) => {
+            // Ajout rapide au panier SANS déclencher la navigation vers la page détail
+            e.preventDefault();
+            e.stopPropagation();
+            onAdd(article);
+          }}
           className={cn(
             "mt-4 w-full rounded-2xl py-2.5 text-xs font-semibold shadow-xs transition-all duration-200",
             "bg-[#D9886A] text-white hover:bg-[#c27558] hover:shadow-md hover:shadow-[#D9886A]/20 active:scale-[0.98]",
@@ -108,6 +124,7 @@ function ProductCard({
         </Button>
       </div>
     </motion.div>
+    </Link>
   );
 }
 

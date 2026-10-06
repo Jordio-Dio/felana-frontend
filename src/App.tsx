@@ -15,6 +15,7 @@ import { CommandesListPage } from "@/pages/orders/CommandesListPage";
 import { NewSalePage } from "@/pages/orders/NewSalePage";
 import { CommandeDetailPage } from "@/pages/orders/CommandeDetailPage";
 import { ShopCatalogPage } from "@/pages/shop/ShopCatalogPage";
+import { ArticleDetailPage } from "@/pages/shop/ArticleDetailPage";
 import { CheckoutPage } from "@/pages/shop/CheckoutPage";
 import { OrderSuccessPage } from "@/pages/shop/OrderSuccessPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
@@ -39,6 +40,7 @@ function App() {
             {/* Vitrine publique - AUCUNE authentification requise */}
             <Route element={<ShopLayout />}>
               <Route path="/shop" element={<ShopCatalogPage />} />
+              <Route path="/shop/articles/:id" element={<ArticleDetailPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/order-success" element={<OrderSuccessPage />} />
               <Route path="/shop/connexion" element={<ClientLoginPage />} />
