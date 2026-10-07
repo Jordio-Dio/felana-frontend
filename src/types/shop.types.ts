@@ -11,6 +11,19 @@ export interface ArticlePublic {
 
 export type ModePaiement = "MVOLA_MANUEL" | "ORANGE_MONEY_MANUEL" | "ESPECES";
 
+/** Infos publiques de la boutique (GET /v1/public/shop-info). */
+export interface ShopInfo {
+  nom: string;
+  adresse: string;
+  telephone: string;
+  mvolaNumero: string;
+  airtelMoneyNumero: string;
+  orangeMoneyNumero: string;
+  email: string;
+  whatsapp: string;
+  nifStat: string;
+}
+
 export interface PublicOrderItemRequest {
   articleId: number;
   quantite: number;

@@ -18,6 +18,7 @@ const NAV_LINKS = [
   { label: "Accueil", sectionId: "hero" },
   { label: "Catalogue", sectionId: "catalogue" },
   { label: "Notre histoire", sectionId: "histoire" },
+  { label: "Contact", sectionId: "contact" },
 ];
 
 export function ShopHeader() {

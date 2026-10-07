@@ -3,6 +3,7 @@ import type {
   ArticlePublic,
   PublicOrderRequest,
   PublicOrderResponse,
+  ShopInfo,
 } from "@/types/shop.types";
 import type { PageResponse } from "@/types/api.types";
 
@@ -21,6 +22,11 @@ export const shopService = {
 
   async createOrder(payload: PublicOrderRequest): Promise<PublicOrderResponse> {
     const { data } = await axiosInstance.post<PublicOrderResponse>("/v1/public/orders", payload);
+    return data;
+  },
+
+  async getShopInfo(): Promise<ShopInfo> {
+    const { data } = await axiosInstance.get<ShopInfo>("/v1/public/shop-info");
     return data;
   },
 };

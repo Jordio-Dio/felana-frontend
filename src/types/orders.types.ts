@@ -59,6 +59,12 @@ export interface Invoice {
   magasinNom: string;
   magasinAdresse: string;
   magasinTelephone: string;
+  magasinEmail: string;
+  magasinWhatsapp: string;
+  magasinNifStat: string;
+  mvolaNumero: string;
+  airtelMoneyNumero: string;
+  orangeMoneyNumero: string;
   clientNomComplet: string;
   clientTelephone: string | null;
   clientEmail: string | null;
@@ -69,5 +75,6 @@ export interface Invoice {
   tauxTaxe: number;
   montantTaxe: number;
   total: number;
+  modePaiement: string | null;
   statutPaiement: StatutCommande;
 }

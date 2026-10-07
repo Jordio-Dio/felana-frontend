@@ -3,7 +3,7 @@ import { Store } from "lucide-react";
 
 export function Sidebar() {
   return (
-    <aside className="hidden w-64 shrink-0 flex-col border-r border-[#F2E6E1] bg-white lg:flex">
+    <aside className="hidden w-64 shrink-0 flex-col border-r border-[#F2E6E1] bg-white lg:flex print:hidden">
       {/* En-tête / Logo */}
       <div className="flex h-16 items-center gap-3 border-b border-[#F2E6E1] px-6">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#8B3A1C]/10 text-[#8B3A1C] ring-1 ring-[#8B3A1C]/15">

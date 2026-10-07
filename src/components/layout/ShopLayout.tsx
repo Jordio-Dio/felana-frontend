@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { UserPlus, LogIn, X, Sparkles } from "lucide-react";
 import { ShopHeader } from "@/components/shop/ShopHeader";
+import { ShopFooter } from "@/components/shop/ShopFooter";
 import { CartProvider } from "@/context/CartContext";
 import { ShopSearchProvider } from "@/context/ShopSearchContext";
 import { ClientAuthProvider, useClientAuth } from "@/context/ClientAuthContext";
@@ -96,6 +97,9 @@ export function ShopLayout() {
             <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
               <Outlet />
             </main>
+
+            {/* Footer contact (id="contact", cible du lien Contact) */}
+            <ShopFooter />
           </div>
         </ShopSearchProvider>
       </CartProvider>

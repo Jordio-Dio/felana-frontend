@@ -102,6 +102,21 @@ export function CommandeDetailPage() {
     );
   }
 
+  const mobileNumbers = [
+    { label: "Mvola", value: invoice.mvolaNumero?.trim() ?? "" },
+    { label: "Airtel Money", value: invoice.airtelMoneyNumero?.trim() ?? "" },
+    { label: "Orange Money", value: invoice.orangeMoneyNumero?.trim() ?? "" },
+  ].filter((n) => n.value !== "");
+
+  // Seul le mode réellement payé est affiché sur le reçu.
+  const modeKey = invoice.modePaiement?.trim() ?? "";
+  const numeroByMode: Record<string, { label: string; value: string }> = {
+    MVOLA_MANUEL: { label: "Mvola", value: invoice.mvolaNumero?.trim() ?? "" },
+    ORANGE_MONEY_MANUEL: { label: "Orange Money", value: invoice.orangeMoneyNumero?.trim() ?? "" },
+    AIRTEL_MONEY_MANUEL: { label: "Airtel Money", value: invoice.airtelMoneyNumero?.trim() ?? "" },
+  };
+  const chosenNumero = modeKey ? numeroByMode[modeKey] : undefined;
+
   return (
     <div className="space-y-6 pb-12">
       {/* Barre d'action supérieure */}
@@ -141,9 +156,37 @@ export function CommandeDetailPage() {
               <p className="mt-1 text-xs text-stone-500 print:text-stone-700">
                 {invoice.magasinAdresse}
               </p>
-              <p className="text-xs text-stone-500 print:text-stone-700">
-                Tél: {invoice.magasinTelephone}
-              </p>
+              {/* Les 3 numéros Mobile Money remplacent la ligne Tél */}
+              {[
+                invoice.orangeMoneyNumero,
+                invoice.mvolaNumero,
+                invoice.airtelMoneyNumero,
+              ]
+                .map((numero) => numero?.trim() ?? "")
+                .filter((numero) => numero !== "")
+                .map((numero) => (
+                  <p
+                    key={numero}
+                    className="text-xs text-stone-500 print:text-stone-700"
+                  >
+                    {numero}
+                  </p>
+                ))}
+              {invoice.magasinEmail && (
+                <p className="text-xs text-stone-500 print:text-stone-700">
+                  {invoice.magasinEmail}
+                </p>
+              )}
+              {invoice.magasinWhatsapp && (
+                <p className="text-xs text-stone-500 print:text-stone-700">
+                  WhatsApp: {invoice.magasinWhatsapp}
+                </p>
+              )}
+              {invoice.magasinNifStat && (
+                <p className="text-xs text-stone-500 print:text-stone-700">
+                  NIF/STAT: {invoice.magasinNifStat}
+                </p>
+              )}
             </div>
 
             <div className="text-left sm:text-right">
@@ -234,6 +277,34 @@ export function CommandeDetailPage() {
                 {formatCurrency(invoice.total)}
               </span>
             </div>
+          </div>
+
+          {/* Mode de paiement réellement payé (visibles à l'impression) */}
+          <div className="mt-6 border-t border-[#F2E6E1] pt-4 text-xs print:border-stone-300">
+            <p className="mb-2 font-bold uppercase tracking-wider text-stone-400 print:text-black">
+              Paiement
+            </p>
+
+            {modeKey === "ESPECES" ? (
+              <p className="text-stone-600 print:text-black">
+                <span className="font-semibold">Espèces :</span>{" "}
+                <span className="font-bold">à la livraison ou au retrait</span>
+              </p>
+            ) : chosenNumero?.value ? (
+              <p className="text-stone-600 print:text-black">
+                <span className="font-semibold">{chosenNumero.label} :</span>{" "}
+                <span className="font-bold">{chosenNumero.value}</span>
+              </p>
+            ) : mobileNumbers.length > 0 ? (
+              <ul className="flex flex-wrap gap-x-6 gap-y-1">
+                {mobileNumbers.map((numero) => (
+                  <li key={numero.label} className="text-stone-600 print:text-black">
+                    <span className="font-semibold">{numero.label}:</span>{" "}
+                    <span className="font-bold">{numero.value}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </div>
         </div>
 

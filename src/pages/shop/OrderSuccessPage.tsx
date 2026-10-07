@@ -1,16 +1,51 @@
+import { useEffect, useState } from "react";
 import { useLocation, Navigate, Link } from "react-router-dom";
-import { CheckCircle2, ArrowLeft } from "lucide-react";
+import { CheckCircle2, ArrowLeft, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/formatters";
-import type { PublicOrderResponse } from "@/types/shop.types";
+import { shopService } from "@/api/shopService";
+import type { PublicOrderResponse, ShopInfo } from "@/types/shop.types";
+
+/** Libellés des numéros Mobile Money selon le mode choisi au checkout. */
+const MODE_NUMERO_LABELS: Record<string, string> = {
+  MVOLA_MANUEL: "Mvola",
+  ORANGE_MONEY_MANUEL: "Orange Money",
+};
 
 export function OrderSuccessPage() {
   const location = useLocation();
   const order = location.state as PublicOrderResponse | undefined;
 
+  const [shopInfo, setShopInfo] = useState<ShopInfo | null>(null);
+
+  useEffect(() => {
+    async function loadShopInfo() {
+      try {
+        const info = await shopService.getShopInfo();
+        setShopInfo(info);
+      } catch (error) {
+        console.error("Erreur lors du chargement des infos boutique :", error);
+      }
+    }
+    loadShopInfo();
+  }, []);
+
   if (!order) {
     return <Navigate to="/shop" replace />;
   }
+
+  const allNumbers = [
+    { label: "Mvola", value: shopInfo?.mvolaNumero?.trim() ?? "" },
+    { label: "Airtel Money", value: shopInfo?.airtelMoneyNumero?.trim() ?? "" },
+    { label: "Orange Money", value: shopInfo?.orangeMoneyNumero?.trim() ?? "" },
+  ].filter((n) => n.value !== "");
+
+  // Numéro du mode choisi si disponible, sinon les 3 numéros.
+  const chosenLabel = MODE_NUMERO_LABELS[order.modePaiement];
+  const chosenNumber = chosenLabel
+    ? allNumbers.find((n) => n.label === chosenLabel)
+    : undefined;
+  const paymentNumbers = chosenNumber ? [chosenNumber] : allNumbers;
 
   return (
     <div className="flex min-h-[75vh] items-center justify-center px-4 py-10">
@@ -47,9 +82,31 @@ export function OrderSuccessPage() {
               Instructions de paiement
             </p>
             <p className="text-xs sm:text-sm text-[#5C2817] leading-relaxed">
-              {order.instructionsPaiement}
+              {order.modePaiement === "ESPECES"
+                ? "Le paiement en espèces se fera à la livraison ou au retrait."
+                : order.instructionsPaiement + " (numéros ci-dessous)"}
             </p>
           </div>
+
+          {/* Numéros Mobile Money (depuis /v1/public/shop-info) */}
+          {paymentNumbers.length > 0 && (
+            <ul className="space-y-1.5">
+              {paymentNumbers.map((numero) => (
+                <li
+                  key={numero.label}
+                  className="flex items-center justify-between gap-3 rounded-xl border border-[#E09F82]/25 bg-white px-3.5 py-2.5"
+                >
+                  <span className="flex items-center gap-2 text-xs font-semibold text-[#5C2817]">
+                    <Smartphone className="h-3.5 w-3.5 text-[#8B3A1C]" />
+                    {numero.label}
+                  </span>
+                  <span className="font-mono text-sm font-bold text-[#8B3A1C]">
+                    {numero.value}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         {/* Bouton d'action principal (Couleur sobre) */}
