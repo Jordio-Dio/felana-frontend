@@ -58,9 +58,9 @@ export interface Invoice {
   dateEmission: string;
   magasinNom: string;
   magasinAdresse: string;
-  magasinTelephone: string;
   magasinEmail: string;
   magasinWhatsapp: string;
+  magasinTelephone: string;
   magasinNifStat: string;
   mvolaNumero: string;
   airtelMoneyNumero: string;

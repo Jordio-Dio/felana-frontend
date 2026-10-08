@@ -156,12 +156,8 @@ export function CommandeDetailPage() {
               <p className="mt-1 text-xs text-stone-500 print:text-stone-700">
                 {invoice.magasinAdresse}
               </p>
-              {/* Les 3 numéros Mobile Money remplacent la ligne Tél */}
-              {[
-                invoice.orangeMoneyNumero,
-                invoice.mvolaNumero,
-                invoice.airtelMoneyNumero,
-              ]
+              {/* Numéros Mobile Money */}
+              {[invoice.orangeMoneyNumero, invoice.mvolaNumero, invoice.airtelMoneyNumero]
                 .map((numero) => numero?.trim() ?? "")
                 .filter((numero) => numero !== "")
                 .map((numero) => (
