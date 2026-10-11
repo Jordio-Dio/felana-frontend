@@ -6,7 +6,6 @@ import { useCart } from "@/context/CartContext";
 import { useShopSearch } from "@/context/ShopSearchContext";
 import type { ArticlePublic } from "@/types/shop.types";
 import { Button } from "@/components/ui/button";
-import { ArtisanBanner } from "@/components/shop/ArtisanBanner";
 import { getCategoryIcon, AllCategoriesIcon } from "@/lib/categoryIcons";
 import { formatCurrency } from "@/lib/formatters";
 import { notify } from "@/lib/toast";
@@ -208,9 +207,10 @@ export function ShopCatalogPage() {
         }}
       />
 
+      {/* Section Histoire / Artisan Banner 
       <div id="histoire" className="pt-10">
-        <ArtisanBanner onExplore={scrollToCatalogue} />
       </div>
+      */}
 
       <div className="pt-10" id="catalogue">
         {/* Barre de Catégories - Design Pro & Minimaliste */}

@@ -212,6 +212,12 @@ export function CommandeDetailPage() {
                 {invoice.vendeurNom}
               </p>
             </div>
+            {invoice.zoneLivraison && (
+              <div className="col-span-2">
+                <p className="font-bold uppercase tracking-wider text-stone-400">Demande / précision de livraison</p>
+                <p className="mt-0.5 font-semibold text-stone-900 print:text-black">{invoice.zoneLivraison}</p>
+              </div>
+            )}
           </div>
 
           {/* Tableau des articles */}
@@ -319,6 +325,15 @@ export function CommandeDetailPage() {
                 {STATUT_LABELS[commande.statut]}
               </Badge>
             </div>
+
+            {commande.zoneLivraison && (
+              <div className="mb-4 rounded-xl bg-[#FAF6F4] p-3">
+                <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                  Demande / précision de livraison
+                </p>
+                <p className="text-xs font-semibold text-stone-800">{commande.zoneLivraison}</p>
+              </div>
+            )}
 
             {hasRole("GERANT") || hasRole("VENDEUR") ? (
               <div className="space-y-2">

@@ -39,9 +39,9 @@ export interface PublicOrderRequest {
   nomClient: string;
   telephone: string;
   adresseLivraison: string;
+  zoneLivraison?: string;
   modePaiement: ModePaiement;
   items: PublicOrderItemRequest[];
-
 }
 
 export interface PublicOrderResponse {

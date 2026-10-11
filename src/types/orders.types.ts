@@ -28,6 +28,7 @@ export interface Commande {
   remise: number;
   totalAchat: number;
   lignes: LigneCommande[];
+  zoneLivraison?: string | null;
 }
 
 export interface LigneCommandeRequest {
@@ -77,4 +78,5 @@ export interface Invoice {
   total: number;
   modePaiement: string | null;
   statutPaiement: StatutCommande;
+  zoneLivraison?: string | null;
 }

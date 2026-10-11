@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { formatCurrency } from "@/lib/formatters";
 import type { ModePaiement } from "@/types/shop.types";
 import type { AxiosError } from "axios";
@@ -33,6 +34,7 @@ export function CheckoutPage() {
   const [nom, setNom] = useState(client?.nom ?? "");
   const [telephone, setTelephone] = useState(client?.telephone ?? "");
   const [adresse, setAdresse] = useState(client?.adresse ?? "");
+  const [zoneLivraison, setZoneLivraison] = useState<string>("");
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,9 +73,9 @@ export function CheckoutPage() {
         nomClient: nom,
         telephone: telephone,
         adresseLivraison: adresse,
+        zoneLivraison: zoneLivraison.trim() || undefined,
         modePaiement,
         items: lines.map((l) => ({ articleId: l.article.id, quantite: l.quantite }))
-        
       });
 
       clearCart();
@@ -219,6 +221,17 @@ export function CheckoutPage() {
                     className="h-9 text-xs border-[#F2E6E1] bg-[#FAF6F4]/50 focus:border-[#8B3A1C]"
                   />
                 </div>
+
+                <div>
+                  <label className="text-[11px] font-semibold text-stone-600">Commande personnalisée</label>
+                  <Textarea
+                    value={zoneLivraison}
+                    onChange={(e) => setZoneLivraison(e.target.value)}
+                    placeholder="Ex: couleur noir, 20 cm..."
+                    className="min-h-[60px] text-xs border-[#F2E6E1] bg-[#FAF6F4]/50 focus:border-[#8B3A1C]"
+                  />
+                </div>
+
                 <div>
                   <label className="text-[11px] font-semibold text-stone-600">Adresse de livraison</label>
                   <Input
