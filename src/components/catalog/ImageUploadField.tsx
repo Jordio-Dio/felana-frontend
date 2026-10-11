@@ -18,7 +18,7 @@ interface ImageUploadFieldProps {
 export function ImageUploadField({
   imageUrls,
   onChange,
-  maxImages = 5,
+  maxImages = 20,
 }: ImageUploadFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
