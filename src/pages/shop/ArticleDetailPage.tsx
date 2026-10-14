@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import { isAxiosError } from "axios";
-import { ArrowLeft, ImageOff, PackageX, RotateCcw, ShoppingBag } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, ImageOff, PackageX, RotateCcw, ShoppingBag } from "lucide-react";
 import { shopService } from "@/api/shopService";
 import { useCart } from "@/context/CartContext";
 import type { ArticlePublic } from "@/types/shop.types";
@@ -12,6 +12,9 @@ import { notify } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 
 type LoadError = "notfound" | "error";
+
+/** Distance minimale de glissement (px) pour changer de photo. */
+const SWIPE_THRESHOLD_PX = 50;
 
 type FetchState =
   | { status: "loading"; articleId: number; retryToken: number }
@@ -132,6 +135,9 @@ export function ArticleDetailPage() {
   });
   const [selectedImage, setSelectedImage] = useState(0);
   const [retryToken, setRetryToken] = useState(0);
+  // Suivi du geste de glissement (doigt sur mobile / souris sur PC)
+  const [dragOffset, setDragOffset] = useState(0);
+  const dragState = useRef<{ startX: number; startY: number; axis: "x" | "y" | null } | null>(null);
 
   const articleId = Number(id);
   const isValidId = Number.isInteger(articleId) && articleId > 0;
@@ -152,6 +158,7 @@ export function ArticleDetailPage() {
         if (cancelled) return;
         // La photo de couverture est toujours sélectionnée par défaut
         setSelectedImage(0);
+        setDragOffset(0);
         setFetchState({ status: "success", articleId, retryToken, article: data });
       },
       (err: unknown) => {
@@ -178,6 +185,39 @@ export function ArticleDetailPage() {
       ? fetchState
       : { status: "loading", articleId, retryToken };
 
+  const totalImages =
+    view.status === "success" ? (view.article.imageUrls?.length ?? 0) : 0;
+
+  // Navigation clavier (PC) : flèches gauche / droite
+  useEffect(() => {
+    if (totalImages < 2) return;
+
+    function onKeyDown(event: KeyboardEvent) {
+      const target = event.target instanceof Element ? event.target : null;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          (target instanceof HTMLElement && target.isContentEditable) ||
+          target.closest('[role="listbox"], [role="dialog"]'))
+      ) {
+        return;
+      }
+
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        setSelectedImage((index) => (index + 1) % totalImages);
+      } else if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        setSelectedImage((index) => (index - 1 + totalImages) % totalImages);
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [totalImages]);
+
   if (view.status === "loading") {
     return <LoadingSkeleton />;
   }
@@ -190,6 +230,57 @@ export function ArticleDetailPage() {
   const images = article.imageUrls ?? [];
   const imageIndex = selectedImage < images.length ? selectedImage : 0;
   const currentImage = images[imageIndex];
+  const hasMultipleImages = images.length > 1;
+
+  function goToImage(index: number) {
+    if (images.length === 0) return;
+    setSelectedImage((index + images.length) % images.length);
+  }
+
+  // Gestuel : glisser le doigt de droite à gauche (photo suivante)
+  // ou l'inverse (photo précédente). Fonctionne aussi à la souris sur PC.
+  function handlePointerDown(event: ReactPointerEvent<HTMLDivElement>) {
+    if (!hasMultipleImages) return;
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    dragState.current = { startX: event.clientX, startY: event.clientY, axis: null };
+  }
+
+  function handlePointerMove(event: ReactPointerEvent<HTMLDivElement>) {
+    const state = dragState.current;
+    if (!state) return;
+
+    const dx = event.clientX - state.startX;
+    const dy = event.clientY - state.startY;
+
+    if (!state.axis) {
+      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      // Gestuel vertical : on laisse la page défiler normalement
+      if (Math.abs(dy) > Math.abs(dx)) {
+        dragState.current = null;
+        return;
+      }
+      state.axis = "x";
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+
+    setDragOffset(dx);
+  }
+
+  function endPointerDrag(event: ReactPointerEvent<HTMLDivElement>) {
+    const state = dragState.current;
+    dragState.current = null;
+
+    if (state?.axis === "x") {
+      const dx = event.clientX - state.startX;
+      if (dx <= -SWIPE_THRESHOLD_PX) goToImage(imageIndex + 1);
+      else if (dx >= SWIPE_THRESHOLD_PX) goToImage(imageIndex - 1);
+    }
+
+    setDragOffset(0);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  }
 
   function handleAddToCart() {
     addToCart(article);
@@ -205,14 +296,28 @@ export function ArticleDetailPage() {
             Galerie d'images (Mobile : sous l'image / Desktop : à droite)
            ============================================ */}
         <div className="flex flex-col gap-3 lg:flex-row">
-          {/* Image principale */}
-          <div className="relative aspect-square min-w-0 flex-1 overflow-hidden rounded-3xl border border-[#F2E6E1] bg-[#FAF6F4]">
+          {/* Image principale — glissable au doigt (mobile) et à la souris (PC) */}
+          <div
+            className={cn(
+              "group relative aspect-square min-w-0 flex-1 touch-pan-y select-none overflow-hidden rounded-3xl border border-[#F2E6E1] bg-[#FAF6F4]",
+              hasMultipleImages && "cursor-grab active:cursor-grabbing"
+            )}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={endPointerDrag}
+            onPointerCancel={endPointerDrag}
+          >
             {currentImage ? (
               <img
                 key={currentImage}
                 src={currentImage}
                 alt={`${article.nom} — photo ${imageIndex + 1}`}
-                className="h-full w-full object-cover"
+                draggable={false}
+                style={{ transform: `translateX(${dragOffset}px)` }}
+                className={cn(
+                  "h-full w-full object-cover",
+                  dragOffset === 0 ? "transition-transform duration-300" : "transition-none"
+                )}
               />
             ) : (
               <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-[#D8C4BC]">
@@ -229,10 +334,32 @@ export function ArticleDetailPage() {
             )}
 
             {/* Compteur de photos */}
-            {images.length > 1 && (
+            {hasMultipleImages && (
               <span className="absolute bottom-3 right-3 z-[1] rounded-full bg-stone-900/60 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-md">
                 {imageIndex + 1} / {images.length}
               </span>
+            )}
+
+            {/* Flèches de navigation (PC : au survol de la photo) */}
+            {hasMultipleImages && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => goToImage(imageIndex - 1)}
+                  aria-label="Photo précédente"
+                  className="absolute left-2 top-1/2 z-[1] hidden -translate-y-1/2 items-center justify-center rounded-full bg-white/80 p-2 text-stone-700 opacity-0 shadow-md transition-opacity duration-200 hover:bg-white focus-visible:opacity-100 sm:flex"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => goToImage(imageIndex + 1)}
+                  aria-label="Photo suivante"
+                  className="absolute right-2 top-1/2 z-[1] hidden -translate-y-1/2 items-center justify-center rounded-full bg-white/80 p-2 text-stone-700 opacity-0 shadow-md transition-opacity duration-200 hover:bg-white focus-visible:opacity-100 sm:flex"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </>
             )}
           </div>
 
