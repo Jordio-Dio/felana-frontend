@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { authService } from "@/api/authService";
+import { refreshAccessToken, isTokenExpired, SessionExpiredError } from "@/api/axiosInstance";
 import type { AuthenticatedUser, LoginRequest, Role } from "@/types/auth.types";
 
 interface AuthContextValue {
@@ -25,10 +26,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const storedUser = authService.getStoredUser();
     const token = authService.getAccessToken();
 
-    if (storedUser && token) {
-      setUser(storedUser);
+    if (!storedUser || !token) {
+      setIsLoading(false);
+      return;
     }
-    setIsLoading(false);
+
+    // Retour après fermeture du navigateur : l'access token (15 min) a très
+    // souvent expiré. On le rafraîchit AVANT d'exposer la session pour ne pas
+    // déclencher une salve de 401 au premier rendu (chaque 401 déclenchant un
+    // rafraîchissement, plusieurs onglets restaurés feraient tourner le même
+    // refresh token en même temps).
+    const sessionUser: AuthenticatedUser = storedUser;
+    const sessionExpired = isTokenExpired(token);
+
+    async function bootstrap() {
+      if (sessionExpired) {
+        try {
+          await refreshAccessToken();
+        } catch (err) {
+          // Refus explicite du serveur -> session réellement morte.
+          // Sinon (réseau, 5xx) on garde la session : le prochain appel réessaiera.
+          if (err instanceof SessionExpiredError) {
+            authService.logout();
+            setIsLoading(false);
+            return;
+          }
+        }
+      }
+      setUser(sessionUser);
+      setIsLoading(false);
+    }
+
+    bootstrap();
   }, []);
 
   async function login(payload: LoginRequest) {

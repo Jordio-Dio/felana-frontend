@@ -53,15 +53,138 @@ axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 });
 
 let isRefreshing = false;
-let refreshSubscribers: Array<(token: string) => void> = [];
+type RefreshSubscriber = {
+  resolve: (token: string) => void;
+  reject: (reason?: unknown) => void;
+};
+let refreshSubscribers: RefreshSubscriber[] = [];
 
-function subscribeTokenRefresh(callback: (token: string) => void) {
-  refreshSubscribers.push(callback);
+function subscribeTokenRefresh(resolve: RefreshSubscriber["resolve"], reject: RefreshSubscriber["reject"]) {
+  refreshSubscribers.push({ resolve, reject });
 }
 
-function onRefreshed(newToken: string) {
-  refreshSubscribers.forEach((callback) => callback(newToken));
+function flushSubscribers(run: (subscriber: RefreshSubscriber) => void) {
+  const pending = refreshSubscribers;
   refreshSubscribers = [];
+  pending.forEach(run);
+}
+
+/** Un access token exploitable : présent, non vide, non expiré. */
+function isUsableAccess(value: string | null): value is string {
+  return !!value && value !== "null" && value !== "undefined" && !isTokenExpired(value);
+}
+
+/** Un refresh token exploitable : c'est un UUID opaque, PAS un JWT. */
+function isUsableRefresh(value: string | null): value is string {
+  return !!value && value !== "null" && value !== "undefined";
+}
+
+/**
+ * Décode l'expiration d'un JWT sans en vérifier la signature : suffisant pour
+ * décider si un rafraîchissement est nécessaire avant d'émettre un appel.
+ */
+export function isTokenExpired(token: string): boolean {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return true;
+    const claims = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+    if (typeof claims.exp !== "number") return false;
+    return Date.now() >= claims.exp * 1000;
+  } catch {
+    return true;
+  }
+}
+
+/**
+ * Refus EXPLICITE du serveur (401/403 sur le refresh) : à ce stade la session
+ * est réellement morte. Seule cette erreur autorise une déconnexion.
+ */
+export class SessionExpiredError extends Error {
+  constructor(message = "Session expirée.") {
+    super(message);
+    this.name = "SessionExpiredError";
+  }
+}
+
+const REFRESH_LOCK_KEY = "felana_refresh_lock";
+const REFRESH_LOCK_TTL_MS = 10_000;
+
+function acquireRefreshLock(): boolean {
+  try {
+    const heldAt = Number(localStorage.getItem(REFRESH_LOCK_KEY) ?? 0);
+    if (heldAt && Date.now() - heldAt < REFRESH_LOCK_TTL_MS) return false;
+    localStorage.setItem(REFRESH_LOCK_KEY, String(Date.now()));
+    return true;
+  } catch {
+    return true; // stockage inaccessible : on tente quand même
+  }
+}
+
+function releaseRefreshLock() {
+  try {
+    localStorage.removeItem(REFRESH_LOCK_KEY);
+  } catch {
+    /* rien à faire */
+  }
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Échange le refresh token contre un nouvel access token.
+ *
+ * Garde-fous, pour ne JAMAIS déconnecter une session qui est encore bonne :
+ *  1. si le token en stockage est déjà valide (un autre onglet a rafraîchi
+ *     entre-temps), on le réutilise sans appel réseau ni rotation supplémentaire ;
+ *  2. un verrou partagé entre onglets sérialise les rafraîchissements réels,
+ *     ce qui évite d'envoyer deux fois le même refresh token ;
+ *  3. seuls les refus du serveur (401/403) lèvent SessionExpiredError. Une
+ *     coupure réseau ou une 5xx est propagée telle quelle : on ne détruit pas
+ *     la session parce que le serveur a eu un raté.
+ */
+export async function refreshAccessToken(): Promise<string> {
+  const storedAccess = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+  if (isUsableAccess(storedAccess)) {
+    return storedAccess;
+  }
+
+  let holdsLock = acquireRefreshLock();
+  for (let attempt = 0; !holdsLock && attempt < 10; attempt++) {
+    await wait(200);
+    holdsLock = acquireRefreshLock();
+  }
+
+  try {
+    // Re-vérification après le verrou : un autre onglet a pu écrire entre-temps.
+    const current = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+    if (isUsableAccess(current)) {
+      return current;
+    }
+
+    const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+    if (!isUsableRefresh(refreshToken)) {
+      throw new SessionExpiredError("Aucun refresh token disponible.");
+    }
+
+    try {
+      const { data } = await axios.post<AuthResponse>(`${BASE_URL}/auth/refresh-token`, {
+        refreshToken,
+      });
+      localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, data.accessToken);
+      localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, data.refreshToken);
+      return data.accessToken;
+    } catch (error) {
+      const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+      if (status === 401 || status === 403) {
+        throw new SessionExpiredError("Session expirée ou révoquée.");
+      }
+      throw error;
+    }
+  } finally {
+    if (holdsLock) releaseRefreshLock();
+  }
 }
 
 /**
@@ -111,38 +234,38 @@ axiosInstance.interceptors.response.use(
     originalRequest._retry = true;
 
     if (isRefreshing) {
-      return new Promise((resolve) => {
-        subscribeTokenRefresh((newToken: string) => {
-          originalRequest.headers.Authorization = `Bearer ${newToken}`;
-          resolve(axiosInstance(originalRequest));
-        });
+      return new Promise((resolve, reject) => {
+        subscribeTokenRefresh(
+          (newToken: string) => {
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            resolve(axiosInstance(originalRequest));
+          },
+          reject
+        );
       });
     }
 
     isRefreshing = true;
 
     try {
-      const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
-      if (!refreshToken) {
-        throw new Error("Aucun refresh token disponible.");
-      }
-
-      const { data } = await axios.post<AuthResponse>(`${BASE_URL}/auth/refresh-token`, {
-        refreshToken,
-      });
-
-      localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, data.accessToken);
-      localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, data.refreshToken);
-
-      onRefreshed(data.accessToken);
-      isRefreshing = false;
-
-      originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+      const accessToken = await refreshAccessToken();
+      flushSubscribers((subscriber) => subscriber.resolve(accessToken));
+      originalRequest.headers.Authorization = `Bearer ${accessToken}`;
       return axiosInstance(originalRequest);
     } catch (refreshError) {
-      isRefreshing = false;
-      clearSession();
+      // Les requêtes en attente doivent être terminées : sinon elles restent
+      // suspendues à jamais et gardent un callback périmé en mémoire.
+      flushSubscribers((subscriber) => subscriber.reject(refreshError));
+
+      // Déconnexion UNIQUEMENT sur refus explicite du serveur. Une erreur
+      // réseau, un 500 ou un serveur qui redémarre ne détruit pas la session :
+      // c'est précisément ce qui renvoyait la gérante au login à chaque fois.
+      if (refreshError instanceof SessionExpiredError) {
+        clearSession();
+      }
       return Promise.reject(refreshError);
+    } finally {
+      isRefreshing = false;
     }
   }
 );
