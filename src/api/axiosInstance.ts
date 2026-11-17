@@ -169,9 +169,14 @@ export async function refreshAccessToken(): Promise<string> {
     }
 
     try {
-      const { data } = await axios.post<AuthResponse>(`${BASE_URL}/auth/refresh-token`, {
-        refreshToken,
-      });
+      // Délai borné : sans lui, un réseau mobile capricieux laisse l'application
+      // bloquée sur l'écran de chargement au démarrage. Un dépassement n'est PAS
+      // un refus du serveur : la session est conservée (voir le catch ci-dessous).
+      const { data } = await axios.post<AuthResponse>(
+        `${BASE_URL}/auth/refresh-token`,
+        { refreshToken },
+        { timeout: 15_000 }
+      );
       localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, data.accessToken);
       localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, data.refreshToken);
       return data.accessToken;
