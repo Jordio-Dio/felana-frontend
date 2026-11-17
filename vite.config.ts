@@ -6,6 +6,15 @@ import { defineConfig } from 'vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  build: {
+    // Vite 8 vise par défaut Safari 16. Or l'iPhone 7 s'arrête à iOS 15.8 :
+    // le bundle contenait des "class static blocks" (ES2022), que Safari 15
+    // ne sait pas lire DU TOUT. Une seule de ces constructions provoquait un
+    // SyntaxError au chargement, donc une page blanche, sans rien afficher.
+    // Cibler Safari 15 fait réécrire ces constructions par esbuild.
+    target: ['safari15', 'ios15', 'es2020'],
+    cssTarget: ['safari15', 'ios15'],
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
