@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { clientAuthService } from "@/api/clientAuthService";
+import { captureEvent, identifyUser, resetAnalytics } from "@/lib/analytics";
 import type {
   AuthenticatedClient,
   ClientLoginRequest,
@@ -62,13 +63,20 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
     clientAuthService.saveSession(auth);
 
     const profile = await clientAuthService.getProfile();
-    setClient({
+    const authenticated = {
       clientId: profile.id,
       nom: profile.nom,
       prenom: profile.prenom,
       telephone: profile.telephone,
       adresse: profile.adresse,
+    };
+    identifyUser({
+      id: `client-${authenticated.clientId}`,
+      name: [authenticated.prenom, authenticated.nom].filter(Boolean).join(" "),
+      role: "CLIENT_BOUTIQUE",
     });
+    captureEvent("client_inscrit");
+    setClient(authenticated);
   }
 
   async function login(payload: ClientLoginRequest) {
@@ -81,16 +89,25 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
     clientAuthService.saveSession(auth);
 
     const profile = await clientAuthService.getProfile();
-    setClient({
+    const authenticated = {
       clientId: profile.id,
       nom: profile.nom,
       prenom: profile.prenom,
       telephone: profile.telephone,
       adresse: profile.adresse,
+    };
+    identifyUser({
+      id: `client-${authenticated.clientId}`,
+      name: [authenticated.prenom, authenticated.nom].filter(Boolean).join(" "),
+      role: "CLIENT_BOUTIQUE",
     });
+    captureEvent("client_connecte");
+    setClient(authenticated);
   }
 
   function logout() {
+    captureEvent("client_deconnecte");
+    resetAnalytics();
     clientAuthService.logout();
     setClient(null);
   }

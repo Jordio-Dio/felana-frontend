@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { captureEvent } from "@/lib/analytics";
 import { formatCurrency } from "@/lib/formatters";
 import type { Article } from "@/types/catalog.types";
 import type { Client } from "@/types/orders.types";
@@ -138,6 +139,11 @@ export function NewSalePage() {
         remise: remiseValue > 0 ? remiseValue : null,
       });
       notify.success(`Vente ${commande.reference} enregistrée avec succès.`);
+      captureEvent("vente_enregistree", {
+        reference: commande.reference,
+        nombre_articles: cart.length,
+        remise_appliquee: remiseValue > 0,
+      });
       navigate(`/commandes/${commande.id}`);
     } catch (err) {
       const axiosError = err as AxiosError<ApiErrorResponse>;

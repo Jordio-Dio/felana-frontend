@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { authService } from "@/api/authService";
 import { refreshAccessToken, isTokenExpired, SessionExpiredError } from "@/api/axiosInstance";
+import { captureEvent, identifyUser, resetAnalytics } from "@/lib/analytics";
 import type { AuthenticatedUser, LoginRequest, Role } from "@/types/auth.types";
 
 interface AuthContextValue {
@@ -53,6 +54,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         }
       }
+      // Session restaurée (retour sur l'app) : on réassocie les événements
+      // à la même personne pour que les funnels et la rétention restent justes.
+      identifyUser(sessionUser);
       setUser(sessionUser);
       setIsLoading(false);
     }
@@ -63,10 +67,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function login(payload: LoginRequest) {
     const authResponse = await authService.login(payload);
     const savedUser = authService.saveSession(authResponse);
+    identifyUser(savedUser);
+    captureEvent("utilisateur_connecte", { role: savedUser.role });
     setUser(savedUser);
   }
 
   function logout() {
+    captureEvent("utilisateur_deconnecte", { role: user?.role });
+    resetAnalytics();
     authService.logout();
     setUser(null);
     window.location.href = "/login";
