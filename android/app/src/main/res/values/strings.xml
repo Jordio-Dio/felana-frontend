@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Hiba Création</string>
+    <string name="title_activity_main">Hiba Création</string>
+    <string name="package_name">com.hibacreation.app</string>
+    <string name="custom_url_scheme">com.hibacreation.app</string>
+</resources>
