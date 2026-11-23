@@ -159,7 +159,7 @@ export function FeaturedByCategory() {
                       </span>
                       {!article.disponible && (
                         <span className="rounded-full bg-gray-900/80 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                          Épuisé
+                          Sur commande
                         </span>
                       )}
                     </div>
@@ -208,15 +208,13 @@ export function FeaturedByCategory() {
 
                     <Button
                       size="sm"
-                      disabled={!article.disponible}
                       onClick={() => handleAddToCart(article)}
                       className={cn(
                         "w-full rounded-full py-2.5 font-medium shadow-sm transition-all duration-200 ease-out",
-                        "bg-[#8a6f56] text-white hover:bg-[#6f5a45] hover:shadow-md",
-                        "disabled:bg-[#d8b7a6] disabled:text-[#8a8276] disabled:shadow-none"
+                        "bg-[#8a6f56] text-white hover:bg-[#6f5a45] hover:shadow-md"
                       )}
                     >
-                      {article.disponible ? "Ajouter au panier" : "Épuisé"}
+                      Ajouter au panier
                     </Button>
                   </div>
                 </div>

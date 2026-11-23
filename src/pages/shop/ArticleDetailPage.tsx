@@ -329,7 +329,7 @@ export function ArticleDetailPage() {
             {/* Badge statut */}
             {!article.disponible && (
               <span className="absolute left-3 top-3 z-[1] rounded-full bg-stone-900/80 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-md">
-                Épuisé
+                Sur commande
               </span>
             )}
 
@@ -401,7 +401,7 @@ export function ArticleDetailPage() {
                 article.disponible ? "bg-emerald-50 text-emerald-700" : "bg-stone-100 text-stone-500"
               )}
             >
-              {article.disponible ? "En stock" : "Épuisé"}
+              {article.disponible ? "En stock" : "Sur commande"}
             </span>
           </div>
 
@@ -416,16 +416,14 @@ export function ArticleDetailPage() {
 
           {/* CTA Desktop / Tablette */}
           <Button
-            disabled={!article.disponible}
             onClick={handleAddToCart}
             className={cn(
               "hidden h-14 w-full gap-2 rounded-2xl bg-[#D9886A] text-base font-bold text-white shadow-lg shadow-[#D9886A]/20 transition-all duration-200 sm:inline-flex",
-              "hover:bg-[#c27558] hover:shadow-xl active:scale-[0.98]",
-              "disabled:bg-stone-200 disabled:text-stone-400 disabled:shadow-none"
+              "hover:bg-[#c27558] hover:shadow-xl active:scale-[0.98]"
             )}
           >
             <ShoppingBag className="h-5 w-5" />
-            {article.disponible ? "Ajouter au panier" : "Article épuisé"}
+            Ajouter au panier
           </Button>
 
           {/* Description complète */}
@@ -457,7 +455,7 @@ export function ArticleDetailPage() {
               <div className="flex items-center justify-between gap-4 py-2.5">
                 <dt className="text-stone-500">Disponibilité</dt>
                 <dd className={cn("font-semibold", article.disponible ? "text-emerald-600" : "text-stone-800")}>
-                  {article.disponible ? "En stock" : "Épuisé"}
+                  {article.disponible ? "En stock" : "Sur commande"}
                 </dd>
               </div>
               <div className="flex items-center justify-between gap-4 py-2.5">
@@ -484,16 +482,14 @@ export function ArticleDetailPage() {
           </div>
 
           <Button
-            disabled={!article.disponible}
             onClick={handleAddToCart}
             className={cn(
               "h-12 flex-1 gap-2 rounded-2xl bg-[#D9886A] text-sm font-bold text-white shadow-md shadow-[#D9886A]/20 transition-all duration-200",
-              "hover:bg-[#c27558] active:scale-[0.98]",
-              "disabled:bg-stone-200 disabled:text-stone-400 disabled:shadow-none"
+              "hover:bg-[#c27558] active:scale-[0.98]"
             )}
           >
             <ShoppingBag className="h-4 w-4" />
-            {article.disponible ? "Ajouter au panier" : "Épuisé"}
+            Ajouter au panier
           </Button>
         </div>
       </div>

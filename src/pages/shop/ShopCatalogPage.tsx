@@ -54,11 +54,11 @@ function ProductCard({
           </div>
         )}
 
-        {/* Badge Épuisé */}
+        {/* Badge : article épuisé mais toujours commandable (production sur commande) */}
         {!article.disponible && (
           <div className="absolute left-3 top-3 z-[1]">
             <span className="rounded-full bg-stone-900/80 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-md">
-              Épuisé
+              Sur commande
             </span>
           </div>
         )}
@@ -106,7 +106,6 @@ function ProductCard({
         {/* Bouton d'action */}
         <Button
           size="sm"
-          disabled={!article.disponible}
           onClick={(e) => {
             // Ajout rapide au panier SANS déclencher la navigation vers la page détail
             e.preventDefault();
@@ -115,11 +114,10 @@ function ProductCard({
           }}
           className={cn(
             "mt-4 w-full rounded-2xl py-2.5 text-xs font-semibold shadow-xs transition-all duration-200",
-            "bg-[#D9886A] text-white hover:bg-[#c27558] hover:shadow-md hover:shadow-[#D9886A]/20 active:scale-[0.98]",
-            "disabled:bg-stone-200 disabled:text-stone-400 disabled:shadow-none"
+            "bg-[#D9886A] text-white hover:bg-[#c27558] hover:shadow-md hover:shadow-[#D9886A]/20 active:scale-[0.98]"
           )}
         >
-          {article.disponible ? "Ajouter au panier" : "Épuisé"}
+          Ajouter au panier
         </Button>
       </div>
     </motion.div>
