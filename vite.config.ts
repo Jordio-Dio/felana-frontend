@@ -6,6 +6,13 @@ import { defineConfig } from 'vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  // Aucun plugin PostCSS n'est nécessaire : Tailwind v4 est appliqué par
+  // @tailwindcss/vite. Déclarer explicitement une liste vide empêche Vite
+  // d'aller chercher une configuration PostCSS héritée ailleurs sur la machine
+  // (qui chargeait un Tailwind v3 incompatible avec l'@import de v4).
+  css: {
+    postcss: { plugins: [] },
+  },
   build: {
     // Vite 8 vise par défaut Safari 16. Or l'iPhone 7 s'arrête à iOS 15.8 :
     // le bundle contenait des "class static blocks" (ES2022), que Safari 15
