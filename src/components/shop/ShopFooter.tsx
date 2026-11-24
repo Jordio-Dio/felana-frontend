@@ -30,11 +30,11 @@ export function ShopFooter() {
   const adresse = shopInfo?.adresse?.trim() ?? "";
   const nifStat = shopInfo?.nifStat?.trim() ?? "";
 
-  // Les 3 numéros de téléphone, affichés sans libellé (remplace la ligne Tél).
+  // Numéros affichés sans libellé (remplace la ligne Tél).
+  // Airtel (033 67 658 01) volontairement absent : c'est le numéro WhatsApp, affiché juste au-dessus.
   const phoneNumbers = [
     shopInfo?.orangeMoneyNumero?.trim() ?? "",
     shopInfo?.mvolaNumero?.trim() ?? "",
-    shopInfo?.airtelMoneyNumero?.trim() ?? "",
   ].filter((numero) => numero !== "");
 
   return (
