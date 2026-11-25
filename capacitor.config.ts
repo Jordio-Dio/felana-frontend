@@ -9,7 +9,10 @@ const config: CapacitorConfig = {
     allowMixedContent: false,
   },
   server: {
+    // L'APK affiche directement le site déployé (aucun code embarqué).
+    url: 'https://hiba-creations.vercel.app/login',
     androidScheme: 'https',
+    cleartext: false,
   },
 }
 

@@ -78,7 +78,7 @@ export function VerifyEmailDialog({ email, onOpenChange, onVerified }: VerifyEma
         onOpenChange(next);
       }}
     >
-      <DialogContent className="sm:max-w-sm rounded-2xl border-[#F2E6E1] bg-white p-6 shadow-xl">
+      <DialogContent className="max-h-[90vh] overflow-y-auto overscroll-contain sm:max-w-sm rounded-2xl border-[#F2E6E1] bg-white p-6 shadow-xl">
         <DialogHeader className="flex flex-col items-center text-center space-y-2">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FAF6F4] text-[#8B3A1C] border border-[#F2E6E1] shadow-xs">
             <MailCheck className="h-6 w-6" />

@@ -161,7 +161,7 @@ export function CategoriesPage() {
             </Button>
           </DialogTrigger>
 
-          <DialogContent className="sm:max-w-md rounded-2xl border-[#F2E6E1] bg-white p-6 shadow-xl">
+          <DialogContent className="max-h-[90vh] overflow-y-auto overscroll-contain sm:max-w-md rounded-2xl border-[#F2E6E1] bg-white p-6 shadow-xl">
             <DialogHeader className="pb-2">
               <DialogTitle className="text-base font-bold text-stone-900">
                 Créer une catégorie
@@ -288,7 +288,7 @@ export function CategoriesPage() {
         open={editTarget !== null}
         onOpenChange={(open) => !open && setEditTarget(null)}
       >
-        <DialogContent className="sm:max-w-md rounded-2xl border-[#F2E6E1] bg-white p-6 shadow-xl">
+        <DialogContent className="max-h-[90vh] overflow-y-auto overscroll-contain sm:max-w-md rounded-2xl border-[#F2E6E1] bg-white p-6 shadow-xl">
           <DialogHeader className="pb-2">
             <DialogTitle className="text-base font-bold text-stone-900">
               Modifier la catégorie

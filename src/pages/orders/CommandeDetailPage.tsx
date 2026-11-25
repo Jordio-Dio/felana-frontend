@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatCurrency, formatDate, STATUT_LABELS, STATUT_BADGE_CLASSES } from "@/lib/formatters";
+import { printPage } from "@/lib/nativePrint";
 import { notify } from "@/lib/toast";
 
 const STATUTS: StatutCommande[] = ["EN_ATTENTE", "EN_FABRICATION", "PAYEE", "LIVREE", "ANNULEE"];
@@ -27,6 +28,7 @@ export function CommandeDetailPage() {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdatingStatut, setIsUpdatingStatut] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
 
   async function load() {
     if (!id) return;
@@ -50,6 +52,22 @@ export function CommandeDetailPage() {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  async function handlePrint() {
+    if (isPrinting) return;
+    setIsPrinting(true);
+    try {
+      const jobName = invoice
+        ? `Recu ${invoice.numeroFacture}`
+        : "Recu de commande";
+      const started = await printPage(jobName);
+      if (!started) {
+        notify.error("L'impression n'est pas disponible sur cet appareil.");
+      }
+    } finally {
+      setIsPrinting(false);
+    }
+  }
 
   async function handleStatutChange(statut: StatutCommande) {
     if (!commande) return;
@@ -118,7 +136,7 @@ export function CommandeDetailPage() {
   const chosenNumero = modeKey ? numeroByMode[modeKey] : undefined;
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 pb-12 print:space-y-0 print:pb-0">
       {/* Barre d'action supérieure */}
       <div className="flex items-center justify-between print:hidden">
         <Button
@@ -132,20 +150,26 @@ export function CommandeDetailPage() {
         </Button>
 
         <Button
-          onClick={() => window.print()}
+          type="button"
+          onClick={handlePrint}
+          disabled={isPrinting}
           size="sm"
           className="rounded-xl bg-[#8B3A1C] font-semibold text-white shadow-md shadow-[#8B3A1C]/20 transition-all hover:bg-[#722F17]"
         >
-          <Printer className="mr-2 h-4 w-4" />
+          {isPrinting ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Printer className="mr-2 h-4 w-4" />
+          )}
           Imprimer le reçu
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 print:block">
         {/* Reçu imprimable / Facture */}
-        <div className="rounded-3xl border border-[#F2E6E1] bg-white p-6 shadow-xl shadow-[#8B3A1C]/5 lg:col-span-2 sm:p-8 print:border-none print:p-0 print:shadow-none">
+        <div className="invoice-print-page rounded-3xl border border-[#F2E6E1] bg-white p-6 shadow-xl shadow-[#8B3A1C]/5 lg:col-span-2 sm:p-8 print:border-none print:p-0 print:shadow-none">
           {/* En-tête du reçu */}
-          <div className="flex flex-col justify-between gap-4 border-b border-[#F2E6E1] pb-6 sm:flex-row sm:items-start">
+          <div className="invoice-print-header flex flex-col justify-between gap-4 border-b border-[#F2E6E1] pb-6 sm:flex-row sm:items-start">
             <div>
               <div className="flex items-center gap-2">
                 <Store className="h-5 w-5 text-[#8B3A1C] print:text-black" />
@@ -196,7 +220,7 @@ export function CommandeDetailPage() {
           </div>
 
           {/* Informations Client & Vendeur */}
-          <div className="my-6 grid grid-cols-2 gap-4 rounded-2xl bg-[#FAF6F4]/60 p-4 text-xs print:border print:border-stone-200 print:bg-transparent">
+          <div className="invoice-print-client my-6 grid grid-cols-2 gap-4 rounded-2xl bg-[#FAF6F4]/60 p-4 text-xs print:border print:border-stone-200 print:bg-transparent">
             <div>
               <p className="font-bold uppercase tracking-wider text-stone-400">Client</p>
               <p className="mt-0.5 font-bold text-stone-900 print:text-black">
@@ -225,10 +249,10 @@ export function CommandeDetailPage() {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-[#F2E6E1] text-left font-bold uppercase tracking-wider text-stone-400">
-                  <th className="pb-3">Article</th>
-                  <th className="pb-3 text-center">Qté</th>
-                  <th className="pb-3 text-right">Prix unit.</th>
-                  <th className="pb-3 text-right">Sous-total</th>
+                  <th className="w-[46%] pb-3">Article</th>
+                  <th className="w-[12%] pb-3 text-center">Qté</th>
+                  <th className="w-[21%] pb-3 text-right">Prix unit.</th>
+                  <th className="w-[21%] pb-3 text-right">Sous-total</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#F2E6E1]/60">
@@ -253,7 +277,7 @@ export function CommandeDetailPage() {
           </div>
 
           {/* Total & Décompte */}
-          <div className="ml-auto mt-6 w-full max-w-xs space-y-2 border-t border-[#F2E6E1] pt-4 text-xs font-medium">
+          <div className="invoice-print-total ml-auto mt-6 w-full max-w-xs space-y-2 border-t border-[#F2E6E1] pt-4 text-xs font-medium">
             <div className="flex justify-between text-stone-500">
               <span>Sous-total</span>
               <span className="font-bold text-stone-800">{formatCurrency(invoice.sousTotal)}</span>
@@ -282,7 +306,7 @@ export function CommandeDetailPage() {
           </div>
 
           {/* Mode de paiement réellement payé (visibles à l'impression) */}
-          <div className="mt-6 border-t border-[#F2E6E1] pt-4 text-xs print:border-stone-300">
+          <div className="invoice-print-payment mt-6 border-t border-[#F2E6E1] pt-4 text-xs print:border-stone-300">
             <p className="mb-2 font-bold uppercase tracking-wider text-stone-400 print:text-black">
               Paiement
             </p>

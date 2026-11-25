@@ -2,10 +2,12 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Toaster } from "@/components/ui/sonner";
 import { initAnalytics } from "@/lib/analytics";
+import { installNativePrintBridge } from "@/lib/nativePrint";
 import './index.css'
 import App from './App.tsx'
 
 initAnalytics();
+installNativePrintBridge();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

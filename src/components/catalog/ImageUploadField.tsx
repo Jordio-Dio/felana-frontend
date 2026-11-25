@@ -78,8 +78,9 @@ export function ImageUploadField({
               </span>
             )}
 
-            {/* Incrustation d'actions au survol */}
-            <div className="absolute inset-0 flex items-center justify-center gap-1.5 bg-stone-900/40 opacity-0 backdrop-blur-[2px] transition-opacity duration-200 group-hover:opacity-100">
+            {/* Incrustation d'actions : toujours visible sur mobile/APK (pas de survol),
+                révélée au survol sur ordinateur. */}
+            <div className="absolute inset-0 flex items-center justify-center gap-1.5 bg-stone-900/40 opacity-100 backdrop-blur-[2px] transition-opacity duration-200 sm:pointer-events-none sm:opacity-0 sm:group-hover:pointer-events-auto sm:group-hover:opacity-100">
               {index !== 0 && (
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -146,7 +147,7 @@ export function ImageUploadField({
         accept="image/*"
         multiple
         onChange={handleFileSelect}
-        className="hidden"
+        className="sr-only"
       />
 
       <p className="text-[11px] font-medium text-stone-400">

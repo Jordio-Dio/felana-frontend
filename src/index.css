@@ -204,6 +204,7 @@ button:disabled,
 
 #root {
   width: 100%;
+  min-height: 100vh;
   min-height: 100svh;
 }
 
@@ -220,4 +221,81 @@ button:disabled,
 
 .animate-hero-title {
   animation: fade-in-up 0.7s ease-out;
+}
+
+/* ============================================
+   Impression (navigateur ET APK Android)
+   ============================================ */
+
+@page {
+  size: A4 portrait;
+  margin: 8mm;
+}
+
+@media print {
+  html,
+  body,
+  #root {
+    width: 210mm !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+  }
+
+  body {
+    font-size: 11pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .invoice-print-page {
+    width: 100% !important;
+    max-width: none !important;
+    break-before: avoid;
+    break-after: avoid;
+  }
+
+  .invoice-print-header,
+  .invoice-print-client,
+  .invoice-print-payment,
+  .invoice-print-total {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  table {
+    width: 100% !important;
+    table-layout: fixed;
+  }
+
+  th,
+  td {
+    overflow-wrap: anywhere;
+  }
+
+  table,
+  thead,
+  tbody,
+  tr,
+  td,
+  th {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .print\:hidden {
+    display: none !important;
+  }
 }

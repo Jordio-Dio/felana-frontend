@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { UserPlus, LogIn, X, Sparkles } from "lucide-react";
 import { ShopHeader } from "@/components/shop/ShopHeader";
 import { ShopFooter } from "@/components/shop/ShopFooter";
@@ -10,7 +10,17 @@ import { ClientAuthProvider, useClientAuth } from "@/context/ClientAuthContext";
 function GuestBannerPrompt() {
   const { isAuthenticated } = useClientAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isVisible, setIsVisible] = useState(false);
+
+  // La bannière est fixée en bas de l'écran : sur ces pages elle recouvrirait
+  // les boutons principaux (notamment « Ajouter au panier » et « Valider »).
+  const hiddenOnThisPage =
+    location.pathname.startsWith("/shop/articles/") ||
+    location.pathname === "/checkout" ||
+    location.pathname === "/order-success" ||
+    location.pathname === "/shop/connexion" ||
+    location.pathname === "/shop/inscription";
 
   useEffect(() => {
     // Si l'utilisateur est déjà connecté, on n'affiche pas la bannière
@@ -31,7 +41,7 @@ function GuestBannerPrompt() {
     sessionStorage.setItem("guest_banner_dismissed", "true");
   };
 
-  if (!isVisible) return null;
+  if (!isVisible || hiddenOnThisPage) return null;
 
   return (
     <div className="fixed bottom-4 left-1/2 z-50 w-[92%] max-w-2xl -translate-x-1/2 transition-all duration-300 ease-out sm:bottom-6">

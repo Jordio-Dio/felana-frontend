@@ -347,7 +347,7 @@ export function ArticleDetailPage() {
                   type="button"
                   onClick={() => goToImage(imageIndex - 1)}
                   aria-label="Photo précédente"
-                  className="absolute left-2 top-1/2 z-[1] hidden -translate-y-1/2 items-center justify-center rounded-full bg-white/80 p-2 text-stone-700 opacity-0 shadow-md transition-opacity duration-200 hover:bg-white focus-visible:opacity-100 sm:flex"
+                  className="absolute left-2 top-1/2 z-[1] hidden -translate-y-1/2 items-center justify-center rounded-full bg-white/80 p-2 text-stone-700 opacity-0 shadow-md transition-opacity duration-200 hover:bg-white group-hover:opacity-100 focus-visible:opacity-100 sm:flex"
                 >
                   <ChevronLeft className="h-5 w-5" />
                 </button>
@@ -355,7 +355,7 @@ export function ArticleDetailPage() {
                   type="button"
                   onClick={() => goToImage(imageIndex + 1)}
                   aria-label="Photo suivante"
-                  className="absolute right-2 top-1/2 z-[1] hidden -translate-y-1/2 items-center justify-center rounded-full bg-white/80 p-2 text-stone-700 opacity-0 shadow-md transition-opacity duration-200 hover:bg-white focus-visible:opacity-100 sm:flex"
+                  className="absolute right-2 top-1/2 z-[1] hidden -translate-y-1/2 items-center justify-center rounded-full bg-white/80 p-2 text-stone-700 opacity-0 shadow-md transition-opacity duration-200 hover:bg-white group-hover:opacity-100 focus-visible:opacity-100 sm:flex"
                 >
                   <ChevronRight className="h-5 w-5" />
                 </button>

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, Loader2, LogIn, AlertCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
@@ -9,7 +9,7 @@ import type { AxiosError } from "axios";
 import type { ApiErrorResponse } from "@/types/api.types";
 
 export function LoginPage() {
-  const { login } = useAuth();
+  const { login, isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -17,6 +17,14 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // L'APK démarre sur /login : si la session est encore valide, on va
+  // directement au tableau de bord au lieu de redemander le mot de passe.
+  useEffect(() => {
+    if (!isAuthLoading && isAuthenticated) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [isAuthLoading, isAuthenticated, navigate]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
