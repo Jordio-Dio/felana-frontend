@@ -67,7 +67,7 @@ export function ShopFooter() {
             </nav>
           </div>
 
-          {/* Colonne 3: Contact (depuis /v1/public/shop-info) */}
+          {/* Colonne 3: Contact (depuis /v1/public/shop-information) */}
           <div className="flex flex-col gap-3">
             <h3 className="font-semibold text-[#3b2f24]">Contact</h3>
             <div className="flex flex-col gap-2">
